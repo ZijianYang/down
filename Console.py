@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """抓取数据"""
-from Store.Entity import DbHelper
+from Store import DbHelper
 import Core
 import getopt
 import sys
@@ -36,8 +36,13 @@ def main(argv):
             version()
             sys.exit(0)
         elif opt in ('-i',):
+            DbHelper.init()
+            DbHelper.seed()
             sys.exit(0)
         elif opt in ('-r',):
+            DbHelper.delete()
+            DbHelper.init()
+            DbHelper.seed()
             sys.exit(0)
     print("unhandled option")
     sys.exit(3)
