@@ -34,16 +34,16 @@ def addfile(configpath):
     """来自文件信则配置信息"""
     configdict = configdictbyfile(configpath)
     configmodel = ConfigModel(configdict)
-    ConfigRepository().add(configmodel.config)
+    ConfigRepository().add(configmodel.config())
 
 
 def adddir(configpath):
     """来自文件夹信则配置信息"""
     configs = []
-    for parent, dirnames, filenames in os.walk(configpath):        
+    for parent, dirnames, filenames in os.walk(configpath):
         for filename in filenames:
             if filename.find(".json") > 0:
                 configdict = configdictbyfile(os.path.join(parent, filename))
                 configmodel = ConfigModel(configdict)
-                configs.append(configmodel.config)
+                configs.append(configmodel.config())
     ConfigRepository().adds(configs)

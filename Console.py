@@ -50,14 +50,6 @@ def main(argv):
             DbHelper.init()
             sys.exit(0)
         elif opt in ('-t',):
-            configmodel = ConfigModel({"Key":"1","RootUrl":"aaa","Rules":"aaaa"})
-            config = Store.Entity.Config(
-            key=configmodel.key,
-            content=json.dumps(configmodel.rules),
-            rooturl=configmodel.rooturl,
-            adddate=Tool.Time.timeobj())
-            Store.ConfigRepository().add(config)
-            Store.ConfigRepository().add(configmodel.config)
             sys.exit(0)
     print("unhandled option")
     sys.exit(3)
