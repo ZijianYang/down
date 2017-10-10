@@ -4,6 +4,13 @@ from Store import DbHelper
 import Core
 import getopt
 import sys
+import Store.ConfigRepository
+import Store
+import Store.Entity
+import Tool.Time
+from Core.Model.Config import ConfigModel
+import json
+
 
 
 def usage():
@@ -23,7 +30,7 @@ def version():
 def main(argv):
     """主函数"""
     try:
-        opts, args = getopt.getopt(argv[1:], 'hvir')
+        opts, args = getopt.getopt(argv[1:], 'hvirt')
     except getopt.GetoptError as err:
         print(err)
         usage()
@@ -41,6 +48,16 @@ def main(argv):
         elif opt in ('-r',):
             DbHelper.delete()
             DbHelper.init()
+            sys.exit(0)
+        elif opt in ('-t',):
+            configmodel = ConfigModel({"Key":"1","RootUrl":"aaa","Rules":"aaaa"})
+            config = Store.Entity.Config(
+            key=configmodel.key,
+            content=json.dumps(configmodel.rules),
+            rooturl=configmodel.rooturl,
+            adddate=Tool.Time.timeobj())
+            Store.ConfigRepository().add(config)
+            Store.ConfigRepository().add(configmodel.config)
             sys.exit(0)
     print("unhandled option")
     sys.exit(3)
