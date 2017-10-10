@@ -50,6 +50,8 @@ def main(argv):
             DbHelper.init()
             sys.exit(0)
         elif opt in ('-t',):
+            entities = Store.ConfigRepository().getbykey("bd")
+            print(entities.count())
             sys.exit(0)
     print("unhandled option")
     sys.exit(3)
