@@ -37,12 +37,10 @@ def main(argv):
             sys.exit(0)
         elif opt in ('-i',):
             DbHelper.init()
-            DbHelper.seed()
             sys.exit(0)
         elif opt in ('-r',):
             DbHelper.delete()
             DbHelper.init()
-            DbHelper.seed()
             sys.exit(0)
     print("unhandled option")
     sys.exit(3)

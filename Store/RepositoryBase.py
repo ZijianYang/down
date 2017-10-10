@@ -13,4 +13,4 @@ class RepositoryBase(object):
 
     def __init__(self):
         """"会话对象"""
-        self.session = AppConfig().Session
+        self.session = AppConfig().session

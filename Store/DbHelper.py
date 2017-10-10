@@ -34,7 +34,7 @@ def seed():
         # 删除数据的另外一种形式:session.delete()
 
         # 插入数据,这里的一个实例只插入一次,第二次插入不生效
-        session.add(Store.Entity.Config(content="student1", rooturl="1.jpg" ,adddate=Tool.Time.timeobj()))
+        session.add(Store.Entity.Config(key="First", content="student1", rooturl="1.jpg" ,adddate=Tool.Time.timeobj()))
         session.commit()
     except Exception as excep:
         print(excep)

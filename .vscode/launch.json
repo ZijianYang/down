@@ -20,7 +20,7 @@
                 "RedirectOutput"
             ],
             "args":[
-                "-h"
+                "--config","add"
             ]        
         },
         {
