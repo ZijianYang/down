@@ -39,8 +39,12 @@ def main(argv):
             content = arg
             sys.exit(0)
         elif opt in ('--config', ):
-            if arg == "add":
+            if arg == "add":# 相同key使用时替换
                 Core.ConfigBusiness.add(content)
+            elif arg == "delete":
+                pass
+            elif arg == "select":
+                pass
             sys.exit(0)
         else:
             print("unhandled option")

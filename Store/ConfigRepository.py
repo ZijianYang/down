@@ -41,3 +41,5 @@ class ConfigRepository(RepositoryBase):
         entities = self.session.query(Config).filter(
             Config.key == key).order_by(Config.adddate.desc())
         return entities
+
+    def deletebykey(self, key):

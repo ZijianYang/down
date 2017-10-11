@@ -47,3 +47,7 @@ def adddir(configpath):
                 configmodel = ConfigModel(configdict)
                 configs.append(configmodel.config())
     ConfigRepository().adds(configs)
+
+def select(content):
+    """查询"""
+    pass
