@@ -14,7 +14,7 @@ class RuleHandle(object):
         """构造函数"""
         self.key = key
         if not fileDirPath:
-            self.filedirpath =  os.path.join(AppConfig().DownPath, self.key)
+            self.filedirpath = os.path.join(AppConfig().DownPath, self.key)
         else:
             self.filedirpath = fileDirPath
 
@@ -23,7 +23,7 @@ class RuleHandle(object):
         print("处理RootUrl:", end="")
         url = downconfig.rooturl
         rooturlinfo = UrlRepository().getsbykeyrequesturl(url, self.key).first()
-        if rooturlinfo:
+        if not rooturlinfo:
             filepath = DownHelper(self.filedirpath, url).Star()
             rootrule = [
                 f for f in downconfig.Rules if f["RuleNo"] == "RootUrl"
