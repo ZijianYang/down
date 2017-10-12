@@ -26,7 +26,7 @@ class RuleHandle(object):
         if not rooturlinfo:
             filepath = DownHelper(self.filedirpath, url).Star()
             rootrule = [
-                f for f in downconfig.Rules if f["RuleNo"] == "RootUrl"
+                f for f in downconfig.rules if f["RuleNo"] == "RootUrl"
             ][0]
             UrlRepository().add(
                 self.key, rootrule["RuleNo"], filepath, "RootUrl", url)
