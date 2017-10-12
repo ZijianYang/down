@@ -1,5 +1,6 @@
 """配置(Config)"""
 import sqlalchemy
+import Tool.Time
 from Store.Entity.EntityBase import EntityBase
 
 
@@ -23,8 +24,14 @@ class Config(EntityBase):
     adddate = sqlalchemy.Column("adddate", sqlalchemy.DateTime, nullable=False)
     isend = sqlalchemy.Column("isend", sqlalchemy.Boolean, default=False)
 
+    def __init__(self, key, rooturl, content):
+        self.key = key
+        self.rooturl = rooturl
+        self.content = content
+        self.adddate = Tool.Time.timeobj()        
+
     def __str__(self):
         return '(Config,key:%s; rooturl:%s; content:%s ,adddate:%s ,isend:%s)' % (
-            self.key, self.rooturl, self.content, self.adddate ,self.isend)
+            self.key, self.rooturl, self.content, self.adddate, self.isend)
 
     __repr__ = __str__    

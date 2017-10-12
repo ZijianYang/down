@@ -8,7 +8,7 @@ import Store.ConfigRepository
 import Store
 import Store.Entity
 import Tool.Time
-from Core.Model.Config import ConfigModel
+from Core.Model import ConfigModel
 import json
 
 

@@ -22,8 +22,5 @@ class ConfigModel(object):
     def config(self):
         """返回数据实体"""
         config = Config(
-            key=self.key,
-            content=json.dumps(self.rules),
-            rooturl=self.rooturl,
-            adddate=Tool.Time.timeobj())
+            self.key, self.rooturl, json.dumps(self.rules))
         return config    
