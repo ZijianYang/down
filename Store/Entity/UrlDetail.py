@@ -3,7 +3,6 @@ import sqlalchemy
 import Tool.Time
 from Store.Entity.EntityBase import EntityBase
 import Store.Entity.Url
-import Store.Entity.Config
 
 
 class UrlDetail(EntityBase):
