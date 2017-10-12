@@ -34,7 +34,7 @@ class UrlRepository(RepositoryBase):
         """根据key和请求url查询"""
         entities = self.session.query(Url).join(
             Config, Config.key == key).filter(
-                Url.delflag == False, Url.isend == False, Url.resultUrl == requesturl)
+                Url.delflag == False, Url.isend == False, Url.resulturl == requesturl)
         return entities
 
     def endbyrequesturl(self, requesturl):

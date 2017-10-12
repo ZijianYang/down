@@ -22,7 +22,7 @@ def new(key):
     rulehandle.HandleRootUrl(configmodel)
     print("根地址%s;规则数量%s;" % (configmodel.rooturl, len(configmodel.rules)))
     noendurls = UrlRepository().getsnoendbykey(key)
-    while len(noendurls) != 0:
+    while noendurls.count() != 0:
         for item in noendurls:
             rulehandle.HandleRule(configmodel, item)
         noendurls = UrlRepository().getsnoendbykey(key)

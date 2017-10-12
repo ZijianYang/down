@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """down"""
-import Core.ConfigBusiness
-import Core.ProcessBusiness
+import Core
 import getopt
 import sys
 import sqlalchemy

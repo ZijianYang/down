@@ -10,7 +10,7 @@ class ConfigModel(object):
 
     def __init__(self, data):
         """从文件获取dict"""
-        if type(data) != dict:
+        if type(data) == str:
             with open(data) as filestream:
                 configcontent = filestream.read()
                 configdict = json.loads(configcontent)

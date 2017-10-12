@@ -21,7 +21,7 @@ class RuleHandle(object):
     def HandleRootUrl(self, downconfig):
         """处理RootUrl"""
         print("处理RootUrl:", end="")
-        url = downconfig.RootUrl
+        url = downconfig.rooturl
         rooturlinfo = UrlRepository().getsbykeyrequesturl(url, self.key).first()
         if rooturlinfo:
             filepath = DownHelper(self.filedirpath, url).Star()
