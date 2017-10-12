@@ -24,7 +24,7 @@ class UrlDetail(EntityBase):
     # 添加外键,关联到表
     urlid = sqlalchemy.Column("urlid", sqlalchemy.Integer, sqlalchemy.ForeignKey("Url.id"))
     # 添加关系属性,urlid
-    url = sqlalchemy.orm.relationship("Url", foreign_keys="UrlDetail.urlid")
+    url = sqlalchemy.orm.relationship("Url", foreign_keys="UrlDetail.urlid", backref=sqlalchemy.orm.backref("urldetails"))
 
     def __init__(self, key, rooturl, content):
         self.key = key
