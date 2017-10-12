@@ -32,6 +32,7 @@ class Url(EntityBase):
     
     # 添加关系属性,UrlDetail的urlid外键属性上
     # urldetails = sqlalchemy.orm.relationship("UrlDeatil", foreign_keys="UrlDeatil.urlid")
+    # 连续使用有定义顺序问题
 
     def __init__(self, key, rooturl, content):
         self.key = key
