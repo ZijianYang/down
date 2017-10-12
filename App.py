@@ -11,7 +11,7 @@ def usage():
     print("-h,--help:print help message")
     print("-v,--version:print script version")
     print("--content:输入执行内容（默认空）")
-    print("--config:执行:add:新增;")
+    print("--config,执行:add:新增(相同key则不新增);")
 
 
 def version():
@@ -37,14 +37,15 @@ def main(argv):
             sys.exit(0)
         elif opt in ('--content', ):
             content = arg
-            sys.exit(0)
         elif opt in ('--config', ):
-            if arg == "add":# 相同key使用时替换
-                Core.ConfigBusiness.add(content)
+            if arg == "add":# 相同key则不新增
+                Core.ConfigBusiness.addpath(content)
+            elif arg == "update":
+                Core.ConfigBusiness.updatepath(content)
             elif arg == "delete":
-                pass
+                Core.ConfigBusiness.deletebykey(content)
             elif arg == "select":
-                pass
+                Core.ConfigBusiness.select(content)
             sys.exit(0)
         else:
             print("unhandled option")
