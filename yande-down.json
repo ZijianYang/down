@@ -1,5 +1,5 @@
 {
-    "key":"First",
+    "Key":"bd",
     "RootUrl":"https://yande.re/post?tags=bondage",
     "Rules": 
     [
@@ -18,7 +18,12 @@
             "UrlRegex": "file_url\":\"(?P<url>.*?)\",",
             "NameRegex":"md5\":\"(?P<md5>.*?)\",",
             "UrlFormat": "",
-            "IsDown":1
+            "IsDown":1,
+            "Deatil":
+            [
+                {"Key":"","Type":"Regex","Regex":""},
+                {"Key":"FileType","Type":"Fix","Value":"Image"}
+            ]
         }
     ]
 }

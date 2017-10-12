@@ -12,7 +12,7 @@ class ConfigRepository(RepositoryBase):
         if not entity:
             self.session.add(config)
             self.session.commit()
-            return entity
+            return config
 
     def adds(self, configs):
         """批量新增"""
