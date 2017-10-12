@@ -2,8 +2,8 @@
 import sqlalchemy
 import Tool.Time
 from Store.Entity.EntityBase import EntityBase
-import Store.Entity.Config
 import Store.Entity.Url
+import Store.Entity.Config
 
 
 class UrlDetail(EntityBase):
@@ -23,9 +23,9 @@ class UrlDetail(EntityBase):
     content = sqlalchemy.Column(
         "content", sqlalchemy.String(250), nullable=False)
     # 添加外键,关联到表
-    #urlid = sqlalchemy.Column("urlid", sqlalchemy.Integer, sqlalchemy.ForeignKey("Url.id"))
+    urlid = sqlalchemy.Column("urlid", sqlalchemy.Integer, sqlalchemy.ForeignKey("Url.id"))
     # 添加关系属性,urlid
-    #url = sqlalchemy.orm.relationship("UrlDetail", foreign_keys="UrlDetail.urlid")    
+    url = sqlalchemy.orm.relationship("Url", foreign_keys="UrlDetail.urlid")
 
     def __init__(self, key, rooturl, content):
         self.key = key

@@ -31,7 +31,7 @@ class Url(EntityBase):
     config = sqlalchemy.orm.relationship("Config", foreign_keys="Url.configid")
     
     # 添加关系属性,UrlDetail的urlid外键属性上
-    #urldetails = sqlalchemy.orm.relationship("UrlDeatil", foreign_keys="UrlDeatil.urlid")
+    urldetails = sqlalchemy.orm.relationship("UrlDeatil", foreign_keys="UrlDeatil.urlid")
 
     def __init__(self, key, rooturl, content):
         self.key = key
