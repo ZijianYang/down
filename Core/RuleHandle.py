@@ -37,7 +37,7 @@ class RuleHandle(object):
     # 按照规则处理
     def HandleRule(self, downConfig, urlItem):
         rule = [
-            f for f in downConfig.Rules if f["RuleNo"] == urlItem["RuleNo"]
+            f for f in downConfig.rules if f["RuleNo"] == urlItem.ruleno
         ][0]
         ruleType = rule["Type"]
         print("地址：%s；规则类型%s" % (urlItem["ResultUrl"], ruleType))
