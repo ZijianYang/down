@@ -28,10 +28,10 @@ class Config(EntityBase):
         self.key = key
         self.rooturl = rooturl
         self.content = content
-        self.adddate = Tool.Time.timeobj()        
+        self.adddate = Tool.Time.timeobj()
 
     def __str__(self):
         return 'Config,key:%s; rooturl:%s; content:%s ,adddate:%s ,isend:%s' % (
             self.key, self.rooturl, self.content, self.adddate, self.isend)
 
-    __repr__ = __str__    
+    __repr__ = __str__
