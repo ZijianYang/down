@@ -29,7 +29,7 @@ class Url(EntityBase):
     configid = sqlalchemy.Column("configid", sqlalchemy.Integer, sqlalchemy.ForeignKey("Config.id"))
     # 添加关系属性,关联到本实例的configid外键属性上
     config = sqlalchemy.orm.relationship("Config", foreign_keys="Url.configid")
-    
+
     # 添加关系属性,UrlDetail的urlid外键属性上
     # urldetails = sqlalchemy.orm.relationship("UrlDeatil", foreign_keys="UrlDeatil.urlid")
     # 连续使用有定义顺序问题
