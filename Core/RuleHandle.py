@@ -5,7 +5,7 @@ import time
 import Store
 from Store.UrlRepository import UrlRepository
 from AppConfig import AppConfig
-from Tool import DownHelper
+from Tool.DownHelper import DownHelper
 
 
 class RuleHandle(object):
