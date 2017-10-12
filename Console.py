@@ -18,7 +18,7 @@ def usage():
     print("Console.py usage:")
     print("-h,--help:print help message")
     print("-v,--version:print script version")
-    print("-i,--初始化数据库和数据")
+    print("-i,--初始化数据库和数据，根据配置文件准备文件夹")
     print("-r,--重建数据库和数据")
 
 
@@ -44,6 +44,7 @@ def main(argv):
             sys.exit(0)
         elif opt in ('-i',):
             DbHelper.init()
+            #根据配置文件准备文件夹
             sys.exit(0)
         elif opt in ('-r',):
             DbHelper.delete()
