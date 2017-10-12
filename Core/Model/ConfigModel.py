@@ -10,7 +10,7 @@ class ConfigModel(object):
 
     def __init__(self, data):
         """从文件获取dict"""
-        if type(data)!=dict:
+        if type(data) != dict:
             with open(data) as filestream:
                 configcontent = filestream.read()
                 configdict = json.loads(configcontent)
@@ -23,4 +23,4 @@ class ConfigModel(object):
         """返回数据实体"""
         config = Config(
             self.key, self.rooturl, json.dumps(self.rules))
-        return config    
+        return config

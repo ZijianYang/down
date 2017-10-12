@@ -31,7 +31,7 @@ class Config(EntityBase):
         self.adddate = Tool.Time.timeobj()        
 
     def __str__(self):
-        return '(Config,key:%s; rooturl:%s; content:%s ,adddate:%s ,isend:%s)' % (
+        return 'Config,key:%s; rooturl:%s; content:%s ,adddate:%s ,isend:%s' % (
             self.key, self.rooturl, self.content, self.adddate, self.isend)
 
     __repr__ = __str__    
