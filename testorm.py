@@ -54,7 +54,7 @@ class User(BaseModel):
     role = sqlalchemy.orm.relationship("Role", foreign_keys="User.role_id")
 
     # 添加关系属性,关联到本实例的role_id外键属性上,如果使用了这种方式,Role模型中的users可以省略
-    # role = sqlalchemy.orm.relationship("Role", foreign_keys="User.role_id", backref=sqlalchemy.orm.backref("users"))
+    role = sqlalchemy.orm.relationship("Role", foreign_keys="User.role_id", backref=sqlalchemy.orm.backref("users"))
 
 
 # 构建数据模型Role
@@ -70,7 +70,7 @@ class Role(BaseModel):
     name = sqlalchemy.Column("name", sqlalchemy.String(50), unique=True)
 
     # 添加关系属性,关联到实例User的role_id外键属性上
-    users = sqlalchemy.orm.relationship("User", foreign_keys="User.role_id")
+    #users = sqlalchemy.orm.relationship("User", foreign_keys="User.role_id")
 
 
 # 利用Session对象连接数据库
@@ -112,7 +112,8 @@ try:
     roles = session.query(Role)                 # 返回全部结果
     for role in roles:
         print("Role:", role.id, role.name)
-
+        for user in role.users:
+            print("Role-User:", user.id, user.name, user.age, user.role_id)
     users = session.query(User)                 # 返回全部结果
     for user in users:
         print("User:", user.id, user.name, user.age, user.role_id)
