@@ -1,4 +1,4 @@
-"""Image仓库"""
+"""Config仓库"""
 from Store.RepositoryBase import RepositoryBase
 from Store.Entity.Config import Config
 

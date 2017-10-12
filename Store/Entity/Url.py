@@ -21,8 +21,8 @@ class Url(EntityBase):
     adddate = sqlalchemy.Column("adddate", sqlalchemy.DateTime, nullable=False)
     # 表结构,具体更多的数据类型自行百度
     ruleno = sqlalchemy.Column("ruleno", sqlalchemy.String(50), nullable=False)
-    sourceUrl = sqlalchemy.Column("sourceUrl", sqlalchemy.Text, nullable=False)
-    resultUrl = sqlalchemy.Column("resultUrl", sqlalchemy.Text, nullable=False)
+    sourceurl = sqlalchemy.Column("sourceurl", sqlalchemy.Text, nullable=False)
+    resulturl = sqlalchemy.Column("resulturl", sqlalchemy.Text, nullable=False)
     filepath = sqlalchemy.Column("filepath", sqlalchemy.Text, nullable=False)
     isend = sqlalchemy.Column("isend", sqlalchemy.Boolean, default=False)
     # 添加外键,关联到表
@@ -34,11 +34,17 @@ class Url(EntityBase):
     # urldetails = sqlalchemy.orm.relationship("UrlDeatil", foreign_keys="UrlDeatil.urlid")
     # 连续使用有定义顺序问题
 
-    def __init__(self, key, rooturl, content):
-        self.key = key
+    def __init__(self, ruleno, filepath, sourceurl, resulturl, configid):
+        """构造函数"""
+        self.adddate = Tool.Time.timeobj()
+        self.ruleno = ruleno
+        self.filepath = filepath
+        self.sourceurl = sourceurl
+        self.configid = configid
+        self.resulturl = resulturl
 
     def __str__(self):
-        return 'Url,key:%s;ruleno:%s; sourceUrl:%s; resultUrl:%s ,filepath:%s ,isend:%s' % (
-            self.config.key, self.ruleno, self.sourceUrl, self.resultUrl, self.filepath, self.isend)
+        return 'Url,key:%s;ruleno:%s; sourceurl:%s; resulturl:%s ,filepath:%s ,isend:%s' % (
+            self.config.key, self.ruleno, self.sourceurl, self.resulturl, self.filepath, self.isend)
 
     __repr__ = __str__

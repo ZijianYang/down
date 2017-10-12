@@ -15,6 +15,7 @@ class AppConfig(object):
     IsDeBug = False  ##是否为测试状态
     DownConfigPath = "./FileStore/downconfig"
     DatabasePath = "./FileStore/downdatabase.db"
+    DownPath = "./DownFile"
     def __init__(self, configPath="./App.config"):
         """
         初始化
@@ -27,6 +28,7 @@ class AppConfig(object):
         self.__class__.DownConfigPath = config["DownConfigPath"]
         databasepath = config["DatabasePath"]
         self.__class__.DatabasePath = databasepath
+        self.__class__.DownPath = config["DownPath"]
         # 利用数据库字符串构造engine, echo为True将打印所有的sql语句, 其他数据库的链接方式可自行百度
         # engine = sqlalchemy.create_engine("mysql+pymysql://username:password@hostname/dbname",
         # encoding="utf8", echo=True)

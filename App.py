@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """down"""
-from Core import *
+import Core.ConfigBusiness
+import Core.ProcessBusiness
 import getopt
 import sys
 import sqlalchemy
@@ -13,7 +14,7 @@ def usage():
     print("-v,--version:print script version")
     print("--content:输入执行内容（默认空）")
     print("--config:执行,:add:新增(相同key则不新增);update:更新;delete：删除;select:查询;")
-    print("--execute,执行:star:开始(不输入key则都开始，都不重复);pardondata:仅重复数据;pardonall:文件和数据都重复;")
+    print("--execute,执行:star:开始(需要key);pardondata:仅重复数据;pardonall:文件和数据都重复;")
 
 
 def version():
@@ -51,12 +52,14 @@ def main(argv):
             sys.exit(0)
         elif opt in ('--execute', ):
             if arg == "new":# 相同key则不新增
-                Core.ConfigBusiness.addpath(content)
+                Core.ProcessBusiness.new(content)
             elif arg == "pardondata":
-                Core.ConfigBusiness.updatepath(content)
+                Core.ProcessBusiness.clear(content)
+                Core.ProcessBusiness.new(content)
             elif arg == "pardonall":
-                Core.ConfigBusiness.deletebykey(content)
-            sys.exit(0)            
+                Core.ProcessBusiness.clear(content, True)
+                Core.ProcessBusiness.new(content)
+            sys.exit(0)
         else:
             print("unhandled option")
             sys.exit(3)

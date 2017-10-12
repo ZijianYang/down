@@ -15,9 +15,13 @@ class ConfigModel(object):
                 configcontent = filestream.read()
                 configdict = json.loads(configcontent)
                 data = configdict
-        self.key = data["Key"]
-        self.rooturl = data["RootUrl"]
-        self.rules = data["Rules"]
+            self.key = data["Key"]
+            self.rooturl = data["RootUrl"]
+            self.rules = data["Rules"]
+        else:
+            self.key = data.key
+            self.rooturl = data.rooturl
+            self.rules = json.loads(data.content)
 
     def config(self):
         """返回数据实体"""
