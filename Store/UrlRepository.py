@@ -30,9 +30,18 @@ class UrlRepository(RepositoryBase):
                 Url.delflag == False, Url.isend == False, Url.ruleno != "End")
         return entities
 
-    def getsbykeyrequesturl(self, key, requestUrl):
+    def getsbykeyrequesturl(self, key, requesturl):
         """根据key和请求url查询"""
         entities = self.session.query(Url).join(
             Config, Config.key == key).filter(
-                Url.delflag == False, Url.isend == False, Url.resultUrl == requestUrl)
+                Url.delflag == False, Url.isend == False, Url.resultUrl == requesturl)
         return entities
+
+    def endbyrequesturl(self, requesturl):
+        """根据请求路径结束"""
+        url= self.session.query(Url).filter(Url.resulturl == requesturl).first()
+        if url:
+            url.update({
+                Url.isend:True
+            })
+            self.session.commit()

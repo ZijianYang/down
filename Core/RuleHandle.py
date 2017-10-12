@@ -2,8 +2,10 @@
 import os
 import re
 import time
+import Store
 from Store.UrlRepository import UrlRepository
 from AppConfig import AppConfig
+from Tool import DownHelper
 
 
 class RuleHandle(object):
@@ -22,11 +24,11 @@ class RuleHandle(object):
         url = downconfig.RootUrl
         rooturlinfo = UrlRepository().getsbykeyrequesturl(url, self.key).first()
         if rooturlinfo:
-            filepath = Basic.Down(self.filedirpath, url).Star()
+            filepath = DownHelper(self.filedirpath, url).Star()
             rootrule = [
                 f for f in downconfig.Rules if f["RuleNo"] == "RootUrl"
             ][0]
-            UrlRepository().Add(
+            UrlRepository().add(
                 self.key, rootrule["RuleNo"], filepath, "RootUrl", url)
             print("处理完毕")
         else:
@@ -39,15 +41,15 @@ class RuleHandle(object):
         ][0]
         ruleType = rule["Type"]
         print("地址：%s；规则类型%s" % (urlItem["ResultUrl"], ruleType))
-        if ruleType == Db.Enum.RuleType.page.name:
+        if ruleType == Store.Enum.RuleType.page.name:
             self.HandlePage(urlItem, rule)
-        elif ruleType == Db.Enum.RuleType.regex.name:
+        elif ruleType == Store.Enum.RuleType.regex.name:
             self.HandleRegex(urlItem, rule)
 
     # 按照规则处理
     def HandlePage(self, urlItem, rule):
         sourceUrl = urlItem["ResultUrl"]
-        tempPath = Basic.Down.UrlToPath(self.fileDirPath, sourceUrl)
+        tempPath = DownHelper.UrlToPath(self.filedirpath, sourceUrl)
         with open(tempPath, "rb") as f:
             html = f.read().decode('utf-8')
         regex = rule["PageEndRegex"]
@@ -62,21 +64,21 @@ class RuleHandle(object):
             siteUrl = sourceUrl[0:sourceUrl.index("/", 8)]
             requestUrl = rule["UrlFormat"].replace("{SiteUrl}", siteUrl)
             requestUrl = requestUrl.replace("{Number}", str(i))
-            rootUrlInfo = Db.UrlListDal().GetsByNo(requestUrl, self.no)
+            rootUrlInfo = UrlRepository().getsbykeyrequesturl(requestUrl, self.key)
             i = i + 1
             if len(rootUrlInfo) == 0:
-                filePath = Basic.Down(self.fileDirPath, requestUrl).Star()
-                Db.UrlListDal().Add(
-                    self.no, rule["NextNo"], filePath, sourceUrl, requestUrl)
+                filePath = DownHelper(self.filedirpath, requestUrl).Star()
+                UrlRepository().add(
+                    self.key, rule["NextNo"], filePath, sourceUrl, requestUrl)
                 print("处理完毕")
             else:
                 print("%s已经处理" % (requestUrl))
-        Db.UrlListDal().UpdateIsEndToTrue(sourceUrl)
+        UrlRepository().endbyrequesturl(sourceUrl)
 
     # 按照规则处理
     def HandleRegex(self, urlItem, rule):
         sourceUrl = urlItem["ResultUrl"]
-        tempPath = Basic.Down.UrlToPath(self.filedirpath, sourceUrl)
+        tempPath = DownHelper.UrlToPath(self.filedirpath, sourceUrl)
         with open(tempPath, "rb") as f:
             html = f.read().decode('utf-8')
         urlRegex = rule["UrlRegex"]
@@ -90,14 +92,14 @@ class RuleHandle(object):
         for item in urls:
             print("当前时间：%s；" % (time.strftime('%Y-%m-%d  %H:%M:%S',time.localtime(time.time()))) , end="")                    
             requestUrl = item
-            rootUrlInfo = Db.UrlListDal().GetsByNo(requestUrl, self.key)
+            rootUrlInfo = UrlRepository().getsbykeyrequesturl(requestUrl, self.key)
             if len(rootUrlInfo) == 0:
-                Basic.Down(self.filedirpath, requestUrl,
+                DownHelper(self.filedirpath, requestUrl,
                            names[i] + os.path.splitext(requestUrl)[1]).Star()
-                Db.UrlListDal().Add(self.key, rule["NextNo"], self.filedirpath,sourceUrl,requestUrl)
+                UrlRepository().add(self.key, rule["NextNo"], self.filedirpath,sourceUrl,requestUrl)
                 print("处理完毕")
             else:
                 print("%s已经处理" % (requestUrl))
             i = i + 1
-        Db.UrlListDal().UpdateIsEndToTrue(sourceUrl)
+        UrlRepository().endbyrequesturl(sourceUrl)
 
