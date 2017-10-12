@@ -39,7 +39,7 @@ class UrlRepository(RepositoryBase):
 
     def endbyrequesturl(self, requesturl):
         """根据请求路径结束"""
-        url= self.session.query(Url).filter(Url.resulturl == requesturl).first()
+        url = self.session.query(Url).filter(Url.resulturl == requesturl).first()
         if url:
             url.update({
                 Url.isend:True
