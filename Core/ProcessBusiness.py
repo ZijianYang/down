@@ -19,12 +19,12 @@ def new(key):
         sys.exit(0)
     configmodel = ConfigModel(ConfigRepository().getbykey(key))
     rulehandle = RuleHandle(key)
-    rulehandle.HandleRootUrl(configmodel)
+    rulehandle.handlerooturl(configmodel)
     print("根地址%s;规则数量%s;" % (configmodel.rooturl, len(configmodel.rules)))
     noendurls = UrlRepository().getsnoendbykey(key)
     while noendurls.count() != 0:
         for item in noendurls:
-            rulehandle.HandleRule(configmodel, item)
+            rulehandle.handlerule(configmodel, item)
         noendurls = UrlRepository().getsnoendbykey(key)
     print("全部完成")
 

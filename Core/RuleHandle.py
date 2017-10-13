@@ -10,6 +10,8 @@ from Tool.DownHelper import DownHelper
 
 class RuleHandle(object):
     """规则具体处理"""
+
+    # 每层处理只对上层进行处理，并对本层进行下载和数据保存
     def __init__(self, key, fileDirPath=None):
         """构造函数"""
         self.key = key
@@ -18,88 +20,96 @@ class RuleHandle(object):
         else:
             self.filedirpath = fileDirPath
 
-    def HandleRootUrl(self, downconfig):
+    def handlerooturl(self, downconfig):
         """处理RootUrl"""
+        # 没有上层处理，对rooturl进行下载和数据保存，不做处理
         print("处理RootUrl:", end="")
-        url = downconfig.rooturl
-        rooturlinfo = UrlRepository().getsbykeyrequesturl(url, self.key).first()
+        rooturl = downconfig.rooturl
+        rooturlinfo = UrlRepository().getsbykeyrequesturl(rooturl,
+                                                          self.key).first()
         if not rooturlinfo:
-            filepath = DownHelper(self.filedirpath, url).Star()
+            filepath = DownHelper(self.filedirpath, rooturl).Star()
             rootrule = [
                 f for f in downconfig.rules if f["RuleNo"] == "RootUrl"
             ][0]
-            UrlRepository().add(
-                self.key, rootrule["RuleNo"], filepath, "RootUrl", url)
+            UrlRepository().add(self.key, rootrule["RuleNo"], filepath,
+                                rooturl, rooturl)  #根处理特殊源和结果是一个
             print("处理完毕")
         else:
             print("已处理,继续")
 
-    # 按照规则处理
-    def HandleRule(self, downConfig, urlItem):
-        rule = [
-            f for f in downConfig.rules if f["RuleNo"] == urlItem.ruleno
-        ][0]
-        ruleType = rule["Type"]
-        print("地址：%s；规则类型%s" % (urlItem["ResultUrl"], ruleType))
-        if ruleType == Store.Enum.RuleType.page.name:
-            self.HandlePage(urlItem, rule)
-        elif ruleType == Store.Enum.RuleType.regex.name:
-            self.HandleRegex(urlItem, rule)
+    def handlerule(self, downconfig, urlinfo):
+        """按照规则处理:下载配置,数据url"""
+        rule = [f for f in downconfig.rules
+                if f["RuleNo"] == urlinfo.ruleno][0]  #查找处理规则
+        ruletype = rule["Type"]
+        requesturl = urlinfo.resulturl  # 处理过后地址的结果地址，即为下一次请求地址和源地址
+        print("请求地址：%s；规则类型%s" % (requesturl, ruletype))  #
+        if ruletype == Store.Enum.ERuleType.page.name:
+            self.handlepage(requesturl, rule)
+        elif ruletype == Store.Enum.ERuleType.regex.name:
+            self.handleregex(requesturl, rule)
 
-    # 按照规则处理
-    def HandlePage(self, urlItem, rule):
-        sourceUrl = urlItem["ResultUrl"]
-        tempPath = DownHelper.UrlToPath(self.filedirpath, sourceUrl)
-        with open(tempPath, "rb") as f:
-            html = f.read().decode('utf-8')
+    def handlepage(self, sourceurl, rule):
+        """按照规则处理"""
+        temppath = DownHelper.UrlToPath(self.filedirpath, sourceurl)
+        with open(temppath, "rb") as filestream:
+            html = filestream.read().decode('utf-8')
         regex = rule["PageEndRegex"]
         pattern = re.compile(regex)
         match = pattern.search(html)
         total = int(match.group("total"))
         i = int(rule["PageStart"])
-        print("源%s共产生%s条" % (sourceUrl, total))
+        print("源%s共产生%s条" % (sourceurl, total))
         while i <= total:
-        # while i <= 1:
-            print("当前时间：%s；" % (time.strftime('%Y-%m-%d  %H:%M:%S',time.localtime(time.time()))) , end="")        
-            siteUrl = sourceUrl[0:sourceUrl.index("/", 8)]
-            requestUrl = rule["UrlFormat"].replace("{SiteUrl}", siteUrl)
-            requestUrl = requestUrl.replace("{Number}", str(i))
-            rootUrlInfo = UrlRepository().getsbykeyrequesturl(requestUrl, self.key)
+            #while i <= 1:
+            print(
+                "当前时间：%s；" % (time.strftime('%Y-%m-%d  %H:%M:%S',
+                                            time.localtime(time.time()))),
+                end="")
+            siteurl = sourceurl[0:sourceurl.index("/", 8)]
+            requesturl = rule["UrlFormat"].replace("{SiteUrl}", siteurl)
+            requesturl = requesturl.replace("{Number}", str(i))
+            requesturlinfo = UrlRepository().getsbykeyrequesturl(
+                requesturl, self.key)
             i = i + 1
-            if len(rootUrlInfo) == 0:
-                filePath = DownHelper(self.filedirpath, requestUrl).Star()
-                UrlRepository().add(
-                    self.key, rule["NextNo"], filePath, sourceUrl, requestUrl)
+            if not requesturlinfo:
+                filepath = DownHelper(self.filedirpath, requesturl).Star()
+                UrlRepository().add(self.key, rule["NextNo"], filepath,
+                                    sourceurl, requesturl)
                 print("处理完毕")
             else:
-                print("%s已经处理" % (requestUrl))
-        UrlRepository().endbyrequesturl(sourceUrl)
+                print("%s已经处理" % (requesturl))
+        UrlRepository().endbyrequesturl(sourceurl)
 
-    # 按照规则处理
-    def HandleRegex(self, urlItem, rule):
-        sourceUrl = urlItem["ResultUrl"]
-        tempPath = DownHelper.UrlToPath(self.filedirpath, sourceUrl)
-        with open(tempPath, "rb") as f:
+    def handleregex(self, sourceurl, rule):
+        """按照规则处理"""
+        temppath = DownHelper.UrlToPath(self.filedirpath, sourceurl)
+        with open(temppath, "rb") as f:
             html = f.read().decode('utf-8')
-        urlRegex = rule["UrlRegex"]
-        urlPattern = re.compile(urlRegex)
-        urls = urlPattern.findall(html)
-        nameRegex = rule["NameRegex"]
-        namePattern = re.compile(nameRegex)
-        names = namePattern.findall(html)
-        print("源%s共产生%s条" % (sourceUrl, len(urls)))
+        urlregex = rule["UrlRegex"]
+        urlpattern = re.compile(urlregex)
+        urls = urlpattern.findall(html)
+        nameregex = rule["NameRegex"]
+        namepattern = re.compile(nameregex)
+        names = namepattern.findall(html)
+        print("源%s共产生%s条" % (sourceurl, len(urls)))
         i = 0
         for item in urls:
-            print("当前时间：%s；" % (time.strftime('%Y-%m-%d  %H:%M:%S',time.localtime(time.time()))) , end="")                    
-            requestUrl = item
-            rootUrlInfo = UrlRepository().getsbykeyrequesturl(requestUrl, self.key)
-            if len(rootUrlInfo) == 0:
-                DownHelper(self.filedirpath, requestUrl,
-                           names[i] + os.path.splitext(requestUrl)[1]).Star()
-                UrlRepository().add(self.key, rule["NextNo"], self.filedirpath,sourceUrl,requestUrl)
+            print(
+                "当前时间：%s；" % (time.strftime('%Y-%m-%d  %H:%M:%S',
+                                            time.localtime(time.time()))),
+                end="")
+            requesturl = item
+            rooturlinfo = UrlRepository().getsbykeyrequesturl(
+                requesturl, self.key)
+            if not rooturlinfo:
+                DownHelper(self.filedirpath, requesturl,
+                           names[i] + os.path.splitext(requesturl)[1]).Star()
+                UrlRepository().add(self.key, rule["NextNo"], self.filedirpath,
+                                    sourceurl, requesturl)
                 print("处理完毕")
             else:
-                print("%s已经处理" % (requestUrl))
+                print("%s已经处理" % (requesturl))
             i = i + 1
-        UrlRepository().endbyrequesturl(sourceUrl)
-
+        UrlRepository().endbyrequesturl(sourceurl)
