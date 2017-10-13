@@ -44,7 +44,7 @@ class Url(EntityBase):
         self.resulturl = resulturl
 
     def __str__(self):
-        return 'Url,key:%s;ruleno:%s; sourceurl:%s; resulturl:%s ,filepath:%s ,isend:%s' % (
-            self.config.key, self.ruleno, self.sourceurl, self.resulturl, self.filepath, self.isend)
+        return 'Url,ruleno:%s; sourceurl:%s; resulturl:%s ,filepath:%s ,isend:%s' % (
+            self.ruleno, self.sourceurl, self.resulturl, self.filepath, self.isend)
 
     __repr__ = __str__

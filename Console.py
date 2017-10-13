@@ -4,7 +4,6 @@ from Store import DbHelper
 import Core
 import getopt
 import sys
-import Store.ConfigRepository
 import Store
 import Store.Entity
 import Tool.Time
@@ -51,7 +50,7 @@ def main(argv):
             DbHelper.init()
             sys.exit(0)
         elif opt in ('-t',):
-            entities = Store.ConfigRepository().getbykey("bd")
+            entities = Store.UrlRepository().getsbykeyrequesturl("bd","https://yande.re/post?tags=bondage")
             print(entities.count())
             sys.exit(0)
     print("unhandled option")

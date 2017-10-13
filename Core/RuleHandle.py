@@ -25,8 +25,8 @@ class RuleHandle(object):
         # 没有上层处理，对rooturl进行下载和数据保存，不做处理
         print("处理RootUrl:", end="")
         rooturl = downconfig.rooturl
-        rooturlinfo = UrlRepository().getsbykeyrequesturl(rooturl,
-                                                          self.key).first()
+        rooturlinfo = UrlRepository().getsbykeyrequesturl(self.key,
+                                                          rooturl).first()
         if not rooturlinfo:
             filepath = DownHelper(self.filedirpath, rooturl).Star()
             rootrule = [
@@ -70,10 +70,10 @@ class RuleHandle(object):
             siteurl = sourceurl[0:sourceurl.index("/", 8)]
             requesturl = rule["UrlFormat"].replace("{SiteUrl}", siteurl)
             requesturl = requesturl.replace("{Number}", str(i))
-            requesturlinfo = UrlRepository().getsbykeyrequesturl(
-                requesturl, self.key)
+            requesturlinfoes = UrlRepository().getsbykeyrequesturl(
+                self.key, requesturl)
             i = i + 1
-            if not requesturlinfo:
+            if requesturlinfoes.count() == 0:
                 filepath = DownHelper(self.filedirpath, requesturl).Star()
                 UrlRepository().add(self.key, rule["NextNo"], filepath,
                                     sourceurl, requesturl)
@@ -85,8 +85,8 @@ class RuleHandle(object):
     def handleregex(self, sourceurl, rule):
         """按照规则处理"""
         temppath = DownHelper.UrlToPath(self.filedirpath, sourceurl)
-        with open(temppath, "rb") as f:
-            html = f.read().decode('utf-8')
+        with open(temppath, "rb") as filestream:
+            html = filestream.read().decode('utf-8')
         urlregex = rule["UrlRegex"]
         urlpattern = re.compile(urlregex)
         urls = urlpattern.findall(html)
@@ -101,9 +101,9 @@ class RuleHandle(object):
                                             time.localtime(time.time()))),
                 end="")
             requesturl = item
-            rooturlinfo = UrlRepository().getsbykeyrequesturl(
-                requesturl, self.key)
-            if not rooturlinfo:
+            requesturlinfoes = UrlRepository().getsbykeyrequesturl(
+                self.key, requesturl)
+            if requesturlinfoes.count() == 0:
                 DownHelper(self.filedirpath, requesturl,
                            names[i] + os.path.splitext(requesturl)[1]).Star()
                 UrlRepository().add(self.key, rule["NextNo"], self.filedirpath,
