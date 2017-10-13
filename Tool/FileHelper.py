@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """文件帮助"""
 import os
 
@@ -23,3 +24,8 @@ def filesfrompath(configpath='', extstr=".json"):
     else:
         raise Exception("路径不正确:%s" % (configpath))
     return configpaths
+
+def noexitcreatdir(configpath):
+    """检查路径如果不存在则创建"""
+    if not os.path.exists(configpath):
+        os.makedirs(configpath)

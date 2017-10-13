@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """抓取数据"""
-from Store import DbHelper
 import Core
 import getopt
 import sys
+import json
 import Store
 import Store.Entity
 import Tool.Time
-from Core.Model import ConfigModel
-import json
+from AppConfig import AppConfig
+
 
 
 
@@ -42,16 +42,19 @@ def main(argv):
             version()
             sys.exit(0)
         elif opt in ('-i',):
-            DbHelper.init()
+            Store.DbHelper.init()
             #根据配置文件准备文件夹
+            Tool.FileHelper.noexitcreatdir(AppConfig().DownConfigPath)
+            Tool.FileHelper.noexitcreatdir(AppConfig().DownPath)
+            print("文件路径准备完")
             sys.exit(0)
         elif opt in ('-r',):
-            DbHelper.delete()
-            DbHelper.init()
+            Store.DbHelper.delete()
+            Store.DbHelper.init()
             sys.exit(0)
         elif opt in ('-t',):
-            entities = Store.UrlRepository().getsbykeyrequesturl("bd","https://yande.re/post?tags=bondage")
-            print(entities.count())
+            import os
+            print(os.path.dirname("./FileStore/downdatabase.db"))
             sys.exit(0)
     print("unhandled option")
     sys.exit(3)
