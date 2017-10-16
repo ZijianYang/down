@@ -28,3 +28,11 @@ class ConfigModel(object):
         config = Config(
             self.key, self.rooturl, json.dumps(self.rules))
         return config
+
+    def rule(self, ruleno):
+        """获取rule规则"""
+        rootrule = [f for f in self.rules if f["RuleNo"] == ruleno][0]
+        if rootrule:
+            return rootrule
+        else:
+            raise Exception("未发现rule：%s" % (ruleno))

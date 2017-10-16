@@ -24,12 +24,12 @@ class UrlRepository(RepositoryBase):
         entities.delete()
         return total
 
-    def getsnoendbykey(self, key):
-        """根据编号查询未结束未删除且不为终止规则的url"""
+    def getsnoendbynorulenokey(self, key, ruleno, count=100):
+        """根据编号查询未结束未删除且不为某个规则的url,默认前100条"""
         entities = self.session.query(Url).join(
             Config, Config.id == Url.configid).filter(
                 Config.key == key, Url.delflag == False, Url.isend == False,
-                Url.ruleno != "End")
+                Url.ruleno != ruleno).order_by(Url.id).limit(count)
         return entities
 
     def getsbykeyrequesturl(self, key, requesturl):
