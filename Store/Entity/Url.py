@@ -35,14 +35,15 @@ class Url(EntityBase):
     # urldetails = sqlalchemy.orm.relationship("UrlDeatil", foreign_keys="UrlDeatil.urlid")
     # 连续使用有定义顺序问题
 
-    def __init__(self, ruleno, filepath, sourceurl, resulturl, configid):
+    def __init__(self, ruleno, filepath, sourceurl, resulturl, md5=""):
         """构造函数"""
         self.adddate = Tool.Time.timeobj()
         self.ruleno = ruleno
         self.filepath = filepath
-        self.md5 = Tool.FileHelper.md5frompath(filepath)
+        if md5 == "":
+            self.md5 = Tool.FileHelper.md5frompath(filepath)
         self.sourceurl = sourceurl
-        self.configid = configid
+        #self.configid = configid
         self.resulturl = resulturl
 
     def __str__(self):

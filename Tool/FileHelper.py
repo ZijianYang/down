@@ -33,9 +33,12 @@ def noexitcreatdir(configpath):
 
 def md5frompath(filepath):
     """根据filepath计算md5 """
-    print(filepath)
     with open(filepath, 'rb') as filestream:
         md5obj = hashlib.md5()
         md5obj.update(filestream.read())
         hashstr = md5obj.hexdigest()
         return hashstr
+
+def deletefile(filepath):
+    """删除文件"""
+    os.remove(filepath)

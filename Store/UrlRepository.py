@@ -7,10 +7,10 @@ from Store.Entity.Url import Url
 class UrlRepository(RepositoryBase):
     """Url仓库"""
 
-    def add(self, key, ruleno, filepath, sourceurl, resulturl):
+    def add(self, key, url):
         """新增：key值,下层处理规则，文件保存地址，请求地址，处理之后的结果地址"""
         config = self.session.query(Config).filter(Config.key == key).first()
-        url = Url(ruleno, filepath, sourceurl, resulturl, config.id)
+        url.configid = config.id
         self.session.add(url)
         self.session.commit()
         return url

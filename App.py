@@ -45,12 +45,17 @@ def main(argv):
             elif arg == "update":
                 Core.ConfigBusiness.updatepath(content)
             elif arg == "delete":
-                Core.ConfigBusiness.deletebykey(content)
+                if content == "":
+                    print("缺少参数")
+                else:
+                    Core.ConfigBusiness.deletebykey(content)
             elif arg == "select":
                 Core.ConfigBusiness.select(content)
             sys.exit(0)
         elif opt in ('--execute', ):
-            if arg == "new":# 相同key则不新增
+            if content == "":
+                print("缺少参数")
+            elif arg == "new":# 相同key则不新增
                 Core.ProcessBusiness.new(content)
             elif arg == "pardondata":
                 Core.ProcessBusiness.clear(content)
@@ -58,6 +63,13 @@ def main(argv):
             elif arg == "pardonall":
                 Core.ProcessBusiness.clear(content, True)
                 Core.ProcessBusiness.new(content)
+            sys.exit(0)
+        elif opt in ('--history', ):
+            if arg == "add":
+                if content == "":
+                    print("缺少参数")
+                else:
+                    Core.FileHistoryBusiness.handle(content)
             sys.exit(0)
         else:
             print("unhandled option")
