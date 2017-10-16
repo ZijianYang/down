@@ -1,6 +1,6 @@
 """链接(Url)"""
 import sqlalchemy
-import Tool.Time
+import Tool
 from Store.Entity.EntityBase import EntityBase
 import Store.Entity.Config
 import Store.Entity.UrlDetail
@@ -24,6 +24,7 @@ class Url(EntityBase):
     sourceurl = sqlalchemy.Column("sourceurl", sqlalchemy.Text, nullable=False)
     resulturl = sqlalchemy.Column("resulturl", sqlalchemy.Text, nullable=False)
     filepath = sqlalchemy.Column("filepath", sqlalchemy.Text, nullable=False)
+    md5 = sqlalchemy.Column("md5", sqlalchemy.String(50), nullable=False)
     isend = sqlalchemy.Column("isend", sqlalchemy.Boolean, default=False)
     # 添加外键,关联到表
     configid = sqlalchemy.Column("configid", sqlalchemy.Integer, sqlalchemy.ForeignKey("Config.id"))
@@ -39,6 +40,7 @@ class Url(EntityBase):
         self.adddate = Tool.Time.timeobj()
         self.ruleno = ruleno
         self.filepath = filepath
+        self.md5 = Tool.FileHelper.md5frompath(filepath)
         self.sourceurl = sourceurl
         self.configid = configid
         self.resulturl = resulturl

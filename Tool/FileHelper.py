@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """文件帮助"""
 import os
+import hashlib
 
 def filesfromdir(configpath, extstr=".json"):
     """从文件夹路径查询某个扩展名的文件列表"""
@@ -29,3 +30,12 @@ def noexitcreatdir(configpath):
     """检查路径如果不存在则创建"""
     if not os.path.exists(configpath):
         os.makedirs(configpath)
+
+def md5frompath(filepath):
+    """根据filepath计算md5 """
+    print(filepath)
+    with open(filepath, 'rb') as filestream:
+        md5obj = hashlib.md5()
+        md5obj.update(filestream.read())
+        hashstr = md5obj.hexdigest()
+        return hashstr

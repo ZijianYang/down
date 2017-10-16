@@ -69,4 +69,4 @@ class ConfigRepository(RepositoryBase):
             Config.key == key)
         if entity:
             entity.update({Config.delflag:True})
-            return entity.first()
+            return entity.count()

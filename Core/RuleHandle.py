@@ -23,7 +23,7 @@ class RuleHandle(object):
     def handlerooturl(self, downconfig):
         """处理RootUrl"""
         # 没有上层处理，对rooturl进行下载和数据保存，不做处理
-        print("处理RootUrl:", end="")
+        print("处理RootUrl:", end=" ")
         rooturl = downconfig.rooturl
         rooturlinfo = UrlRepository().getsbykeyrequesturl(self.key,
                                                           rooturl).first()
@@ -38,7 +38,7 @@ class RuleHandle(object):
 
     def handlerule(self, downconfig, urlinfo):
         """按照规则处理:下载配置,数据url"""
-        rule = downconfig.rule(urlinfo.ruleno)#查找处理规则
+        rule = downconfig.rule(urlinfo.ruleno)  #查找处理规则
         ruletype = rule["Type"]
         requesturl = urlinfo.resulturl  # 处理过后地址的结果地址，即为下一次请求地址和源地址
         print("请求地址：%s；规则类型%s" % (requesturl, ruletype))  #
@@ -60,8 +60,7 @@ class RuleHandle(object):
         i = int(rule["PageStart"])
         print("源%s共产生%s条" % (sourceurl, total))
         while i <= total:
-            #while i <= 1:
-            Tool.Time.currenttimeprint(end="")
+            Tool.Time.currenttimeprint(end=" ")
             siteurl = sourceurl[0:sourceurl.index("/", 8)]
             requesturl = rule["UrlFormat"].replace("{SiteUrl}", siteurl)
             requesturl = requesturl.replace("{Number}", str(i))
@@ -75,7 +74,6 @@ class RuleHandle(object):
                 print("处理完毕")
             else:
                 print("%s已经存在数据,继续" % (requesturl))
-   
 
     def handleregex(self, sourceurl, rule):
         """按照规则处理"""
@@ -96,9 +94,10 @@ class RuleHandle(object):
             requesturlinfoes = UrlRepository().getsbykeyrequesturl(
                 self.key, requesturl)
             if requesturlinfoes.count() == 0:
-                Tool.DownHelper(self.filedirpath, requesturl,
-                           names[i] + os.path.splitext(requesturl)[1]).Star()
-                UrlRepository().add(self.key, rule["NextNo"], self.filedirpath,
+                filepath = Tool.DownHelper(
+                    self.filedirpath, requesturl,
+                    names[i] + os.path.splitext(requesturl)[1]).Star()
+                UrlRepository().add(self.key, rule["NextNo"], filepath,
                                     sourceurl, requesturl)
                 print("处理完毕")
             else:
