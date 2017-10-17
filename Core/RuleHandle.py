@@ -25,11 +25,13 @@ class RuleHandle(object):
         # 没有上层处理，对rooturl进行下载和数据保存，不做处理
         print("处理RootUrl:", end=" ")
         rooturl = downconfig.rooturl
-        rooturlinfo = Store.UrlRepository().getsbykeyrequesturl(self.key, rooturl).first()
+        rooturlinfo = Store.UrlRepository().getsbykeyrequesturl(
+            self.key, rooturl).first()
         if not rooturlinfo:
             filepath = Tool.DownHelper(self.filedirpath, rooturl).star()
             rootrule = downconfig.rule("RootUrl")
-            url = Store.Entity.Url(rootrule["RuleNo"], filepath, rooturl, rooturl)
+            url = Store.Entity.Url(rootrule["RuleNo"], filepath, rooturl,
+                                   rooturl)
             Store.UrlRepository().add(self.key, url)  #根处理特殊源和结果是一个
             print("处理完毕")
         else:
@@ -67,9 +69,7 @@ class RuleHandle(object):
                 self.key, requesturl)
             i = i + 1
             if requesturlinfoes.count() == 0:
-                filepath = Tool.DownHelper.star(self.filedirpath, requesturl)
-                url = Store.Entity.Url(rule["NextNo"], filepath, sourceurl, requesturl)
-                Store.UrlRepository().add(self.key, url)
+                self.historhandledown(rule, sourceurl, requesturl)
                 print("处理完毕")
             else:
                 print("%s已经存在数据,继续" % (requesturl))
@@ -85,28 +85,52 @@ class RuleHandle(object):
         nameregex = rule["NameRegex"]
         namepattern = re.compile(nameregex)
         names = namepattern.findall(html)
+        md5regex = rule["Md5Regex"]
+        md5pattern = re.compile(md5regex)
+        md5s = md5pattern.findall(html)
         print("源%s共产生%s条" % (sourceurl, len(urls)))
         i = 0
+        success = 0 #成功数量
         for item in urls:
             Tool.Time.currenttimeprint(end="")
             requesturl = item
             requesturlinfoes = Store.UrlRepository().getsbykeyrequesturl(
                 self.key, requesturl)
             if requesturlinfoes.count() == 0:
-                if True:
-                    filepath = Tool.DownHelper.star(self.filedirpath, requesturl,
-                        names[i] + os.path.splitext(requesturl)[1])
-                    url = Store.Entity.Url(rule["NextNo"], filepath, sourceurl, requesturl)
-                    if rule["IsDown"] == 1:
-                        filehistory = Store.FileHistoryRepository().add(
-                            Store.Entity.FileHistory(filepath, url.md5))
-                        if not url.filepath == filehistory.filepath:
-                            os.remove(url.filepath)
-                            url.filepath = filehistory.filepath
-                    Store.UrlRepository().add(self.key, url)
-                #else:
-                #    md5 = 
+                name = names[i] + os.path.splitext(requesturl)[1]
+                if md5s[i]:
+                    filehistory = Store.FileHistoryRepository().getbymd5(
+                        md5s[i])
+                    if filehistory:  #已存在不用下载
+                        url = Store.Entity.Url(rule["NextNo"],
+                                               filehistory.filepath, sourceurl,
+                                               requesturl, filehistory.md5)
+                        Store.UrlRepository().add(self.key, url)
+                        success = success + 1
+                    else:
+                        if self.historhandledown(rule, sourceurl, requesturl, name):
+                            success = success + 1
+                else:
+                    if self.historhandledown(rule, sourceurl, requesturl, name):
+                        success = success + 1
                 print("处理完毕")
             else:
                 print("%s已经存在数据，继续" % (requesturl))
             i = i + 1
+        return success == len(urls)
+
+    def historhandledown(self, rule, sourceurl, requesturl, name=None):
+        """连带history处理的下载"""
+        filepath = Tool.DownHelper.star(self.filedirpath, requesturl, name)
+        issuccess = False
+        if filepath:
+            url = Store.Entity.Url(rule["NextNo"], filepath, sourceurl, requesturl)
+            if rule["IsDown"] == 1:
+                filehistory = Store.FileHistoryRepository().add(
+                    Store.Entity.FileHistory(filepath, url.md5))
+                if not url.filepath == filehistory.filepath:
+                    os.remove(url.filepath)
+                    url.filepath = filehistory.filepath
+            Store.UrlRepository().add(self.key, url)
+            issuccess = True
+        return issuccess
