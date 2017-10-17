@@ -46,6 +46,7 @@ def main(argv):
             #根据配置文件准备文件夹
             Tool.FileHelper.noexitcreatdir(AppConfig().DownConfigPath)
             Tool.FileHelper.noexitcreatdir(AppConfig().DownPath)
+            Tool.FileHelper.noexitcreatdir(AppConfig().HistoryPath)
             print("文件路径准备完")
             sys.exit(0)
         elif opt in ('-r',):

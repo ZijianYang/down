@@ -6,13 +6,12 @@ python Console.py -i
 python Console.py -r
 
 在默认路径查找配置文件并加入库中
-python App.py --config add 
-
-查询
-python App.py  --config select
+python App.py --config add #新增配置
+python App.py  --config select #查询
 
 开始
-python App.py --content bd  --execute new
+python App.py --content bd  --execute new #开始或继续
+python App.py --content bd  --execute pardondata #清除数据开始
 
-清除数据开始
-python App.py --content bd  --execute pardondata
+向历史文件添加
+python App.py --content path --history add

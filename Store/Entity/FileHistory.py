@@ -29,7 +29,7 @@ class FileHistory(EntityBase):
         """构造函数"""
         self.adddate = Tool.Time.timeobj()
         self.filepath = filepath
-        if not md5 == "":
+        if md5 == "":
             self.md5 = Tool.FileHelper.md5frompath(filepath)
 
     def __str__(self):

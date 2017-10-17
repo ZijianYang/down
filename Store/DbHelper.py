@@ -21,7 +21,7 @@ def delete():
 def init():
     """初始化库"""
     appconfig = AppConfig()
-    dbpath = os.path.dirname(appconfig.DatabasePath)    
+    dbpath = os.path.dirname(appconfig.DatabasePath)
     Tool.FileHelper.noexitcreatdir(dbpath)
     import Store.Entity
     # 创建所有表,如果表已经存在,则不会创建

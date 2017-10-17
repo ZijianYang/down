@@ -25,7 +25,7 @@ def main(argv):
     """主函数"""
     content = ""
     try:
-        opts, args = getopt.getopt(argv[1:], 'hv', ['config=', 'content=', 'execute='])
+        opts, args = getopt.getopt(argv[1:], 'hv', ['config=', 'content=', 'execute=', 'history='])
     except getopt.GetoptError as err:
         print(err)
         usage()

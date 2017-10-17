@@ -3,28 +3,38 @@
 import os
 import hashlib
 
-def filesfromdir(configpath, extstr=".json"):
-    """从文件夹路径查询某个扩展名的文件列表"""
-    configpaths = []
-    for parent, dirnames, filenames in os.walk(configpath):
+def filesfromdir(path, extstr=".json"):
+    """从文件夹路径查询某个扩展名的文件列表,仅一层"""
+    filepaths = []
+    for parent, dirnames, filenames in os.walk(path):
         for filename in filenames:
             if filename.find(extstr) > 0:
-                configpaths.append(os.path.join(parent, filename))
-    return configpaths
+                filepaths.append(os.path.join(parent, filename))
+    return filepaths
 
-def filesfrompath(configpath='', extstr=".json"):
-    """从路径获取固定扩展名文件列表:传入目录路径则遍历，文件路径则放入列表"""
-    configpaths = []
-    if os.path.isdir(configpath):
-        configpaths = filesfromdir(configpath, extstr)
-    elif os.path.isfile(configpath):
-        if configpath.find(extstr) > 0:
-            configpaths.append(configpath)
+def filesfrompath(path='', extstr=".json"):
+    """从路径获取固定扩展名文件列表，仅一层:传入目录路径则遍历，文件路径则放入列表"""
+    filepaths = []
+    if os.path.isdir(path):
+        filepaths = filesfromdir(path, extstr)
+    elif os.path.isfile(path):
+        if path.find(extstr) > 0:
+            filepaths.append(path)
         else:
-            raise Exception("路径不正确:%s" % (configpath))
+            raise Exception("路径不正确:%s" % (path))
     else:
-        raise Exception("路径不正确:%s" % (configpath))
-    return configpaths
+        raise Exception("路径不正确:%s" % (path))
+    return filepaths
+
+def allfilefromdir(dirpath):
+    """遍历文件夹下所有文件，所有层"""
+    filelist = os.listdir(dirpath) #列出文件夹下所有的目录与文件
+    result = []
+    for i in range(0, len(filelist)):
+        path = os.path.join(dirpath, filelist[i])
+        if os.path.isfile(path):
+            result.append(path)
+    return result
 
 def noexitcreatdir(configpath):
     """检查路径如果不存在则创建"""
@@ -38,7 +48,3 @@ def md5frompath(filepath):
         md5obj.update(filestream.read())
         hashstr = md5obj.hexdigest()
         return hashstr
-
-def deletefile(filepath):
-    """删除文件"""
-    os.remove(filepath)

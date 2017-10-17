@@ -101,7 +101,7 @@ class RuleHandle(object):
                     filehistory = Store.FileHistoryRepository().add(
                         Store.Entity.FileHistory(filepath, url.md5))
                     if not url.filepath == filehistory.filepath:
-                        Tool.FileHelper.deletefile(url.filepath)
+                        os.remove(url.filepath)
                         url.filepath = filehistory.filepath
                 Store.UrlRepository().add(self.key, url)
                 print("处理完毕")
