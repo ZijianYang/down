@@ -69,8 +69,11 @@ class RuleHandle(object):
                 self.key, requesturl)
             i = i + 1
             if requesturlinfoes.count() == 0:
-                self.historhandledown(rule, sourceurl, requesturl)
-                print("处理完毕")
+                filepath = Tool.DownHelper.star(self.filedirpath, requesturl)
+                if filepath:
+                    url = Store.Entity.Url(rule["NextNo"], filepath, sourceurl, requesturl)
+                    Store.UrlRepository().add(self.key, url)
+                    print("处理完毕")
             else:
                 print("%s已经存在数据,继续" % (requesturl))
 
@@ -101,7 +104,7 @@ class RuleHandle(object):
                 if md5s[i]:
                     filehistory = Store.FileHistoryRepository().getbymd5(
                         md5s[i])
-                    if filehistory:  #已存在不用下载
+                    if filehistory:  #已存在不用下载，可减少下载
                         url = Store.Entity.Url(rule["NextNo"],
                                                filehistory.filepath, sourceurl,
                                                requesturl, filehistory.md5)
@@ -121,7 +124,7 @@ class RuleHandle(object):
         return success == len(urls)
 
     def historhandledown(self, rule, sourceurl, requesturl, name=None):
-        """连带history处理的下载"""
+        """连带history处理的下载,并不能减少下载量，只能减少存储空间（若删除），为了整理做准备"""
         filepath = Tool.DownHelper.star(self.filedirpath, requesturl, name)
         issuccess = False
         print(filepath)
@@ -129,7 +132,9 @@ class RuleHandle(object):
             url = Store.Entity.Url(rule["NextNo"], filepath, sourceurl, requesturl)
             filehistory = Store.FileHistoryRepository().getbymd5(url.md5)
             if filehistory:
+                #os.remove(url.filepath)
                 url.filepath = filehistory.filepath
+            #Store.FileHistoryRepository().add(Store.Entity.FileHistory(filepath, url.md5))
             Store.UrlRepository().add(self.key, url)
             issuccess = True
         return issuccess
