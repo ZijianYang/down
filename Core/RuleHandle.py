@@ -107,6 +107,7 @@ class RuleHandle(object):
                                                requesturl, filehistory.md5)
                         Store.UrlRepository().add(self.key, url)
                         success = success + 1
+                        print("%s已经存在历史数据" % (requesturl))
                     else:
                         if self.historhandledown(rule, sourceurl, requesturl, name):
                             success = success + 1
@@ -123,14 +124,14 @@ class RuleHandle(object):
         """连带history处理的下载"""
         filepath = Tool.DownHelper.star(self.filedirpath, requesturl, name)
         issuccess = False
+        print(filepath)
         if filepath:
-            url = Store.Entity.Url(rule["NextNo"], filepath, sourceurl, requesturl)
-            if rule["IsDown"] == 1:
-                filehistory = Store.FileHistoryRepository().add(
-                    Store.Entity.FileHistory(filepath, url.md5))
-                if not url.filepath == filehistory.filepath:
-                    os.remove(url.filepath)
-                    url.filepath = filehistory.filepath
+            url = Store.Entity.Url(rule["NextNo"], filepath, sourceurl, requesturl)            
+            filehistory = Store.FileHistoryRepository().add(
+                Store.Entity.FileHistory(filepath, url.md5))
+            if not url.filepath == filehistory.filepath:
+                os.remove(url.filepath)
+                url.filepath = filehistory.filepath
             Store.UrlRepository().add(self.key, url)
             issuccess = True
         return issuccess
