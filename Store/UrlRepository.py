@@ -10,9 +10,11 @@ class UrlRepository(RepositoryBase):
     def add(self, key, url):
         """新增：key值,下层处理规则，文件保存地址，请求地址，处理之后的结果地址"""
         config = self.session.query(Config).filter(Config.key == key).first()
-        url.configid = config.id
-        self.session.add(url)
-        self.session.commit()
+        entity = self.session.query(Url).filter(Url.sourceurl == url.sourceurl).first()
+        if not entity:
+            url.configid = config.id
+            self.session.add(url)
+            self.session.commit()
         return url
 
     def deletebykey(self, key):
