@@ -23,7 +23,7 @@ def new(key):
     print("根地址%s;规则数量%s;" % (configmodel.rooturl, len(configmodel.rules)))
     noendurls = UrlRepository().getsnoendbynorulenokey(key, "End")
     while noendurls.count() != 0:
-        for item in noendurls:            
+        for item in noendurls:
             rulehandle.handlerule(configmodel, item)
         noendurls = UrlRepository().getsnoendbynorulenokey(key, "End")
     print("全部完成")
