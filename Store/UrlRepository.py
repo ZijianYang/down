@@ -8,10 +8,10 @@ class UrlRepository(RepositoryBase):
     """Url仓库"""
 
     def add(self, key, url):
-        """新增：key值,下层处理规则，文件保存地址，请求地址，处理之后的结果地址"""
-        config = self.session.query(Config).filter(Config.key == key).first()
-        entity = self.session.query(Url).filter(Url.sourceurl == url.sourceurl).first()
+        """新增：key值,url;处理时新增需要处理的数据，重复不新增(用resulturl判断)"""
+        entity = self.session.query(Url).filter(Url.resulturl == url.resulturl).first()
         if not entity:
+            config = self.session.query(Config).filter(Config.key == key).first()
             url.configid = config.id
             self.session.add(url)
             self.session.commit()
