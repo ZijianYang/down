@@ -58,9 +58,9 @@ class ConfigRepository(RepositoryBase):
         return entities
 
     def getbykey(self, key):
-        """关键字查询最近的"""
+        """关键字查询最近的未删除的"""
         entities = self.session.query(Config).filter(
-            Config.key == key).order_by(Config.adddate.desc())
+            Config.key == key, Config.delflag == False).order_by(Config.adddate.desc())
         return entities.first()
 
     def deletebykey(self, key):
@@ -68,5 +68,4 @@ class ConfigRepository(RepositoryBase):
         entity = self.session.query(Config).filter(
             Config.key == key)
         if entity:
-            entity.update({Config.delflag:True})
-            return entity.count()
+            entity.delete()

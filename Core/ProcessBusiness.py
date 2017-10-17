@@ -38,5 +38,4 @@ def clear(key, isall=None):
         print("清理文件成功，Path:%s" % (filedirpath))
     resulturldetail = UrlDetailRepository().deletebykey(key)
     resulturl = UrlRepository().deletebykey(key)
-    resultconfig = ConfigRepository().deletebykey(key)
-    print("清理config，共%s条;清理url，共%s条;清理urldetail，共%s条;" % (resultconfig, resulturl, resulturldetail))
+    print("清理url，共%s条;清理urldetail，共%s条;" % (resulturl, resulturldetail))

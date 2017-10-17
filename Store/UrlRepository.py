@@ -18,13 +18,14 @@ class UrlRepository(RepositoryBase):
     def deletebykey(self, key):
         """根据key删除url,返回删除数量"""
         entities = self.session.query(Url).join(
-            Config, Config.id == Url.configid).filter(Config.key == key,
-                                                      Url.delflag == False)
+            Config, Config.id == Url.configid).filter(Config.key == key)
+        count = entities.count()
         for entityjoin in entities:
             entity = self.session.query(Url).filter(
                 Url.id == entityjoin.id)
             entity.delete()
-        return entities.count()
+        self.session.commit()
+        return count
 
     def getsnoendbynorulenokey(self, key, ruleno, count=100):
         """根据编号查询未结束未删除且不为某个规则的url,默认前100条"""

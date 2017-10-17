@@ -30,8 +30,10 @@ class UrlDetailRepository(RepositoryBase):
         entities = self.session.query(UrlDetail).join(
             Url, UrlDetail.urlid == Url.id).join(
                 Config, Url.configid == Config.id).filter(Config.key == key)
+        count = entities.count()
         for entityjoin in entities:
             entity = self.session.query(UrlDetail).filter(
                 UrlDetail.id == entityjoin.id)
             entity.delete()
-        return entities.count()
+        self.session.commit()
+        return count
