@@ -76,7 +76,7 @@ class RuleHandle(object):
                     print("处理完毕")
             else:
                 print("%s已经存在数据,继续" % (requesturl))
-        Store.UrlRepository().endbyrequesturl(requesturl)
+        Store.UrlRepository().endbyrequesturl(sourceurl)
 
     def handleregex(self, sourceurl, rule):
         """按照规则处理"""
@@ -121,4 +121,4 @@ class RuleHandle(object):
                 print("%s已经存在数据，继续" % (requesturl))
             i = i + 1
         if successcount == len(urls):# 全部下载成功
-            Store.UrlRepository().endbyrequesturl(requesturl)
+            Store.UrlRepository().endbyrequesturl(sourceurl)
