@@ -14,7 +14,7 @@ def handle(dirpath):
     filecopycount = 0 #复制文件数量
     for filepath in filepaths:
         filehistory = Store.Entity.FileHistory(filepath)
-        filename = filehistory.md5 + "." +os.path.split(filepath)[1].split(".")[1]
+        filename = filehistory.md5 + os.path.splitext(os.path.split(filepath)[1])[1]
         newfiledir = os.path.join(historypath, filehistory.md5[0:2])
         Tool.FileHelper.noexitcreatdir(newfiledir)
         newfilepath = os.path.join(newfiledir, filename)

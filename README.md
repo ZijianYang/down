@@ -15,3 +15,8 @@ python App.py --content bd  --execute pardondata #清除数据开始
 
 向历史文件添加
 python App.py --content path --history add
+
+*****************
+超时处理有问题，不能继续
+工作目录文件转为历史功能，保留html页面
+urldetail添加tag和size
