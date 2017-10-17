@@ -27,7 +27,7 @@ class RuleHandle(object):
         rooturl = downconfig.rooturl
         rooturlinfo = Store.UrlRepository().getsbykeyrequesturl(self.key, rooturl).first()
         if not rooturlinfo:
-            filepath = Tool.DownHelper(self.filedirpath, rooturl).Star()
+            filepath = Tool.DownHelper(self.filedirpath, rooturl).star()
             rootrule = downconfig.rule("RootUrl")
             url = Store.Entity.Url(rootrule["RuleNo"], filepath, rooturl, rooturl)
             Store.UrlRepository().add(self.key, url)  #根处理特殊源和结果是一个
@@ -49,7 +49,7 @@ class RuleHandle(object):
 
     def handlepage(self, sourceurl, rule):
         """按照规则处理"""
-        temppath = Tool.DownHelper.UrlToPath(self.filedirpath, sourceurl)
+        temppath = Tool.DownHelper.urltopath(self.filedirpath, sourceurl)
         with open(temppath, "rb") as filestream:
             html = filestream.read().decode('utf-8')
         regex = rule["PageEndRegex"]
@@ -67,7 +67,7 @@ class RuleHandle(object):
                 self.key, requesturl)
             i = i + 1
             if requesturlinfoes.count() == 0:
-                filepath = Tool.DownHelper(self.filedirpath, requesturl).Star()
+                filepath = Tool.DownHelper(self.filedirpath, requesturl).star()
                 url = Store.Entity.Url(rule["NextNo"], filepath, sourceurl, requesturl)
                 Store.UrlRepository().add(self.key, url)
                 print("处理完毕")
@@ -76,7 +76,7 @@ class RuleHandle(object):
 
     def handleregex(self, sourceurl, rule):
         """按照规则处理"""
-        temppath = Tool.DownHelper.UrlToPath(self.filedirpath, sourceurl)
+        temppath = Tool.DownHelper.urltopath(self.filedirpath, sourceurl)
         with open(temppath, "rb") as filestream:
             html = filestream.read().decode('utf-8')
         urlregex = rule["UrlRegex"]
@@ -95,7 +95,7 @@ class RuleHandle(object):
             if requesturlinfoes.count() == 0:
                 filepath = Tool.DownHelper(
                     self.filedirpath, requesturl,
-                    names[i] + os.path.splitext(requesturl)[1]).Star()
+                    names[i] + os.path.splitext(requesturl)[1]).star()
                 url = Store.Entity.Url(rule["NextNo"], filepath, sourceurl, requesturl)
                 if rule["IsDown"] == 1:
                     filehistory = Store.FileHistoryRepository().add(
