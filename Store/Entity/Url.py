@@ -42,6 +42,8 @@ class Url(EntityBase):
         self.filepath = filepath
         if md5 == "":
             self.md5 = Tool.FileHelper.md5frompath(filepath)
+        else:
+            self.md5 = md5
         self.sourceurl = sourceurl
         #self.configid = configid
         self.resulturl = resulturl

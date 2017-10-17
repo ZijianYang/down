@@ -67,7 +67,7 @@ class RuleHandle(object):
                 self.key, requesturl)
             i = i + 1
             if requesturlinfoes.count() == 0:
-                filepath = Tool.DownHelper(self.filedirpath, requesturl).star()
+                filepath = Tool.DownHelper.star(self.filedirpath, requesturl)
                 url = Store.Entity.Url(rule["NextNo"], filepath, sourceurl, requesturl)
                 Store.UrlRepository().add(self.key, url)
                 print("处理完毕")
@@ -94,9 +94,8 @@ class RuleHandle(object):
                 self.key, requesturl)
             if requesturlinfoes.count() == 0:
                 if True:
-                    filepath = Tool.DownHelper(
-                        self.filedirpath, requesturl,
-                        names[i] + os.path.splitext(requesturl)[1]).star()
+                    filepath = Tool.DownHelper.star(self.filedirpath, requesturl,
+                        names[i] + os.path.splitext(requesturl)[1])
                     url = Store.Entity.Url(rule["NextNo"], filepath, sourceurl, requesturl)
                     if rule["IsDown"] == 1:
                         filehistory = Store.FileHistoryRepository().add(

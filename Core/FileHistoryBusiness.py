@@ -18,7 +18,7 @@ def handle(dirpath):
         newfilepath = os.path.join(newfiledir, filename)
         if not os.path.exists(newfilepath):# 不存在则复制
             shutil.copy(filepath, newfilepath)
-        print("从：%s到：%s" % (filepath, newfilepath))
+            print("从：%s到：%s" % (filepath, newfilepath))
         filehistory.filepath = newfilepath
         Store.FileHistoryRepository().add(filehistory)
     print("全部完成")

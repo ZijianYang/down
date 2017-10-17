@@ -2,4 +2,4 @@
 import Tool.Single
 import Tool.Time
 import Tool.FileHelper
-from Tool.DownHelper import DownHelper
+import Tool.DownHelper

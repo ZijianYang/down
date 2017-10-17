@@ -31,6 +31,8 @@ class FileHistory(EntityBase):
         self.filepath = filepath
         if md5 == "":
             self.md5 = Tool.FileHelper.md5frompath(filepath)
+        else:
+            self.md5 = md5
 
     def __str__(self):
         return 'Url,filepath:%s; md5:%s;' % (self.filepath, self.md5)
