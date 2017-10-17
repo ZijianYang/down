@@ -12,6 +12,9 @@ class FileHistoryRepository(RepositoryBase):
         if not entity:
             self.session.add(filehistory)
             self.session.commit()
+            return True
+        else:
+            return False
 
     def getbymd5(self, md5):
         """根据md5查询"""

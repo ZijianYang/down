@@ -34,6 +34,8 @@ def allfilefromdir(dirpath):
         path = os.path.join(dirpath, filelist[i])
         if os.path.isfile(path):
             result.append(path)
+        else:            
+            result = result + allfilefromdir(path)
     return result
 
 def noexitcreatdir(configpath):
