@@ -12,7 +12,11 @@ def handle(dirpath):
     historypath = AppConfig().HistoryPath
     adddatacount = 0 #插入数据数量
     filecopycount = 0 #复制文件数量
+    totalcount = len(filepaths)
+    i = 0
     for filepath in filepaths:
+        print("文件总数:%s;复制文件数量:%s;数据:%s;当前%s" % (totalcount, filecopycount, adddatacount, i))
+        i = i + 1
         filehistory = Store.Entity.FileHistory(filepath)
         filename = filehistory.md5 + os.path.splitext(os.path.split(filepath)[1])[1]
         newfiledir = os.path.join(historypath, filehistory.md5[0:2])
@@ -25,4 +29,4 @@ def handle(dirpath):
         filehistory.filepath = newfilepath
         if Store.FileHistoryRepository().add(filehistory):
             adddatacount = adddatacount + 1
-    print("全部完成，文件总数:%s;复制文件数量:%s;数据:%s" % (len(filepaths), filecopycount, adddatacount))
+    print("全部完成，文件总数:%s;复制文件数量:%s;数据:%s" % (totalcount, filecopycount, adddatacount))
