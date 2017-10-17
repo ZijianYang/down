@@ -47,7 +47,6 @@ class RuleHandle(object):
             self.handlepage(requesturl, rule)
         elif ruletype == Store.Enum.ERuleType.regex.name:
             self.handleregex(requesturl, rule)
-        Store.UrlRepository().endbyrequesturl(requesturl)
 
     def handlepage(self, sourceurl, rule):
         """按照规则处理"""
@@ -77,6 +76,7 @@ class RuleHandle(object):
                     print("处理完毕")
             else:
                 print("%s已经存在数据,继续" % (requesturl))
+        Store.UrlRepository().endbyrequesturl(requesturl)
 
     def handleregex(self, sourceurl, rule):
         """按照规则处理"""
@@ -94,7 +94,7 @@ class RuleHandle(object):
         md5s = md5pattern.findall(html)
         print("源%s共产生%s条" % (sourceurl, len(urls)))
         i = 0
-        success = 0  #成功数量
+        successcount = 0  #成功数量
         for item in urls:
             Tool.Time.currenttimeprint(end="")
             requesturl = item
@@ -108,16 +108,17 @@ class RuleHandle(object):
                                            filehistory.filepath, sourceurl,
                                            requesturl, filehistory.md5)
                     Store.UrlRepository().add(self.key, url)
-                    success = success + 1
+                    successcount = successcount + 1
                     print("%s已经存在历史数据" % (requesturl))
                 else:
                     filepath = Tool.DownHelper.star(self.filedirpath, requesturl, name)
                     if filepath:
                         url = Store.Entity.Url(rule["NextNo"], filepath, sourceurl, requesturl)
                         Store.UrlRepository().add(self.key, url)
-                        success = success + 1
+                        successcount = successcount + 1
                 print("处理完毕")
             else:
                 print("%s已经存在数据，继续" % (requesturl))
             i = i + 1
-        return success == len(urls)
+        if successcount == len(urls):# 全部下载成功
+            Store.UrlRepository().endbyrequesturl(requesturl)
