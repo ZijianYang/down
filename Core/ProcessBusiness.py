@@ -24,7 +24,10 @@ def new(key):
     noendurls = UrlRepository().getsnoendbynorulenokey(key, "End")
     while noendurls.count() != 0:
         for item in noendurls:
-            rulehandle.handlerule(configmodel, item)
+            try:
+                rulehandle.handlerule(configmodel, item)
+            except:
+                print()
         noendurls = UrlRepository().getsnoendbynorulenokey(key, "End")
     print("全部完成")
 

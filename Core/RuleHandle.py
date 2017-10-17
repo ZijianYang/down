@@ -93,17 +93,20 @@ class RuleHandle(object):
             requesturlinfoes = Store.UrlRepository().getsbykeyrequesturl(
                 self.key, requesturl)
             if requesturlinfoes.count() == 0:
-                filepath = Tool.DownHelper(
-                    self.filedirpath, requesturl,
-                    names[i] + os.path.splitext(requesturl)[1]).star()
-                url = Store.Entity.Url(rule["NextNo"], filepath, sourceurl, requesturl)
-                if rule["IsDown"] == 1:
-                    filehistory = Store.FileHistoryRepository().add(
-                        Store.Entity.FileHistory(filepath, url.md5))
-                    if not url.filepath == filehistory.filepath:
-                        os.remove(url.filepath)
-                        url.filepath = filehistory.filepath
-                Store.UrlRepository().add(self.key, url)
+                if True:
+                    filepath = Tool.DownHelper(
+                        self.filedirpath, requesturl,
+                        names[i] + os.path.splitext(requesturl)[1]).star()
+                    url = Store.Entity.Url(rule["NextNo"], filepath, sourceurl, requesturl)
+                    if rule["IsDown"] == 1:
+                        filehistory = Store.FileHistoryRepository().add(
+                            Store.Entity.FileHistory(filepath, url.md5))
+                        if not url.filepath == filehistory.filepath:
+                            os.remove(url.filepath)
+                            url.filepath = filehistory.filepath
+                    Store.UrlRepository().add(self.key, url)
+                #else:
+                #    md5 = 
                 print("处理完毕")
             else:
                 print("%s已经存在数据，继续" % (requesturl))

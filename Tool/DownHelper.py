@@ -33,27 +33,22 @@ class DownHelper(object):
         """下载文件"""
         print("下载文件" + self.url, end="")
         request = urllib.request.urlopen(self.url, data=None, timeout=60)
-        try:
-            if request.getcode() == 200:        
-                data = request.read()
-                with open(path, 'wb') as filestream:
-                    filestream.write(data)
-                print("下载完成", end="")
-            else:
-                print(path+"下载失败", end="")
-        except:
-            print("Error: 下载失败")
+        if request.getcode() == 200:
+            data = request.read()
+            with open(path, 'wb') as filestream:
+                filestream.write(data)
+            print("下载完成", end="")
+        else:
+            print(path+"下载失败", end="")
+
 
     def downhtml(self, path):
         """下载网页"""
         print("下载网页" + self.url, end="")
         page = urllib.request.urlopen(self.url, data=None, timeout=60)
-        try:
-            html = page.read()
-            with open(path, "wb+") as filestream:
-                filestream.write(html)
-        except:
-            print("Error: 下载失败")
+        html = page.read()
+        with open(path, "wb+") as filestream:
+            filestream.write(html)
         print("下载完成", end="")
 
     def urltoname(self, url):

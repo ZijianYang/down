@@ -15,3 +15,8 @@ class FileHistoryRepository(RepositoryBase):
         else:
             filehistory.filepath = entity.filepath
         return filehistory
+
+    def getbymd5(self, md5):
+        """根据md5查询"""
+        entity = self.session.query(FileHistory).filter(FileHistory.md5 == md5).first()
+        return entity
