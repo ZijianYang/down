@@ -13,7 +13,7 @@ def handle(dirpath):
     adddatacount = 0 #插入数据数量
     filecopycount = 0 #复制文件数量
     totalcount = len(filepaths)
-    i = 0
+    i = 1
     for filepath in filepaths:
         print("文件总数:%s;复制文件数量:%s;数据:%s;当前%s" % (totalcount, filecopycount, adddatacount, i))
         i = i + 1
