@@ -20,9 +20,11 @@ class UrlRepository(RepositoryBase):
         entities = self.session.query(Url).join(
             Config, Config.id == Url.configid).filter(Config.key == key,
                                                       Url.delflag == False)
-        total = entities.count()
-        entities.delete()
-        return total
+        for entityjoin in entities:
+            entity = self.session.query(Url).filter(
+                Url.id == entityjoin.id)
+            entity.delete()
+        return entities.count()
 
     def getsnoendbynorulenokey(self, key, ruleno, count=100):
         """根据编号查询未结束未删除且不为某个规则的url,默认前100条"""

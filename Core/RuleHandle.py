@@ -28,7 +28,7 @@ class RuleHandle(object):
         rooturlinfo = Store.UrlRepository().getsbykeyrequesturl(
             self.key, rooturl).first()
         if not rooturlinfo:
-            filepath = Tool.DownHelper(self.filedirpath, rooturl).star()
+            filepath = Tool.DownHelper.star(self.filedirpath, rooturl)
             rootrule = downconfig.rule("RootUrl")
             url = Store.Entity.Url(rootrule["RuleNo"], filepath, rooturl,
                                    rooturl)
@@ -126,7 +126,7 @@ class RuleHandle(object):
         issuccess = False
         print(filepath)
         if filepath:
-            url = Store.Entity.Url(rule["NextNo"], filepath, sourceurl, requesturl)            
+            url = Store.Entity.Url(rule["NextNo"], filepath, sourceurl, requesturl)
             filehistory = Store.FileHistoryRepository().add(
                 Store.Entity.FileHistory(filepath, url.md5))
             if not url.filepath == filehistory.filepath:
@@ -135,3 +135,5 @@ class RuleHandle(object):
             Store.UrlRepository().add(self.key, url)
             issuccess = True
         return issuccess
+    
+    #def 

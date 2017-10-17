@@ -2,6 +2,7 @@
 """抓取数据"""
 from Store.ConfigRepository import ConfigRepository
 from Store.UrlRepository import  UrlRepository
+from Store.UrlDetailRepository import  UrlDetailRepository
 from Core.Model import ConfigModel
 import sys
 import os
@@ -35,5 +36,7 @@ def clear(key, isall=None):
         if os.path.exists(filedirpath):
             shutil.rmtree(filedirpath)
         print("清理文件成功，Path:%s" % (filedirpath))
-    result = ConfigRepository().deletebykey(key)
-    print("清理数据成功，共%s条" % (result))
+    resulturldetail = UrlDetailRepository().deletebykey(key)
+    resulturl = UrlRepository().deletebykey(key)
+    resultconfig = ConfigRepository().deletebykey(key)
+    print("清理config，共%s条;清理url，共%s条;清理urldetail，共%s条;" % (resultconfig, resulturl, resulturldetail))

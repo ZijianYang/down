@@ -26,9 +26,8 @@ class UrlDetail(EntityBase):
     # 添加关系属性,urlid
     url = sqlalchemy.orm.relationship("Url", foreign_keys="UrlDetail.urlid", backref=sqlalchemy.orm.backref("urldetails"))
 
-    def __init__(self, key, rooturl, content):
+    def __init__(self, key, content):
         self.key = key
-        self.rooturl = rooturl
         self.content = content
         self.adddate = Tool.Time.timeobj()
 
