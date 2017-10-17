@@ -127,11 +127,11 @@ class RuleHandle(object):
         print(filepath)
         if filepath:
             url = Store.Entity.Url(rule["NextNo"], filepath, sourceurl, requesturl)
-            filehistory = Store.FileHistoryRepository().add(
-                Store.Entity.FileHistory(filepath, url.md5))
-            if not url.filepath == filehistory.filepath:
+            filehistory = Store.FileHistoryRepository().getbymd5(url.md5)
+            if filehistory:
                 os.remove(url.filepath)
                 url.filepath = filehistory.filepath
+            Store.FileHistoryRepository().add(Store.Entity.FileHistory(filepath, url.md5))
             Store.UrlRepository().add(self.key, url)
             issuccess = True
         return issuccess
