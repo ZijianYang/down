@@ -45,6 +45,13 @@ class UrlRepository(RepositoryBase):
                 Url.delflag == False)
         return entities
 
+    def setnewfilepath(self, filepath, newfilepath):
+        """根据文件路径修改为新的路径"""
+        entities = self.session.query(Url).filter(Url.filepath == filepath)
+        for entity in entities:
+            entity.update({Url.filepath:newfilepath})
+            self.session.commit()
+
     def endbyrequesturl(self, requesturl):
         """根据请求路径结束"""
         url = self.session.query(Url).filter(Url.resulturl == requesturl)

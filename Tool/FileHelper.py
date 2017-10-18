@@ -26,15 +26,19 @@ def filesfrompath(path='', extstr=".json"):
         raise Exception("路径不正确:%s" % (path))
     return filepaths
 
-def allfilefromdir(dirpath):
+def allfilefromdir(dirpath, includes=None):
     """遍历文件夹下所有文件，所有层"""
     filelist = os.listdir(dirpath) #列出文件夹下所有的目录与文件
     result = []
     for i in range(0, len(filelist)):
         path = os.path.join(dirpath, filelist[i])
         if os.path.isfile(path):
-            result.append(path)
-        else:            
+            if includes:
+                if os.path.splitext(os.path.split(path)[1])[1] in includes:
+                    result.append(path)
+            else:
+                result.append(path)
+        else:
             result = result + allfilefromdir(path)
     return result
 

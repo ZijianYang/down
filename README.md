@@ -18,6 +18,5 @@ python App.py --content bd  --execute pardondata #清除数据开始
 python App.py --content path --history add
 
 *****************
-工作目录文件转为历史功能，保留html页面
 进度条效果
 pip install git+https://github.com/WoLpH/python-progressbar

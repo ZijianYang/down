@@ -68,9 +68,9 @@ def main(argv):
             if content == "":
                 print("缺少参数")
             elif arg == "add":
-                Core.FileHistoryBusiness.add(content)
+                Core.FileHistoryBusiness.add(content, [".jpg", ".png"])
             elif arg == "move":
-                Core.FileHistoryBusiness.move(content)
+                Core.FileHistoryBusiness.add(content, [".jpg", ".png"], True)
             sys.exit(0)
         else:
             print("unhandled option")

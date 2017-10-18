@@ -7,7 +7,7 @@ class FileHistoryRepository(RepositoryBase):
     """FileHistory仓库仓库"""
 
     def add(self, filehistory):
-        """新增：如果已存在则使用已存在的filepath"""
+        """新增：如果已存在则不加"""
         entity = self.session.query(FileHistory).filter(FileHistory.md5 == filehistory.md5).first()
         if not entity:
             self.session.add(filehistory)
