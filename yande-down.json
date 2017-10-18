@@ -19,9 +19,9 @@
             "NameRegex":"md5\":\"(?P<md5>.*?)\",",
             "UrlFormat": "",
             "IsDown":1,
-            "Deatil":
+            "Detail":
             [
-                {"Key":"","Type":"Regex","Regex":""},
+                {"Key":"Tags","Type":"Regex","Regex":"tags\":\"(?P<tag>.*?)\","},
                 {"Key":"FileType","Type":"Fix","Value":"Image"}
             ]
         }

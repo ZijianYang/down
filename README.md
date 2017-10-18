@@ -7,6 +7,7 @@ python Console.py -r
 
 在默认路径查找配置文件并加入库中
 python App.py --config add #新增配置
+python App.py --config update #新增配置
 python App.py  --config select #查询
 
 开始
@@ -19,5 +20,4 @@ python App.py --content path --history add
 *****************
 超时处理有问题，不能继续
 工作目录文件转为历史功能，保留html页面
-urldetail添加tag和size
 进度条效果

@@ -60,6 +60,7 @@ class RuleHandle(object):
         i = int(rule["PageStart"])
         print("源%s共产生%s条" % (sourceurl, total))
         while i <= total:
+        #while i <= 1:
             Tool.Time.currenttimeprint(end=" ")
             siteurl = sourceurl[0:sourceurl.index("/", 8)]
             requesturl = rule["UrlFormat"].replace("{SiteUrl}", siteurl)
@@ -85,29 +86,31 @@ class RuleHandle(object):
             html = filestream.read().decode('utf-8')
         urlregex = rule["UrlRegex"]
         urlpattern = re.compile(urlregex)
-        urls = urlpattern.findall(html)
+        urlstrs = urlpattern.findall(html)
         nameregex = rule["NameRegex"]
         namepattern = re.compile(nameregex)
         names = namepattern.findall(html)
         md5regex = rule["Md5Regex"]
         md5pattern = re.compile(md5regex)
         md5s = md5pattern.findall(html)
-        print("源%s共产生%s条" % (sourceurl, len(urls)))
-        i = 0
+        totalcount = len(urlstrs) #总处理数量
+        print("源%s共产生%s条" % (sourceurl, totalcount))
+        i = 0 #循环用计数器
         successcount = 0  #成功数量
-        for item in urls:
-            Tool.Time.currenttimeprint(end="")
-            requesturl = item
-            requesturlinfoes = Store.UrlRepository().getsbykeyrequesturl(
-                self.key, requesturl)
-            if requesturlinfoes.count() == 0:
-                name = names[i] + os.path.splitext(requesturl)[1]
+        urls = [] # 数据库url集合
+        for requesturl in urlstrs:
+            Tool.Time.currenttimeprint(end="") #输出当前时间
+            requesturlinfo = Store.UrlRepository().getsbykeyrequesturl(
+                self.key, requesturl).first() #检查数据是否已经存在
+            if not requesturlinfo:
+                name = names[i] + os.path.splitext(requesturl)[1] #计算文件名
                 filehistory = Store.FileHistoryRepository().getbymd5(md5s[i])
                 if filehistory:  #已存在不用下载，可减少下载
                     url = Store.Entity.Url(rule["NextNo"],
                                            filehistory.filepath, sourceurl,
                                            requesturl, filehistory.md5)
                     Store.UrlRepository().add(self.key, url)
+                    urls.append(url)
                     successcount = successcount + 1
                     print("%s已经存在历史数据" % (requesturl))
                 else:
@@ -115,10 +118,41 @@ class RuleHandle(object):
                     if filepath:
                         url = Store.Entity.Url(rule["NextNo"], filepath, sourceurl, requesturl)
                         Store.UrlRepository().add(self.key, url)
+                        urls.append(url)
                         successcount = successcount + 1
                 print("处理完毕")
             else:
+                urls.append(requesturlinfo)
                 print("%s已经存在数据，继续" % (requesturl))
             i = i + 1
-        if successcount == len(urls):# 全部下载成功
+            print("进度：%s/%s;成功%s" % (i, totalcount, successcount))
+        if 'Detail' in rule.keys():
+            self.urldetail(html, rule["Detail"], urls)
+        if successcount == totalcount:# 全部下载成功
             Store.UrlRepository().endbyrequesturl(sourceurl)
+
+
+    def urldetail(self, html, ruledetails, urls):
+        """处理详情信息"""
+        values = {}
+        for ruledetail in ruledetails:
+            if ruledetail["Type"] == "Fix":
+                values["Fix"] = ruledetail["Value"]
+            elif ruledetail["Type"] == "Regex":
+                regex = ruledetail["Regex"]
+                pattern = re.compile(regex)
+                regexvalues = pattern.findall(html)
+                values["Regex"] = regexvalues
+        i = 0 # 循环计数
+        for url in urls:
+            urldetails = []
+            for (key, value) in values.items():
+                if key == "Fix":
+                    detailkey = [f for f in ruledetails if f["Type"] == "Fix"][0]["Key"]
+                    urldetail = Store.Entity.UrlDetail(detailkey, value, url.id)
+                elif key == "Regex":
+                    detailkey = [f for f in ruledetails if f["Type"] == "Regex"][0]["Key"]
+                    urldetail = Store.Entity.UrlDetail(detailkey, value[i], url.id)
+                urldetails.append(urldetail)
+            Store.UrlDetailRepository().adds(url.resulturl, urldetails)
+            i = i + 1
