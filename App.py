@@ -65,11 +65,12 @@ def main(argv):
                 Core.ProcessBusiness.new(content)
             sys.exit(0)
         elif opt in ('--history', ):
-            if arg == "add":
-                if content == "":
-                    print("缺少参数")
-                else:
-                    Core.FileHistoryBusiness.handle(content)
+            if content == "":
+                print("缺少参数")
+            elif arg == "add":
+                Core.FileHistoryBusiness.add(content)
+            elif arg == "move":
+                Core.FileHistoryBusiness.move(content)
             sys.exit(0)
         else:
             print("unhandled option")

@@ -6,7 +6,7 @@ import Store
 import Store.Entity
 from AppConfig import AppConfig
 
-def handle(dirpath):
+def add(dirpath):
     """处理历史文件"""
     filepaths = Tool.FileHelper.allfilefromdir(dirpath)
     historypath = AppConfig().HistoryPath
