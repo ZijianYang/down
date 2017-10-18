@@ -59,24 +59,30 @@ class RuleHandle(object):
         total = int(match.group("total"))
         i = int(rule["PageStart"])
         print("源%s共产生%s条" % (sourceurl, total))
+        progressbar = Tool.ProgressBar(total=total)
         while i <= total:
-        #while i <= 1:
-            Tool.Time.currenttimeprint(end=" ")
+        #while i <= 1:            
             siteurl = sourceurl[0:sourceurl.index("/", 8)]
             requesturl = rule["UrlFormat"].replace("{SiteUrl}", siteurl)
             requesturl = requesturl.replace("{Number}", str(i))
+            message = "%s,请求地址:%s" % (Tool.Time.timestr(), requesturl) #输出当前时间
             requesturlinfoes = Store.UrlRepository().getsbykeyrequesturl(
                 self.key, requesturl)
             i = i + 1
             if requesturlinfoes.count() == 0:
                 filepath = Tool.DownHelper.star(self.filedirpath, requesturl)
-                if filepath:
+                if filepath is None:
+                    message = message + "下载错误"
+                elif filepath == "":
+                    message = message + "已经存在"
+                else:
                     url = Store.Entity.Url(rule["NextNo"], filepath, sourceurl,
                                            requesturl)
                     Store.UrlRepository().add(self.key, url)
-                    print("处理完毕")
+                message = message + "处理完毕"
             else:
-                print("%s已经存在数据,继续" % (requesturl))
+                message = message + "已经存在数据"
+            progressbar.move(message)
         Store.UrlRepository().endbyrequesturl(sourceurl)
 
     def handleregex(self, sourceurl, rule):
@@ -98,8 +104,9 @@ class RuleHandle(object):
         i = 0 #循环用计数器
         successcount = 0  #成功数量
         urls = [] # 数据库url集合
+        progressbar = Tool.ProgressBar(total=totalcount)
         for requesturl in urlstrs:
-            Tool.Time.currenttimeprint(end="") #输出当前时间
+            message = "%s,请求地址:%s" % (Tool.Time.timestr(), requesturl) #输出当前时间
             requesturlinfo = Store.UrlRepository().getsbykeyrequesturl(
                 self.key, requesturl).first() #检查数据是否已经存在
             if not requesturlinfo:
@@ -112,20 +119,25 @@ class RuleHandle(object):
                     Store.UrlRepository().add(self.key, url)
                     urls.append(url)
                     successcount = successcount + 1
-                    print("%s已经存在历史数据" % (requesturl))
+                    message = message + "已经存在历史数据"
                 else:
                     filepath = Tool.DownHelper.star(self.filedirpath, requesturl, name)
-                    if filepath:
+                    if filepath is None:
+                        message = message + "下载错误"
+                    elif filepath == "":
+                        message = message + "已经存在"
+                    else:
                         url = Store.Entity.Url(rule["NextNo"], filepath, sourceurl, requesturl)
                         Store.UrlRepository().add(self.key, url)
                         urls.append(url)
                         successcount = successcount + 1
-                print("处理完毕")
+                        message = message + "下载完毕"
+                message = message + "处理完毕"
             else:
                 urls.append(requesturlinfo)
-                print("%s已经存在数据，继续" % (requesturl))
+                message = message + "已经存在数据"
             i = i + 1
-            print("进度：%s/%s;成功%s" % (i, totalcount, successcount))
+            progressbar.move("成功%s;" % (successcount) + message)
         if 'Detail' in rule.keys():
             self.urldetail(html, rule["Detail"], urls)
         if successcount == totalcount:# 全部下载成功
