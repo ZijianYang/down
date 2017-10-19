@@ -41,4 +41,6 @@ def handlefilepath(filepath):
 def handleurl(filepath, newfilepath):
     """处理url数据和文件"""
     Store.UrlRepository().setnewfilepath(filepath, newfilepath)
+    print("修改成功", end="")
     os.remove(filepath)
+    print("删除成功")
