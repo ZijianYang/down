@@ -20,8 +20,9 @@ class UrlDetailRepository(RepositoryBase):
             else:
                 url = self.session.query(Url).filter(
                     Url.resulturl == resulturl).first()
-                urldetail.urlid = url.id
-                self.session.add(urldetail)
+                if url:
+                    urldetail.urlid = url.id
+                    self.session.add(urldetail)
         self.session.commit()
         return urldeatils
 
