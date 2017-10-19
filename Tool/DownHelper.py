@@ -18,7 +18,7 @@ def star(dirpath, url, name=None):
             if isfile:
                 downfile(url, path)
             else:
-                downhtml(url, path)            
+                downhtml(url, path)
         except:
             return None
     return path

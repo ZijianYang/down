@@ -120,8 +120,6 @@ class RuleHandle(object):
                     filepath = Tool.DownHelper.star(self.filedirpath, requesturl, name)
                     if filepath is None:
                         message = message + "下载错误"
-                    elif filepath == "":
-                        message = message + "已经存在"
                     else:
                         url = Store.Entity.Url(rule["NextNo"], filepath, sourceurl, requesturl)
                         Store.UrlRepository().add(self.key, url)
