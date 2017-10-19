@@ -20,3 +20,39 @@ python App.py --content path --history add
 *****************
 进度条效果
 pip install git+https://github.com/WoLpH/python-progressbar
+
+
+****************
+config eg:
+明明***.json
+
+{
+    "Key":"bd",
+    "RootUrl":"https://yande.re/post?tags=bondage",
+    "Rules": 
+    [
+        {
+            "RuleNo":"RootUrl",
+            "NextNo":"Second",
+            "PageEndRegex": "(?P<total>\\d+)[^\"]+\"next_page", 
+            "PageStart": 1, 
+            "Type": "page",
+            "UrlFormat": "{SiteUrl}/post?page={Number}&tags=bondage"
+        }, 
+        {
+            "RuleNo":"Second",
+            "NextNo":"End",
+            "Type": "regex", 
+            "UrlRegex": "file_url\":\"(?P<url>.*?)\",",
+            "NameRegex":"md5\":\"(?P<md5>.*?)\",",
+            "Md5Regex":"md5\":\"(?P<md5>.*?)\",",
+            "UrlFormat": "",
+            "IsDown":1,
+            "Detail":
+            [
+                {"Key":"Tags","Type":"Regex","Regex":"tags\":\"(?P<tag>.*?)\","},
+                {"Key":"FileType","Type":"Fix","Value":"Image"}
+            ]
+        }
+    ]
+}
