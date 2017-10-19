@@ -103,7 +103,6 @@ class RuleHandle(object):
         print("源%s共产生%s条" % (sourceurl, totalcount))
         i = 0 #循环用计数器
         successcount = 0  #成功数量
-        urls = [] # 数据库url集合
         progressbar = Tool.ProgressBar(total=totalcount)
         for requesturl in urlstrs:
             message = "%s,请求地址:%s" % (Tool.Time.timestr(), requesturl) #输出当前时间
@@ -117,7 +116,6 @@ class RuleHandle(object):
                                            filehistory.filepath, sourceurl,
                                            requesturl, filehistory.md5)
                     Store.UrlRepository().add(self.key, url)
-                    urls.append(url)
                     successcount = successcount + 1
                     message = message + "已经存在历史数据"
                 else:
@@ -129,42 +127,41 @@ class RuleHandle(object):
                     else:
                         url = Store.Entity.Url(rule["NextNo"], filepath, sourceurl, requesturl)
                         Store.UrlRepository().add(self.key, url)
-                        urls.append(url)
                         successcount = successcount + 1
                         message = message + "下载完毕"
                 message = message + "处理完毕"
             else:
-                urls.append(requesturlinfo)
                 message = message + "已经存在数据"
             i = i + 1
             progressbar.move("成功%s;" % (successcount) + message)
         if 'Detail' in rule.keys():
-            self.urldetail(html, rule["Detail"], urls)
+            self.urldetail(html, rule["Detail"], urlstrs)
         if successcount == totalcount:# 全部下载成功
             Store.UrlRepository().endbyrequesturl(sourceurl)
 
 
-    def urldetail(self, html, ruledetails, urls):
+    def urldetail(self, html, ruledetails, resulturls):
         """处理详情信息"""
         values = {}
         for ruledetail in ruledetails:
             if ruledetail["Type"] == "Fix":
-                values["Fix"] = ruledetail["Value"]
+                values[ruledetail["Key"]] = ruledetail["Value"]
             elif ruledetail["Type"] == "Regex":
                 regex = ruledetail["Regex"]
                 pattern = re.compile(regex)
                 regexvalues = pattern.findall(html)
-                values["Regex"] = regexvalues
+                values[ruledetail["Key"]] = regexvalues
         i = 0 # 循环计数
-        for url in urls:
+        for resulturl in resulturls:
             urldetails = []
             for (key, value) in values.items():
-                if key == "Fix":
-                    detailkey = [f for f in ruledetails if f["Type"] == "Fix"][0]["Key"]
-                    urldetail = Store.Entity.UrlDetail(detailkey, value, url.id)
-                elif key == "Regex":
-                    detailkey = [f for f in ruledetails if f["Type"] == "Regex"][0]["Key"]
-                    urldetail = Store.Entity.UrlDetail(detailkey, value[i], url.id)
+                typestr = [f for f in ruledetails if f["Key"] == key][0]["Type"]
+                if typestr == "Fix":
+                    urldetailvalue = value
+                elif typestr == "Regex":
+                    urldetailvalue = value[i]
+                urldetail = Store.Entity.UrlDetail(key, urldetailvalue)
                 urldetails.append(urldetail)
-            Store.UrlDetailRepository().adds(url.resulturl, urldetails)
+            Store.UrlDetailRepository().adds(resulturl, urldetails)
+            print("处理详情数据：%s" % (resulturl))
             i = i + 1

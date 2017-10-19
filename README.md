@@ -51,7 +51,8 @@ config eg:
             "Detail":
             [
                 {"Key":"Tags","Type":"Regex","Regex":"tags\":\"(?P<tag>.*?)\","},
-                {"Key":"FileType","Type":"Fix","Value":"Image"}
+                {"Key":"FileType","Type":"Fix","Value":"Image"},
+                {"Key":"Score","Type":"Regex","Regex":"score\":(?P<score>.*?),"}
             ]
         }
     ]
