@@ -43,7 +43,7 @@ config eg:
             "RuleNo":"Second",
             "NextNo":"End",
             "Type": "regex", 
-            "UrlRegex": "file_url\":\"(?P<url>.*?)\",",
+            "UrlRegex": "sample_url\":\"(?P<url>.*?)\",",
             "NameRegex":"md5\":\"(?P<md5>.*?)\",",
             "Md5Regex":"md5\":\"(?P<md5>.*?)\",",
             "UrlFormat": "",

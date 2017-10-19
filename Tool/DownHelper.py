@@ -18,12 +18,10 @@ def star(dirpath, url, name=None):
             if isfile:
                 downfile(url, path)
             else:
-                downhtml(url, path)
-            return path
+                downhtml(url, path)            
         except:
             return None
-    else:
-        return ""
+    return path
 
 def downfile(url, path):
     """下载文件"""

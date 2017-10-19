@@ -61,7 +61,6 @@ class RuleHandle(object):
         print("源%s共产生%s条" % (sourceurl, total))
         progressbar = Tool.ProgressBar(total=total)
         while i <= total:
-        #while i <= 1:            
             siteurl = sourceurl[0:sourceurl.index("/", 8)]
             requesturl = rule["UrlFormat"].replace("{SiteUrl}", siteurl)
             requesturl = requesturl.replace("{Number}", str(i))
@@ -73,12 +72,11 @@ class RuleHandle(object):
                 filepath = Tool.DownHelper.star(self.filedirpath, requesturl)
                 if filepath is None:
                     message = message + "下载错误"
-                elif filepath == "":
-                    message = message + "已经存在"
                 else:
                     url = Store.Entity.Url(rule["NextNo"], filepath, sourceurl,
                                            requesturl)
                     Store.UrlRepository().add(self.key, url)
+                    message = message + "下载完成"
                 message = message + "处理完毕"
             else:
                 message = message + "已经存在数据"
