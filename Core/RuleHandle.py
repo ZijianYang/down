@@ -54,7 +54,7 @@ class RuleHandle(object):
         with open(temppath, "rb") as filestream:
             html = filestream.read().decode('utf-8')
         regex = rule["PageEndRegex"]
-        pageend = rule["PageEnd"]        
+        pageend = rule["PageEnd"]
         pattern = re.compile(regex)
         match = pattern.search(html)
         total = min(int(match.group("total")), int(pageend))
