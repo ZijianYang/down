@@ -54,9 +54,10 @@ class RuleHandle(object):
         with open(temppath, "rb") as filestream:
             html = filestream.read().decode('utf-8')
         regex = rule["PageEndRegex"]
+        pageend = rule["PageEnd"]        
         pattern = re.compile(regex)
         match = pattern.search(html)
-        total = int(match.group("total"))
+        total = min(int(match.group("total")), int(pageend))
         i = int(rule["PageStart"])
         print("源%s共产生%s条" % (sourceurl, total))
         progressbar = Tool.ProgressBar(total=total)
