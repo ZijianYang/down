@@ -37,6 +37,7 @@ config eg:
             "NextNo":"Second",
             "PageEndRegex": "(?P<total>\\d+)[^\"]+\"next_page", 
             "PageStart": 1, 
+            "PageEnd": 10,
             "Type": "page",
             "UrlFormat": "{SiteUrl}/post?page={Number}&tags=bondage"
         }, 
@@ -65,4 +66,4 @@ case when UrlDetail.[key]='score' then UrlDetail.content end,
 case when UrlDetail.[key]='tag' then UrlDetail.content end 
 from url 
 inner join UrlDetail on UrlDetail.urlid=Url.id
-少量更新修改key的前几条的结束标记`
+添加新的配置文件，只插前几页，每次都移动后全部清除
