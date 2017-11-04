@@ -19,6 +19,9 @@ class FileHistory(EntityBase):
     # 表结构,具体更多的数据类型自行百度
     filepath = sqlalchemy.Column("filepath", sqlalchemy.Text, nullable=False)
     md5 = sqlalchemy.Column("md5", sqlalchemy.String(50), nullable=False)
+    remark1 = sqlalchemy.Column("remark1", sqlalchemy.String(200))
+    remark2 = sqlalchemy.Column("remark2", sqlalchemy.String(200))
+    remark3 = sqlalchemy.Column("remark3", sqlalchemy.String(200))
 
 
     # 添加关系属性,UrlDetail的urlid外键属性上

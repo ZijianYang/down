@@ -21,10 +21,11 @@ def add(dirpath, includes, ishandleurl=False):
             shutil.copy(filepath, filehistory.filepath)
             filecopycount = filecopycount + 1
             print("从：%s到：%s" % (filepath, filehistory.filepath))
-        if Store.FileHistoryRepository().add(filehistory):
-            if ishandleurl:
-                handleurl(filepath, filehistory.filepath)
-            adddatacount = adddatacount + 1
+        Store.FileHistoryRepository().add(filehistory)
+        if ishandleurl:
+            #handleurl(filepath, filehistory.filepath)
+            handleurlbymd5(filehistory.md5, filepath, filehistory.filepath)
+        adddatacount = adddatacount + 1
     print("全部完成，文件总数:%s;复制文件数量:%s;数据:%s" % (totalcount, filecopycount, adddatacount))
 
 def handlefilepath(filepath):
@@ -41,6 +42,13 @@ def handlefilepath(filepath):
 def handleurl(filepath, newfilepath):
     """处理url数据和文件"""
     Store.UrlRepository().setnewfilepath(filepath, newfilepath)
+    print("修改成功", end="")
+    os.remove(filepath)
+    print("删除成功")
+
+def handleurlbymd5(md5, filepath, newfilepath):
+    """处理url数据和文件"""
+    Store.UrlRepository().setnewfilepathbymd5(md5, newfilepath)
     print("修改成功", end="")
     os.remove(filepath)
     print("删除成功")

@@ -25,6 +25,7 @@ class Url(EntityBase):
     resulturl = sqlalchemy.Column("resulturl", sqlalchemy.Text, nullable=False)
     filepath = sqlalchemy.Column("filepath", sqlalchemy.Text, nullable=False)
     md5 = sqlalchemy.Column("md5", sqlalchemy.String(50), nullable=False)
+    sourcekey = sqlalchemy.Column("sourcekey", sqlalchemy.String(50))
     isend = sqlalchemy.Column("isend", sqlalchemy.Boolean, default=False)
     # 添加外键,关联到表
     configid = sqlalchemy.Column("configid", sqlalchemy.Integer, sqlalchemy.ForeignKey("Config.id"))
@@ -49,7 +50,7 @@ class Url(EntityBase):
         self.resulturl = resulturl
 
     def __str__(self):
-        return 'Url,ruleno:%s; sourceurl:%s; resulturl:%s ,filepath:%s ,isend:%s' % (
-            self.ruleno, self.sourceurl, self.resulturl, self.filepath, self.isend)
+        return 'Url,ruleno:%s; sourceurl:%s; resulturl:%s ,filepath:%s ,isend:%s ,sourcekey:%s' % (
+            self.ruleno, self.sourceurl, self.resulturl, self.filepath, self.isend, self.sourcekey)
 
     __repr__ = __str__

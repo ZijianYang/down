@@ -109,11 +109,20 @@ class RuleHandle(object):
                 self.key, requesturl).first() #检查数据是否已经存在
             if not requesturlinfo:
                 name = names[i] + os.path.splitext(requesturl)[1] #计算文件名
-                filehistory = Store.FileHistoryRepository().getbymd5(md5s[i])
-                if filehistory:  #已存在不用下载，可减少下载
+                #filehistory = Store.FileHistoryRepository().getbymd5(md5s[i])
+                urlsourcekey = Store.UrlRepository().getbysourcekey(md5s[i])
+                #if filehistory:  #已存在不用下载，可减少下载
+                #    url = Store.Entity.Url(rule["NextNo"],
+                #                           filehistory.filepath, sourceurl,
+                #                           requesturl, filehistory.md5)
+                #    Store.UrlRepository().add(self.key, url)
+                #    successcount = successcount + 1
+                #    message = message + "已经存在历史数据"
+                if urlsourcekey:  #已存在不用下载，可减少下载
                     url = Store.Entity.Url(rule["NextNo"],
-                                           filehistory.filepath, sourceurl,
-                                           requesturl, filehistory.md5)
+                                           urlsourcekey.filepath, sourceurl,
+                                           requesturl, urlsourcekey.md5)
+                    url.sourcekey = md5s[i]
                     Store.UrlRepository().add(self.key, url)
                     successcount = successcount + 1
                     message = message + "已经存在历史数据"
@@ -123,6 +132,7 @@ class RuleHandle(object):
                         message = message + "下载错误"
                     else:
                         url = Store.Entity.Url(rule["NextNo"], filepath, sourceurl, requesturl)
+                        url.sourcekey = md5s[i]
                         Store.UrlRepository().add(self.key, url)
                         successcount = successcount + 1
                         message = message + "下载完毕"
