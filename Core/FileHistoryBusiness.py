@@ -52,3 +52,21 @@ def handleurlbymd5(md5, filepath, newfilepath):
     print("修改成功", end="")
     os.remove(filepath)
     print("删除成功")
+
+def detail():
+    """设置详情"""
+    data = Store.FileHistoryRepository().getsremarknull(0, 1)
+    total = data["total"]
+    progressbar = Tool.ProgressBar(total=total)
+    count = 0
+    pagesize = 10
+    pageindex = 0
+    successcount = 0
+    while count < total:
+        datapage = Store.FileHistoryRepository().getsremarknull(pageindex, pagesize)
+        for item in datapage["list"]:
+            if Store.FileHistoryRepository().setremarkbymd5(item.md5):
+                successcount = successcount + 1
+            count = count + 1
+            progressbar.move("成功%s;" % (successcount))
+        pageindex = pageindex + 1

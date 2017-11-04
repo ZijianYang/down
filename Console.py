@@ -54,8 +54,14 @@ def main(argv):
             Store.DbHelper.init()
             sys.exit(0)
         elif opt in ('-t',):
-            import os
-            print(os.path.dirname("./FileStore/downdatabase.db"))
+            #import os
+            #print(os.path.dirname("./FileStore/downdatabase.db"))
+            ##############
+            from Store.FileHistoryRepository import FileHistoryRepository
+            data = FileHistoryRepository().getsremarknull(1,2)
+            print(data["total"])
+            for item in data["list"]:
+                print(item)
             sys.exit(0)
     print("unhandled option")
     sys.exit(3)
