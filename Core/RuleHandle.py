@@ -111,24 +111,24 @@ class RuleHandle(object):
             if not requesturlinfo:
                 name = names[i] + os.path.splitext(requesturl)[1] #计算文件名
                 filehistory = Store.FileHistoryRepository().getbymd5(md5s[i])                
-                if filehistory:  #已存在不用下载，可减少下载
-                    url = Store.Entity.Url(rule["NextNo"],
-                                           filehistory.filepath, sourceurl,
-                                           requesturl, filehistory.md5)
-                    url.sourcekey = md5s[i]
-                    Store.UrlRepository().add(self.key, url)
-                    successcount = successcount + 1
-                    message = message + "已经存在历史数据"
-                
-                #urlsourcekey = Store.UrlRepository().getbysourcekey(md5s[i])
-                #if urlsourcekey:  #已存在不用下载，可减少下载
+                #if filehistory:  #已存在不用下载，可减少下载
                 #    url = Store.Entity.Url(rule["NextNo"],
-                #                           urlsourcekey.filepath, sourceurl,
-                #                           requesturl, urlsourcekey.md5)
+                #                           filehistory.filepath, sourceurl,
+                #                           requesturl, filehistory.md5)
                 #    url.sourcekey = md5s[i]
                 #    Store.UrlRepository().add(self.key, url)
                 #    successcount = successcount + 1
                 #    message = message + "已经存在历史数据"
+                
+                urlsourcekey = Store.UrlRepository().getbysourcekey(md5s[i])
+                if urlsourcekey:  #已存在不用下载，可减少下载
+                    url = Store.Entity.Url(rule["NextNo"],
+                                           urlsourcekey.filepath, sourceurl,
+                                           requesturl, urlsourcekey.md5)
+                    url.sourcekey = md5s[i]
+                    Store.UrlRepository().add(self.key, url)
+                    successcount = successcount + 1
+                    message = message + "已经存在历史数据"
                 
                 else:
                     filepath = Tool.DownHelper.star(self.filedirpath, requesturl, name)
