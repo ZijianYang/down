@@ -51,7 +51,7 @@ class FileHistoryRepository(RepositoryBase):
         """查询备注为null的filehistory"""
         entities = self.session.query(FileHistory).filter(
             sqlalchemy.or_(FileHistory.remark1 == None, FileHistory.remark2 ==
-                           None, FileHistory.remark3 == None))
+                           None))
         star = index*size
         end = (index+1)*size
         total = entities.count()
