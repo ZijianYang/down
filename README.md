@@ -17,6 +17,7 @@ python App.py --content bd  --execute pardondata #清除数据开始
 向历史文件添加
 python App.py --content path --history add
 python App.py --content path --history move#慎用
+python App.py --content path --history detail
 
 *****************
 进度条效果

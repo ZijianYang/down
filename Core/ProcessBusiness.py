@@ -18,7 +18,7 @@ def new(key):
     if not config:
         print("未找到配置信息")
         sys.exit(0)
-    configmodel = ConfigModel(ConfigRepository().getbykey(key))
+    configmodel = ConfigModel(config)
     rulehandle = RuleHandle(key)
     rulehandle.handlerooturl(configmodel)
     print("根地址%s;规则数量%s;" % (configmodel.rooturl, len(configmodel.rules)))
@@ -39,3 +39,20 @@ def clear(key, isall=None):
     resulturldetail = UrlDetailRepository().deletebykey(key)
     resulturl = UrlRepository().deletebykey(key)
     print("清理url，共%s条;清理urldetail，共%s条;" % (resulturl, resulturldetail))
+
+def clearnew(key, count=3):
+    """清理最开始的页面和文件，为了获取新更新内容"""
+    config = ConfigRepository().getbykey(key)
+    if not config:
+        print("未找到配置信息")
+        sys.exit(0)
+    configmodel = ConfigModel(config)
+    rooturl = configmodel.rooturl
+    pagerule = configmodel.rule('RootUrl')
+    UrlRepository().endbyrequesturl(rooturl, False)
+    i = 0
+    while i <= count:
+        siteurl = rooturl[0:rooturl.index("/", 8)]
+        requesturl = pagerule["UrlFormat"].replace("{SiteUrl}", siteurl)
+        pageurl = UrlRepository().getsbykeyrequesturl(configmodel.key, requesturl)
+        os.remove(pageurl.filepath)

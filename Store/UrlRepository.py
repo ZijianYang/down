@@ -66,9 +66,9 @@ class UrlRepository(RepositoryBase):
         entities.update({Url.filepath:newfilepath})
         self.session.commit()
 
-    def endbyrequesturl(self, requesturl):
-        """根据请求路径结束"""
+    def endbyrequesturl(self, requesturl, end=True):
+        """根据请求路径设置结束标记"""
         url = self.session.query(Url).filter(Url.resulturl == requesturl)
         if url:
-            url.update({Url.isend: True})
+            url.update({Url.isend: end})
             self.session.commit()

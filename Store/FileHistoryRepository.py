@@ -36,7 +36,7 @@ class FileHistoryRepository(RepositoryBase):
         score = scoredetail.content if scoredetail else None
         tagsdetail = urldetails.filter(UrlDetail.key == "Tags").first()
         tags = tagsdetail.content if tagsdetail else None
-        print("%s,%s" % (score, tags))
+        #print("%s,%s" % (score, tags))
         if filehistory and (score or tags):
             filehistory.update({
                 FileHistory.remark1: score,

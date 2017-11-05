@@ -63,6 +63,9 @@ def main(argv):
             elif arg == "pardonall":
                 Core.ProcessBusiness.clear(content, True)
                 Core.ProcessBusiness.new(content)
+            elif arg == "pardonnew":
+                Core.ProcessBusiness.clearnew(content)
+                Core.ProcessBusiness.new(content)
             sys.exit(0)
         elif opt in ('--history', ):
             if arg == "detail":

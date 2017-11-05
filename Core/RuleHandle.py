@@ -54,7 +54,6 @@ class RuleHandle(object):
         with open(temppath, "rb") as filestream:
             html = filestream.read().decode('utf-8')
         regex = rule["PageEndRegex"]
-        print(rule)
         pageend = rule["PageEnd"] if 'PageEnd' in rule else None
         pattern = re.compile(regex)
         match = pattern.search(html)
