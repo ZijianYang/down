@@ -38,10 +38,18 @@ class UrlRepository(RepositoryBase):
         return entities
 
     def getsbykeyrequesturl(self, key, requesturl):
-        """根据key和请求url查询未删除的"""
+        """根据key和请求即源url查询未删除的"""
         entities = self.session.query(Url).join(
             Config, Config.id == Url.configid).filter(
                 Config.key == key, Url.sourceurl == requesturl,
+                Url.delflag == False)
+        return entities
+
+    def getsbykeyresultturl(self, key, resulturl):
+        """根据key和结果url查询未删除的"""
+        entities = self.session.query(Url).join(
+            Config, Config.id == Url.configid).filter(
+                Config.key == key, Url.resulturl == resulturl,
                 Url.delflag == False)
         return entities
 

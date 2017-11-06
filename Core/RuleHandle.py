@@ -66,7 +66,7 @@ class RuleHandle(object):
             requesturl = rule["UrlFormat"].replace("{SiteUrl}", siteurl)
             requesturl = requesturl.replace("{Number}", str(i))
             message = "%s,请求地址:%s" % (Tool.Time.timestr(), requesturl) #输出当前时间
-            requesturlinfoes = Store.UrlRepository().getsbykeyrequesturl(
+            requesturlinfoes = Store.UrlRepository().getsbykeyresultturl(
                 self.key, requesturl)
             i = i + 1
             if requesturlinfoes.count() == 0:

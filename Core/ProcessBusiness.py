@@ -40,7 +40,7 @@ def clear(key, isall=None):
     resulturl = UrlRepository().deletebykey(key)
     print("清理url，共%s条;清理urldetail，共%s条;" % (resulturl, resulturldetail))
 
-def clearnew(key, count=3):
+def clearnew(key, count=1):
     """清理最开始的页面和文件，为了获取新更新内容"""
     config = ConfigRepository().getbykey(key)
     if not config:
@@ -50,9 +50,20 @@ def clearnew(key, count=3):
     rooturl = configmodel.rooturl
     pagerule = configmodel.rule('RootUrl')
     UrlRepository().endbyrequesturl(rooturl, False)
-    i = 0
+    i = 1
+    successcount = 0
     while i <= count:
         siteurl = rooturl[0:rooturl.index("/", 8)]
         requesturl = pagerule["UrlFormat"].replace("{SiteUrl}", siteurl)
-        pageurl = UrlRepository().getsbykeyrequesturl(configmodel.key, requesturl)
-        os.remove(pageurl.filepath)
+        requesturl = requesturl.replace("{Number}", str(i))
+        pageurl = UrlRepository().getsbykeyresultturl(configmodel.key, requesturl).first()
+        #print(requesturl)
+        #print(pageurl)
+        if pageurl:
+            #print(pageurl.filepath)
+            if os.path.exists(pageurl.filepath):
+                os.remove(pageurl.filepath)
+                successcount = successcount +1
+        i = i + 1
+    print("清理成功数量：%s" % (successcount))
+
