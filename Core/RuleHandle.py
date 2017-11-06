@@ -105,7 +105,7 @@ class RuleHandle(object):
         progressbar = Tool.ProgressBar(total=totalcount)
         for requesturl in urlstrs:
             message = "%s,请求地址:%s" % (Tool.Time.timestr(), requesturl) #输出当前时间
-            requesturlinfo = Store.UrlRepository().getsbykeyrequesturl(
+            requesturlinfo = Store.UrlRepository().getsbykeyresultturl(
                 self.key, requesturl).first() #检查数据是否已经存在
             if not requesturlinfo:
                 name = names[i] + os.path.splitext(requesturl)[1] #计算文件名

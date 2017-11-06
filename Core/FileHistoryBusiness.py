@@ -69,7 +69,7 @@ def detail():
                 successcount = successcount + 1
             count = count + 1
             progressbar.move("成功%s;" % (successcount))
-        if count(datapage["list"]) == 0 and pageindex != 0:
-            pageindex = 0
-        else:
-            pageindex = pageindex + 1
+        #if count(datapage["list"]) == 0 and pageindex != 0:
+        #    pageindex = 0
+        #else:
+        pageindex = pageindex + 1
