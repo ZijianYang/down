@@ -51,19 +51,18 @@ def clearnew(key, count=1):
     pagerule = configmodel.rule('RootUrl')
     UrlRepository().endbyrequesturl(rooturl, False)
     i = 1
-    successcount = 0
+    successremovefilecount = 0
+    successremovedatacount = 0
     while i <= count:
         siteurl = rooturl[0:rooturl.index("/", 8)]
         requesturl = pagerule["UrlFormat"].replace("{SiteUrl}", siteurl)
         requesturl = requesturl.replace("{Number}", str(i))
         pageurl = UrlRepository().getsbykeyresultturl(configmodel.key, requesturl).first()
-        #print(requesturl)
-        #print(pageurl)
         if pageurl:
-            #print(pageurl.filepath)
+            if UrlRepository().deletebyid(pageurl.id):
+                successremovedatacount =  successremovedatacount + 1
             if os.path.exists(pageurl.filepath):
                 os.remove(pageurl.filepath)
-                successcount = successcount +1
+                successremovefilecount = successremovefilecount +1
         i = i + 1
-    print("清理成功数量：%s" % (successcount))
-
+    print("清理成功文件数量：%s;删除数据数量%s" % (successremovefilecount, successremovedatacount))

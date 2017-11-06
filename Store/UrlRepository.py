@@ -29,6 +29,12 @@ class UrlRepository(RepositoryBase):
         self.session.commit()
         return count
 
+    def deletebyid(self, id):
+        """根据id删除url"""
+        entity = self.session.query(Url).filter(Url.id == id)
+        entity.delete()
+        self.session.commit()        
+
     def getsnoendbynorulenokey(self, key, ruleno, count=100):
         """根据编号查询未结束未删除且不为某个规则的url,默认前100条"""
         entities = self.session.query(Url).join(
@@ -69,7 +75,7 @@ class UrlRepository(RepositoryBase):
             self.session.commit()
 
     def setnewfilepathbymd5(self, md5, newfilepath):
-        """根据文件路径修改为新的路径"""
+        """根据文件MD5修改为新的路径"""
         entities = self.session.query(Url).filter(Url.md5 == md5)
         entities.update({Url.filepath:newfilepath})
         self.session.commit()
