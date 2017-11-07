@@ -142,6 +142,7 @@ class RuleHandle(object):
                 message = message + "处理完毕"
             else:
                 message = message + "已经存在数据"
+                successcount = successcount + 1
             i = i + 1
             progressbar.move("成功%s;" % (successcount) + message)
         if 'Detail' in rule.keys():
