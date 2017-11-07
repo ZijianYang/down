@@ -58,27 +58,6 @@ def detail():
     data = Store.FileHistoryRepository().getsremarknull(0, 1)
     total = data["total"]
     progressbar = Tool.ProgressBar(total=total)
-    count = 0
-    pagesize = 10
-    pageindex = 0
-    successcount = 0
-    while count < total:
-        datapage = Store.FileHistoryRepository().getsremarknull(pageindex, pagesize)
-        for item in datapage["list"]:
-            if Store.FileHistoryRepository().setremarkbymd5(item.md5):
-                successcount = successcount + 1
-            count = count + 1
-            progressbar.move("成功%s;" % (successcount))
-        if count(datapage["list"]) == 0 and pageindex != 0:
-            pageindex = 0
-        else:
-            pageindex = pageindex + 1
-
-def detailfirst():
-    """设置详情"""
-    data = Store.FileHistoryRepository().getsremarknull(0, 1)
-    total = data["total"]
-    progressbar = Tool.ProgressBar(total=total)
     pagesize = 10
     successcount = 0
     while True:
