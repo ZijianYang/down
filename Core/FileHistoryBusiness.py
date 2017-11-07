@@ -69,10 +69,10 @@ def detail():
                 if Store.FileHistoryRepository().setremarkbymd5(item.md5):
                     successcount = successcount + 1
                     sucesscountcurrent = sucesscountcurrent + 1
-                progressbar.move("成功%s;" % (successcount))
+                    progressbar.move("成功%s;" % (successcount))
             if len(datapage["list"]) == 0:
                 break
             pageindex = pageindex + 1
-        if sucesscountcurrent == 0:
+        if sucesscountcurrent == 0  or successcount >= total:
             break
     print("共需处理%s;成功%s;" % (total, successcount))
