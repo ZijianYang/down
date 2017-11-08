@@ -28,7 +28,8 @@ def main(argv):
     """主函数"""
     content = ""
     try:
-        opts, args = getopt.getopt(argv[1:], 'hv', ['config=', 'content=', 'execute=', 'history='])
+        opts, args = getopt.getopt(
+            argv[1:], 'hv', ['config=', 'content=', 'execute=', 'history='])
     except getopt.GetoptError as err:
         print(err)
         usage()
@@ -43,7 +44,7 @@ def main(argv):
         elif opt in ('--content', ):
             content = arg
         elif opt in ('--config', ):
-            if arg == "add":# 相同key则不新增
+            if arg == "add":  # 相同key则不新增
                 Core.ConfigBusiness.addpath(content)
             elif arg == "update":
                 Core.ConfigBusiness.updatepath(content)
@@ -58,8 +59,15 @@ def main(argv):
         elif opt in ('--execute', ):
             if content == "":
                 print("缺少参数")
-            elif arg == "new":# 相同key则不新增
-                Core.ProcessBusiness.new(content)
+            elif arg == "new":  # 相同key则不新增
+                if content == "all":
+                    configpaths = Tool.FileHelper.filesfrompath(
+                        os.path.join(AppConfig().DownConfigPath, ""))
+                    configs = Core.ConfigBusiness.configsfrompaths(configpaths)
+                    for item in configs:
+                        Core.ProcessBusiness.new(item.key)
+                else:
+                    Core.ProcessBusiness.new(content)
             elif arg == "pardondata":
                 Core.ProcessBusiness.clear(content)
                 Core.ProcessBusiness.new(content)
@@ -68,7 +76,8 @@ def main(argv):
                 Core.ProcessBusiness.new(content)
             elif arg == "pardonnew":
                 if content == "all":
-                    configpaths = Tool.FileHelper.filesfrompath(os.path.join(AppConfig().DownConfigPath, ""))
+                    configpaths = Tool.FileHelper.filesfrompath(
+                        os.path.join(AppConfig().DownConfigPath, ""))
                     configs = Core.ConfigBusiness.configsfrompaths(configpaths)
                     for item in configs:
                         Core.ProcessBusiness.clearnew(item.key)
@@ -86,7 +95,8 @@ def main(argv):
                 elif arg == "add":
                     Core.FileHistoryBusiness.add(content, [".jpg", ".png"])
                 elif arg == "move":
-                    Core.FileHistoryBusiness.add(content, [".jpg", ".png"], True)
+                    Core.FileHistoryBusiness.add(content, [".jpg", ".png"],
+                                                 True)
             sys.exit(0)
         else:
             print("unhandled option")
