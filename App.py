@@ -4,6 +4,9 @@ import Core
 import getopt
 import sys
 import sqlalchemy
+import os
+import Tool.FileHelper
+from AppConfig import AppConfig
 
 
 def usage():
@@ -64,8 +67,15 @@ def main(argv):
                 Core.ProcessBusiness.clear(content, True)
                 Core.ProcessBusiness.new(content)
             elif arg == "pardonnew":
-                Core.ProcessBusiness.clearnew(content)
-                Core.ProcessBusiness.new(content)
+                if content == "all":
+                    configpaths = Tool.FileHelper.filesfrompath(os.path.join(AppConfig().DownConfigPath, ""))
+                    configs = Core.ConfigBusiness.configsfrompaths(configpaths)
+                    for item in configs:
+                        Core.ProcessBusiness.clearnew(content)
+                        Core.ProcessBusiness.new(content)
+                else:
+                    Core.ProcessBusiness.clearnew(content)
+                    Core.ProcessBusiness.new(content)
             sys.exit(0)
         elif opt in ('--history', ):
             if arg == "detail":

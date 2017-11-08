@@ -13,12 +13,12 @@ python App.py  --config select #查询
 开始
 python App.py --content bd  --execute new #开始或继续
 python App.py --content bd  --execute pardondata #清除数据开始
-python App.py --content bd  --execute pardonnew #清除最近的页面数据和文件后开始
+python App.py --content bd  --execute pardonnew #清除最近的页面数据和文件后开始(all则为所有,默认位置配置文件)
 
 向历史文件添加
 python App.py --content path --history add
 python App.py --content path --history move#慎用
-python App.py --content path --history detail
+python App.py --history detail
 
 *****************
 进度条效果
