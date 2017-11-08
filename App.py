@@ -71,8 +71,8 @@ def main(argv):
                     configpaths = Tool.FileHelper.filesfrompath(os.path.join(AppConfig().DownConfigPath, ""))
                     configs = Core.ConfigBusiness.configsfrompaths(configpaths)
                     for item in configs:
-                        Core.ProcessBusiness.clearnew(content)
-                        Core.ProcessBusiness.new(content)
+                        Core.ProcessBusiness.clearnew(item.key)
+                        Core.ProcessBusiness.new(item.key)
                 else:
                     Core.ProcessBusiness.clearnew(content)
                     Core.ProcessBusiness.new(content)
