@@ -68,5 +68,4 @@ case when UrlDetail.[key]='score' then UrlDetail.content end,
 case when UrlDetail.[key]='tag' then UrlDetail.content end 
 from url 
 inner join UrlDetail on UrlDetail.urlid=Url.id
-添加新的启动，加载配置之后修改配置只取前几页。并使用新的分支路径
 重新更新urldetail和historyfile的remark
