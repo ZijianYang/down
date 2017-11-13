@@ -109,7 +109,7 @@ class RuleHandle(object):
                 self.key, requesturl).first() #检查数据是否已经存在
             if not requesturlinfo:
                 name = names[i] + os.path.splitext(requesturl)[1] #计算文件名
-                filehistory = Store.FileHistoryRepository().getbymd5(md5s[i])                
+                #filehistory = Store.FileHistoryRepository().getbymd5(md5s[i])                
                 #if filehistory:  #已存在不用下载，可减少下载
                 #    url = Store.Entity.Url(rule["NextNo"],
                 #                           filehistory.filepath, sourceurl,
