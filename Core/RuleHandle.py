@@ -44,13 +44,15 @@ class RuleHandle(object):
         requesturl = urlinfo.resulturl  # 处理过后地址的结果地址，即为下一次请求地址和源地址
         print("请求地址：%s；规则类型%s" % (requesturl, ruletype))  #
         if ruletype == Store.Enum.ERuleType.page.name:
-            self.handlepage(requesturl, rule, validationdata)
+            self.handlepage(urlinfo, rule, validationdata)
         elif ruletype == Store.Enum.ERuleType.regex.name:
-            self.handleregex(requesturl, rule)
+            self.handleregex(urlinfo, rule)
 
-    def handlepage(self, sourceurl, rule, validationdata=True):
+    def handlepage(self, urlinfo, rule, validationdata=True):
         """按照规则处理"""
-        temppath = Tool.DownHelper.urltopath(self.filedirpath, sourceurl)
+        #temppath = Tool.DownHelper.urltopath(self.filedirpath, sourceurl)
+        temppath = urlinfo.filepath
+        sourceurl = urlinfo.requesturl
         with open(temppath, "rb") as filestream:
             html = filestream.read().decode('utf-8')
         regex = rule["PageEndRegex"]
@@ -84,9 +86,12 @@ class RuleHandle(object):
             progressbar.move(message)
         Store.UrlRepository().endbyrequesturl(sourceurl)
 
-    def handleregex(self, sourceurl, rule, validationdata=True):
+    def handleregex(self, urlinfo, rule, validationdata=True):
         """按照规则处理"""
-        temppath = Tool.DownHelper.urltopath(self.filedirpath, sourceurl)
+        temppath = urlinfo.filepath
+        sourceurl = urlinfo.requesturl
+
+        #temppath = Tool.DownHelper.urltopath(self.filedirpath, sourceurl)
         with open(temppath, "rb") as filestream:
             html = filestream.read().decode('utf-8')
         urlregex = rule["UrlRegex"]
