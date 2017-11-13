@@ -52,14 +52,13 @@ class RuleHandle(object):
         """按照规则处理"""
         #temppath = Tool.DownHelper.urltopath(self.filedirpath, sourceurl)
         temppath = urlinfo.filepath
-        sourceurl = urlinfo.requesturl
+        sourceurl = urlinfo.resulturl
         with open(temppath, "rb") as filestream:
             html = filestream.read().decode('utf-8')
         regex = rule["PageEndRegex"]
         pattern = re.compile(regex)
         match = pattern.search(html)
         total = int(rule["PageEnd"] if 'PageEnd' in rule else match.group("total"))
-        print(rule["PageEnd"])
         i = int(rule["PageStart"])
         print("源%s共产生%s条" % (sourceurl, total))
         progressbar = Tool.ProgressBar(total=total)
@@ -89,7 +88,7 @@ class RuleHandle(object):
     def handleregex(self, urlinfo, rule, validationdata=True):
         """按照规则处理"""
         temppath = urlinfo.filepath
-        sourceurl = urlinfo.requesturl
+        sourceurl = urlinfo.resulturl
 
         #temppath = Tool.DownHelper.urltopath(self.filedirpath, sourceurl)
         with open(temppath, "rb") as filestream:
