@@ -20,14 +20,14 @@ class RuleHandle(object):
         else:
             self.filedirpath = fileDirPath
 
-    def handlerooturl(self, downconfig):
+    def handlerooturl(self, downconfig, validationdata=True):
         """处理RootUrl"""
         # 没有上层处理，对rooturl进行下载和数据保存，不做处理
         print("处理RootUrl:", end=" ")
         rooturl = downconfig.rooturl
         rooturlinfo = Store.UrlRepository().getsbykeyrequesturl(
             self.key, rooturl).first()
-        if not rooturlinfo:
+        if not rooturlinfo or not validationdata:
             filepath = Tool.DownHelper.star(self.filedirpath, rooturl)
             rootrule = downconfig.rule("RootUrl")
             url = Store.Entity.Url(rootrule["RuleNo"], filepath, rooturl,
@@ -37,27 +37,27 @@ class RuleHandle(object):
         else:
             print("已存在数据,继续")
 
-    def handlerule(self, downconfig, urlinfo):
+    def handlerule(self, downconfig, urlinfo, validationdata=True):
         """按照规则处理:下载配置,数据url"""
         rule = downconfig.rule(urlinfo.ruleno)  #查找处理规则
         ruletype = rule["Type"]
         requesturl = urlinfo.resulturl  # 处理过后地址的结果地址，即为下一次请求地址和源地址
         print("请求地址：%s；规则类型%s" % (requesturl, ruletype))  #
         if ruletype == Store.Enum.ERuleType.page.name:
-            self.handlepage(requesturl, rule)
+            self.handlepage(requesturl, rule, validationdata)
         elif ruletype == Store.Enum.ERuleType.regex.name:
             self.handleregex(requesturl, rule)
 
-    def handlepage(self, sourceurl, rule):
+    def handlepage(self, sourceurl, rule, validationdata=True):
         """按照规则处理"""
         temppath = Tool.DownHelper.urltopath(self.filedirpath, sourceurl)
         with open(temppath, "rb") as filestream:
             html = filestream.read().decode('utf-8')
         regex = rule["PageEndRegex"]
-        pageend = rule["PageEnd"] if 'PageEnd' in rule else None
         pattern = re.compile(regex)
         match = pattern.search(html)
         total = int(rule["PageEnd"] if 'PageEnd' in rule else match.group("total"))
+        print(rule["PageEnd"])
         i = int(rule["PageStart"])
         print("源%s共产生%s条" % (sourceurl, total))
         progressbar = Tool.ProgressBar(total=total)
@@ -69,7 +69,7 @@ class RuleHandle(object):
             requesturlinfoes = Store.UrlRepository().getsbykeyresultturl(
                 self.key, requesturl)
             i = i + 1
-            if requesturlinfoes.count() == 0:
+            if requesturlinfoes.count() == 0 or not validationdata:
                 filepath = Tool.DownHelper.star(self.filedirpath, requesturl)
                 if filepath is None:
                     message = message + "下载错误"
@@ -84,7 +84,7 @@ class RuleHandle(object):
             progressbar.move(message)
         Store.UrlRepository().endbyrequesturl(sourceurl)
 
-    def handleregex(self, sourceurl, rule):
+    def handleregex(self, sourceurl, rule, validationdata=True):
         """按照规则处理"""
         temppath = Tool.DownHelper.urltopath(self.filedirpath, sourceurl)
         with open(temppath, "rb") as filestream:
@@ -107,7 +107,7 @@ class RuleHandle(object):
             message = "%s,请求地址:%s" % (Tool.Time.timestr(), requesturl) #输出当前时间
             requesturlinfo = Store.UrlRepository().getsbykeyresultturl(
                 self.key, requesturl).first() #检查数据是否已经存在
-            if not requesturlinfo:
+            if not requesturlinfo or not validationdata:
                 name = names[i] + os.path.splitext(requesturl)[1] #计算文件名
                 #filehistory = Store.FileHistoryRepository().getbymd5(md5s[i])                
                 #if filehistory:  #已存在不用下载，可减少下载

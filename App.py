@@ -74,17 +74,17 @@ def main(argv):
             elif arg == "pardonall":
                 Core.ProcessBusiness.clear(content, True)
                 Core.ProcessBusiness.new(content)
-            elif arg == "pardonnew":
+            elif arg == "newpardon":
                 if content == "all":
                     configpaths = Tool.FileHelper.filesfrompath(
                         os.path.join(AppConfig().DownConfigPath, ""))
                     configs = Core.ConfigBusiness.configsfrompaths(configpaths)
                     for item in configs:
-                        Core.ProcessBusiness.clearnew(item.key)
-                        Core.ProcessBusiness.new(item.key)
+                        #Core.ProcessBusiness.clearnew(item.key)
+                        Core.ProcessBusiness.newpardon(item.key)
                 else:
-                    Core.ProcessBusiness.clearnew(content)
-                    Core.ProcessBusiness.new(content)
+                    #Core.ProcessBusiness.clearnew(content)
+                    Core.ProcessBusiness.newpardon(content)
             sys.exit(0)
         elif opt in ('--history', ):
             if arg == "detail":
