@@ -68,4 +68,4 @@ case when UrlDetail.[key]='score' then UrlDetail.content end,
 case when UrlDetail.[key]='tag' then UrlDetail.content end 
 from url 
 inner join UrlDetail on UrlDetail.urlid=Url.id
-重新更新urldetail和historyfile的remark
+#重新更新urldetail和historyfile的remark
