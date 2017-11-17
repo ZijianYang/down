@@ -23,13 +23,13 @@ def images(pageindex):
     pageindex = int(pageindex)
     pagesize = int(args.get("pagesize")) if args.get("pagesize") else 10
     score = int(args.get("score")) if args.get("score") else 0
-    #print('1：%s;2：%s;3：%s;4：%s;' % (score, tag, pagesize, pageindex))
+    print('1：%s;2：%s;3：%s;4：%s;' % (score, tag, pagesize, pageindex))
     data = Store.FileHistoryRepository().getspage(score, tag, pageindex,
                                                   pagesize)
     #print(ClassToDict.todict(data["list"][0]))
     return jsonify({
         'list': [{
-            'filepath': item.filepath,
+            'filepath': item.filepath.replace("\\","/"),
             'md5': item.md5,
             'score': item.remark1,
             'tags': item.remark2
