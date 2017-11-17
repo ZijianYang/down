@@ -50,7 +50,7 @@ def handleurlbymd5(md5, filepath, newfilepath):
     """处理url数据和文件"""
     Store.UrlRepository().setnewfilepathbymd5(md5, newfilepath)
     print("修改成功", end="")
-    #os.remove(filepath)
+    os.remove(filepath)
     print("删除成功")
 
 def detail():
