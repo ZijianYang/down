@@ -1,14 +1,12 @@
 """接口"""
 from flask import Flask, jsonify, request
 from flask_script import Manager
-from Tool import ClassToDict 
+from Tool import ClassToDict
 import Store
 import Store.Entity
 
 APP = Flask(__name__)
 MANAGER = Manager(APP)
-
-
 
 
 @APP.route('/')
@@ -26,11 +24,18 @@ def images(pageindex):
     pagesize = int(args.get("pagesize")) if args.get("pagesize") else 10
     score = int(args.get("score")) if args.get("score") else 0
     #print('1：%s;2：%s;3：%s;4：%s;' % (score, tag, pagesize, pageindex))
-    data = Store.FileHistoryRepository().getspage(score, tag, pageindex, pagesize)
-    print(ClassToDict.todict(data))
+    data = Store.FileHistoryRepository().getspage(score, tag, pageindex,
+                                                  pagesize)
+    #print(ClassToDict.todict(data["list"][0]))
     return jsonify({
-        'list': [ClassToDict.todict(item) for item in data["list"]],
-        'count': data["total"]
+        'list': [{
+            'filepath': item.filepath,
+            'md5': item.md5,
+            'score': item.remark1,
+            'tags': item.remark2
+        } for item in data["list"]],
+        'count':
+        data["total"]
     })
 
 
