@@ -52,9 +52,21 @@ class FileHistoryRepository(RepositoryBase):
         entities = self.session.query(FileHistory).filter(
             sqlalchemy.or_(FileHistory.remark1 == None, FileHistory.remark2 ==
                            None))
-        star = index*size
-        end = (index+1)*size
+        star = index * size
+        end = (index + 1) * size
         total = entities.count()
         #print("%s,%s" % (star, end))
         items = entities[star:end]
-        return {"total":total, "list":items}
+        return {"total": total, "list": items}
+
+    def getspage(self, score=0, tag=None, pageindex=0, pagesize=10):
+        """分页查询"""
+        entities = self.session.query(FileHistory).filter(
+            FileHistory.remark1 >= score)
+        if tag:
+            entities = entities.filter(FileHistory.remark2 == tag)
+        star = pageindex * pagesize
+        end = (pageindex + 1) * pagesize
+        total = entities.count()
+        items = entities[star:end]
+        return {"total": total, "list": items}
