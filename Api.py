@@ -5,7 +5,7 @@ from Tool import ClassToDict
 import Store
 import Store.Entity
 
-APP = Flask(__name__)
+APP = Flask(__name__,static_folder='', static_url_path='')
 MANAGER = Manager(APP)
 
 
