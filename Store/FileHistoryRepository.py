@@ -20,12 +20,6 @@ class FileHistoryRepository(RepositoryBase):
         else:
             return False
 
-    def getbymd5(self, md5):
-        """根据md5查询"""
-        entity = self.session.query(FileHistory).filter(
-            FileHistory.md5 == md5).first()
-        return entity
-
     def setremarkbymd5(self, md5):
         """根据md5设置remark"""
         filehistory = self.session.query(FileHistory).filter(
@@ -46,6 +40,12 @@ class FileHistoryRepository(RepositoryBase):
             return True
         else:
             return False
+
+    def getbymd5(self, md5):
+        """根据md5查询"""
+        entity = self.session.query(FileHistory).filter(
+            FileHistory.md5 == md5).first()
+        return entity
 
     def getsremarknull(self, index, size):
         """查询备注为null的filehistory"""

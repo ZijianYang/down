@@ -20,6 +20,13 @@ python App.py --content path --history add
 python App.py --content path --history move#慎用
 python App.py --history detail
 
+*********************************************
+#Api
+python manage.py runserver
+python manage.py runserver --host 127.0.0.1
+python manage.py runserver -h # 帮助
+
+
 *****************
 进度条效果
 pip install git+https://github.com/WoLpH/python-progressbar
