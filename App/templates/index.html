@@ -2,8 +2,9 @@
 {% block csses %}
 <style>
     .list > div{
-        width:25%;
-        min-width: 100px;
+        padding:3px;
+        width:24%;
+        min-width: 200px;
         float: left;
     }
 
@@ -32,9 +33,7 @@
     </div>
     <div class="list">
         <div v-for="item in items"  v-on:click="gotodetail(item.id)">
-            <span v-text="item.md5"></span>
-            <!--{{item.tags}}-->
-            <img v-bind:src="item.url"/>
+            <img v-bind:src="item.url" v-bind:title="item.title"/>
         </div>        
     </div>
 </div>
@@ -51,11 +50,17 @@
             score: 0,
             tag: '',
         },
+        computed: {
+            paramesdata: function () {
+                return { params: { score: this.score, tag: this.tag } }
+            }
+        },
         methods: {
             additems(newlist) {
                 isend = newlist.length==0;
                 for (var i = 0; i < newlist.length; i++) {
                     newlist[i].pageindex=this.pageindex;
+                    newlist[i].title="scroe:"+newlist[i].score+";tags:"+newlist[i].tags;
                     this.items.push(newlist[i]);
                 }
                 if(!isend){
@@ -63,15 +68,12 @@
                     this.getbychange(false);
                 };
             },
-            paramesdata() {
-                return { params: { score: this.score, tag: this.tag } }
-            },
             get(isfirst=true) {
                 if(isfirst){
                     this.items = [];
                     this.pageindex = 1;
                 }
-                axios.get('/api/images/' + this.pageindex, this.paramesdata())
+                axios.get('/api/images/' + this.pageindex, this.paramesdata)
                     .then((response) => {
                         console.log(response);
                         if(response.status=200){
