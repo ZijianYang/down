@@ -61,7 +61,7 @@
                     this.items = [];
                     this.pageindex = 1;
                 }
-                axios.get('/images/' + this.pageindex, this.paramesdata())
+                axios.get('/api/images/' + this.pageindex, this.paramesdata())
                     .then((response) => {
                         console.log(response);
                         if(response.status=200){
