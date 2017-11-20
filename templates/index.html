@@ -1,0 +1,74 @@
+{% extends "base.html" %} {% block page_content %}
+<span>{{ name }}</span>
+<div id="images">
+    <div>
+        <label for="score"></label>
+        <select v-model="score">
+            <option>0</option>
+            <option>10</option>
+            <option>50</option>
+        </select>
+        <label for="tag"></label>
+        <input name="tag" type="text" v-model="tag" />
+        <button type="button" v-on:click="get()">查询</button>
+    </div>
+    <div>
+        <span v-text="total"></span>
+        <button type="button" v-on:click="add()">继续</button>
+    </div>
+    <div v-for="item in items">
+        {{item.md5}}
+    </div>
+</div>
+{% endblock %} {% block scripts %}
+<script>
+    var images = new Vue({
+        el: '#images',
+        data: {
+            items: [],
+            total: '',
+            pagesize: 10,
+            pageindex: 1,
+            score: 0,
+            tag: ''
+        },
+        methods: {
+            additems(newlist) {
+                for (var i = 0; i < newlist.length; i++) {
+                    this.items.push(newlist[i]);
+                }
+            },
+            paramesdata() {
+                return { params: { score: this.score, tag: this.tag } }
+            },
+            get() {
+                this.items=[]
+                axios.get('/images/' + this.pageindex, this.paramesdata())
+                    .then((response) => {
+                        console.log(response);
+                        this.total = response.data.count;
+                        this.additems(response.data.list);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            },
+            add() {
+                this.pageindex = this.pageindex + 1;
+                axios.get('/images/' + this.pageindex, this.paramesdata())
+                    .then((response) => {
+                        console.log(response);
+                        this.total = response.data.count;
+                        this.additems(response.data.list);
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            }
+        },
+        mounted: function () {
+            this.get()
+        }
+    })
+
+</script> {% endblock %}
