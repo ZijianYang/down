@@ -16,10 +16,6 @@
         },
         methods: {
             get() {
-                if(isfirst){
-                    this.items = [];
-                    this.pageindex = 1;
-                }
                 axios.get('/api/image/' + this.id)
                     .then((response) => {
                         console.log(response);
@@ -33,6 +29,7 @@
             },
         },
         mounted: function () {
+            this.id = Vue.GetUrlParam("id");
             this.get()
         },   
     })
