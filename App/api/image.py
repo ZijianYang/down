@@ -9,6 +9,7 @@ def images(pageindex):
     tag = args.get("tag", None, type=str)
     pagesize = args.get("pagesize", 10, type=int)
     score = args.get("score", 0, type=int)
+    pageindex = pageindex-1
     print('1：%s;2：%s;3：%s;4：%s;' % (score, tag, pagesize, pageindex))
     data = Store.FileHistoryRepository().getspage(score, tag, pageindex,
                                                   pagesize)

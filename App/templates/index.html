@@ -57,14 +57,13 @@
         },
         methods: {
             additems(newlist) {
-                isend = newlist.length==0;
+                this.isend = newlist.length==0;
                 for (var i = 0; i < newlist.length; i++) {
                     newlist[i].pageindex=this.pageindex;
                     newlist[i].title="scroe:"+newlist[i].score+";tags:"+newlist[i].tags;
                     this.items.push(newlist[i]);
                 }
-                if(!isend){
-                    this.pageindex = this.pageindex + 1;
+                if(!this.isend){                    
                     this.getbychange(false);
                 };
             },
@@ -72,6 +71,11 @@
                 if(isfirst){
                     this.items = [];
                     this.pageindex = 1;
+                }
+                else{
+                    this.pageindex = this.pageindex + 1;
+                    if(this.isend)
+                        return;
                 }
                 axios.get('/api/images/' + this.pageindex, this.paramesdata)
                     .then((response) => {
