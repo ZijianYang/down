@@ -64,8 +64,10 @@
                 axios.get('/images/' + this.pageindex, this.paramesdata())
                     .then((response) => {
                         console.log(response);
-                        this.total = response.data.count;
-                        this.additems(response.data.list);
+                        if(response.status=200){
+                            this.total = response.data.count;
+                            this.additems(response.data.list);
+                        }
                     })
                     .catch(function (error) {
                         console.log(error);

@@ -2,95 +2,38 @@
 {% block csses %}
 {% endblock %}
 {% block page_content %}
-<div id="images">
-    <div>
-        <label for="score"></label>
-        <select v-model="score">
-            <option>0</option>
-            <option>10</option>
-            <option>50</option>
-        </select>
-        <label for="tag"></label>
-        <input name="tag" type="text" v-model="tag" />
-        <button type="button" v-on:click="get()">查询</button>
-    </div>
-    <div>
-        <span v-text="total"></span>
-        <button type="button" v-on:click="get(false)">继续</button>
-    </div>
-    <div class="list">
-        <div v-for="item in items">
-            {{item.md5}}
-            <!--{{item.tags}}-->
-            <!--img v-bind:src="item.url"/>-->
-        </div>        
-    </div>
+<div id="image">
+    {{image.md5}}
 </div>
 {% endblock %}
 {% block scripts %}
 <script>
-    var images = new Vue({
-        el: '#images',
+    var image = new Vue({
+        el: '#image',
         data: {
             items: [],
-            total: '',
-            pagesize: 10,
-            pageindex: 1,
-            score: 0,
-            tag: '',
+            image: '',
         },
         methods: {
-            additems(newlist) {
-                isend = newlist.length==0;
-                for (var i = 0; i < newlist.length; i++) {
-                    newlist[i].pageindex=this.pageindex;
-                    this.items.push(newlist[i]);
-                }
-                if(!isend){
-                    this.pageindex = this.pageindex + 1;
-                    if(($(document).height()) <= $(window).height())
-                        this.get(false);
-                };
-            },
-            paramesdata() {
-                return { params: { score: this.score, tag: this.tag } }
-            },
-            get(isfirst=true) {
+            get() {
                 if(isfirst){
                     this.items = [];
                     this.pageindex = 1;
                 }
-                axios.get('/images/' + this.pageindex, this.paramesdata())
+                axios.get('/image/' + this.id)
                     .then((response) => {
                         console.log(response);
-                        this.total = response.data.count;
-                        this.additems(response.data.list);
+                        if(response.status=200){                            
+                            this.image = response.data;
+                        }
                     })
                     .catch(function (error) {
                         console.log(error);
-                    });
-                
+                    });                
             },
-            gotodetail(id){
-                //window.location.href=''
-                window.open("detail?pageindex="+this.pageindex+"&score="+this.score+"$tag="+this.tag);
-            }
         },
         mounted: function () {
-            this.get()    
-            self = this;        
-            $(window).scroll(function(){
-                //滚动条所在位置的高度
-                totalheight = parseFloat($(window).height()) + parseFloat($(window).scrollTop());
-                //当前文档高度   小于或等于   滚动条所在位置高度  则是页面底部
-                if(($(document).height()) <= totalheight) {
-                    //页面到达底部
-                    self.get(false)
-                } 
-            });
-            window.onresize = function(){
-                self.get(false)
-            }
+            this.get()
         },   
     })
 </script> 

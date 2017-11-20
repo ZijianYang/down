@@ -25,14 +25,13 @@ def detail():
     return render_template('detail.html')
 
 
-@APP.route('/images/<pageindex>')
+@APP.route('/images/<int:pageindex>', methods=['GET', 'POST'])
 def images(pageindex):
     """查询"""
     args = request.args
-    tag = None if args.get("tag") == "" else args.get("tag")
-    pageindex = int(pageindex)
-    pagesize = int(args.get("pagesize")) if args.get("pagesize") else 10
-    score = int(args.get("score")) if args.get("score") else 0
+    tag = args.get("tag", None, type=str)
+    pagesize = args.get("pagesize", 10, type=int)
+    score = args.get("score", 0, type=int)
     print('1：%s;2：%s;3：%s;4：%s;' % (score, tag, pagesize, pageindex))
     data = Store.FileHistoryRepository().getspage(score, tag, pageindex,
                                                   pagesize)
@@ -50,19 +49,17 @@ def images(pageindex):
     })
 
 
-@APP.route('/image/<id>')
-def image(id):
+@APP.route('/image/<int:imageid>', methods=['GET', 'POST'])
+def image(imageid):
     """查询"""
-    args = request.args
-    id = None if args.get("id") == "" else args.get("id")
-    data = Store.FileHistoryRepository().getbyid(id)
+    data = Store.FileHistoryRepository().getbyid(imageid)
     return jsonify({
         'id': data.id,
         'url': data.filepath.replace("\\", "/"),
         'md5': data.md5,
         'score': data.remark1,
         'tags': data.remark2
-    })
+    } if data else {})
 
 
 @APP.errorhandler(404)
