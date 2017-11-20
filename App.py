@@ -81,7 +81,7 @@ def main(argv):
                     configs = Core.ConfigBusiness.configsfrompaths(configpaths)
                     for item in configs:
                         #Core.ProcessBusiness.clearnew(item.key)
-                        Core.ProcessBusiness.newpardon(item.key)
+                        Core.ProcessBusiness.newpardon(item.key, 1)
                 else:
                     #Core.ProcessBusiness.clearnew(content)
                     Core.ProcessBusiness.newpardon(content)
