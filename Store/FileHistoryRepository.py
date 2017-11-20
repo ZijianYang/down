@@ -64,9 +64,14 @@ class FileHistoryRepository(RepositoryBase):
         entities = self.session.query(FileHistory).filter(
             FileHistory.remark1 >= score)
         if tag:
-            entities = entities.filter(FileHistory.remark2.like('%'+tag+'%'))  
+            entities = entities.filter(FileHistory.remark2.like('%'+tag+'%'))
         star = pageindex * pagesize
         end = (pageindex + 1) * pagesize
         total = entities.count()
         items = entities[star:end]
         return {"total": total, "list": items}
+
+    def getbyid(self, imageid):
+        """分页查询"""
+        entity = self.session.query(FileHistory).filter(FileHistory.id == imageid).first()
+        return entity

@@ -2,7 +2,6 @@
 {% block csses %}
 {% endblock %}
 {% block page_content %}
-<span>{{ name }}</span>
 <div id="images">
     <div>
         <label for="score"></label>
@@ -21,7 +20,7 @@
     </div>
     <div class="list">
         <div v-for="item in items">
-            <span v-on:click="gotodetail(item.id)" v-text="item.md5"></span>
+            {{item.md5}}
             <!--{{item.tags}}-->
             <!--img v-bind:src="item.url"/>-->
         </div>        
@@ -74,7 +73,7 @@
             },
             gotodetail(id){
                 //window.location.href=''
-                window.open("detail?id="+id+"&pageindex="+this.pageindex+"&score="+this.score+"$tag="+this.tag);
+                window.open("detail?pageindex="+this.pageindex+"&score="+this.score+"$tag="+this.tag);
             }
         },
         mounted: function () {
