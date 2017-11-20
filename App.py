@@ -84,7 +84,7 @@ def main(argv):
                         Core.ProcessBusiness.newpardon(item.key, 1)
                 else:
                     #Core.ProcessBusiness.clearnew(content)
-                    Core.ProcessBusiness.newpardon(content)
+                    Core.ProcessBusiness.newpardon(content, 1)
             sys.exit(0)
         elif opt in ('--history', ):
             if arg == "detail":
