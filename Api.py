@@ -33,7 +33,7 @@ def images(pageindex):
     #print(ClassToDict.todict(data["list"][0]))
     return jsonify({
         'list': [{
-            'filepath': item.filepath.replace("\\", "/"),
+            'url': item.filepath.replace("\\", "/"),
             'md5': item.md5,
             'score': item.remark1,
             'tags': item.remark2
