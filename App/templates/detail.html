@@ -3,7 +3,8 @@
 {% endblock %}
 {% block page_content %}
 <div id="image">
-    {{image.md5}}
+    <!-- {{image.md5}} -->
+    <img v-bind:src="image.url"/>
 </div>
 {% endblock %}
 {% block scripts %}

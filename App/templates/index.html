@@ -1,5 +1,16 @@
 {% extends "base.html" %}
 {% block csses %}
+<style>
+    .list > div{
+        width:25%;
+        min-width: 100px;
+        float: left;
+    }
+
+    .list > div img{
+        width:100%;
+    }
+</style>
 {% endblock %}
 {% block page_content %}
 <span>{{ name }}</span>
@@ -20,10 +31,10 @@
         <!-- <button type="button" v-on:click="get(false)">继续</button> -->
     </div>
     <div class="list">
-        <div v-for="item in items">
-            <span v-on:click="gotodetail(item.id)" v-text="item.md5"></span>
+        <div v-for="item in items"  v-on:click="gotodetail(item.id)">
+            <span v-text="item.md5"></span>
             <!--{{item.tags}}-->
-            <!--img v-bind:src="item.url"/>-->
+            <img v-bind:src="item.url"/>
         </div>        
     </div>
 </div>
@@ -49,8 +60,7 @@
                 }
                 if(!isend){
                     this.pageindex = this.pageindex + 1;
-                    if(($(document).height()) <= $(window).height())
-                        this.get(false);
+                    this.getbychange(false);
                 };
             },
             paramesdata() {
@@ -71,8 +81,16 @@
                     })
                     .catch(function (error) {
                         console.log(error);
-                    });
-                
+                    });                
+            },
+            getbychange(){
+                //滚动条所在位置的高度
+                totalheight = parseFloat($(window).height()) + parseFloat($(window).scrollTop());
+                //当前文档高度   小于或等于   滚动条所在位置高度  则是页面底部
+                if(($(document).height()) <= totalheight+10) {
+                    //页面到达底部
+                    this.get(false)
+                } 
             },
             gotodetail(id){
                 //window.location.href=''
@@ -83,16 +101,10 @@
             this.get()    
             self = this;        
             $(window).scroll(function(){
-                //滚动条所在位置的高度
-                totalheight = parseFloat($(window).height()) + parseFloat($(window).scrollTop());
-                //当前文档高度   小于或等于   滚动条所在位置高度  则是页面底部
-                if(($(document).height()) <= totalheight) {
-                    //页面到达底部
-                    self.get(false)
-                } 
+                self.getbychange()
             });
             window.onresize = function(){
-                self.get(false)
+                self.getbychange()
             }
         },   
     })
