@@ -16,7 +16,7 @@
         min-width: 800px;
     }
 
-    .box {
+    .waterwall .box {
         padding: 3px;
         /* border: solid 2px #eeeeee; */
         /* border-radius: 4px; */
@@ -24,14 +24,19 @@
         cursor: pointer;
     }
 
-    .box img {
+    .waterwall .box img {
         width: 100%;
+    }
+
+    .select{
+        margin:5px 5px 0px 15px;
+        position: absolute;
     }
 </style>
 {% endblock %} {% block page_content %}
 <span style="display:none;">{{ name }}</span>
 <div id="images">
-    <div style="margin:5px 5px 0px 15px;">
+    <div class="select">
         <template v-if="isshowselect">
             <div>
                 <label for="score"></label>
