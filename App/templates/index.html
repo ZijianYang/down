@@ -32,21 +32,24 @@
 <span style="display:none;">{{ name }}</span>
 <div id="images">
     <div style="margin:5px 5px 0px 15px;">
-        <div>
-            <label for="score"></label>
-            <select v-model="score">
-                <option>0</option>
-                <option>19</option>
-                <option>49</option>
-                <option>99</option>
-            </select>
-            <label for="tag"></label>
-            <input name="tag" type="text" v-model="tag" />
-            <button type="button" v-on:click="get()">查询</button>
-        </div>
-        <div>
+        <template v-if="isshowselect">
+            <div>
+                <label for="score"></label>
+                <select v-model="score">
+                    <option>0</option>
+                    <option>19</option>
+                    <option>49</option>
+                    <option>99</option>
+                </select>
+                <label for="tag"></label>
+                <input name="tag" type="text" v-model="tag" />
+                <button type="button" v-on:click="get()">查询</button>
+            </div>
+        </template>
+        <template v-else>
             <span v-text="'共:'+total"></span>
-        </div>
+            <button type="button" v-on:click="showselect()">查询</button>
+        </template>
     </div>
     <div class="waterwall">
         <div class="box">
@@ -64,10 +67,13 @@
         data: {
             items: [],
             total: '',
+
             pagesize: 10,
             pageindex: 1,
             score: 0,
             tag: '',
+
+            isshowselect: false,
         },
         computed: {
             paramesdata: function () {
@@ -75,6 +81,9 @@
             }
         },
         methods: {
+            showselect() {
+                this.isshowselect = true;
+            },
             additems(newlist) {
                 this.isend = newlist.length == 0;
                 for (var i = 0; i < newlist.length; i++) {
@@ -87,6 +96,7 @@
                 };
             },
             get(isfirst = true) {
+                this.isshowselect = false;
                 if (isfirst) {
                     this.items = [];
                     this.pageindex = 1;
@@ -120,7 +130,7 @@
             gotodetail(id) {
                 //window.location.href=''
                 window.open("detail?id=" + id + "&pageindex=" + this.pageindex + "&score=" + this.score + "$tag=" + this.tag);
-            }
+            },
         },
         mounted: function () {
             this.get()
