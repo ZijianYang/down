@@ -137,8 +137,12 @@
                             this.items4.push(newlist[i]);
                             break;
                     }
-                    this.itemindex=this.itemindex+1;
-                }
+                    Vue.nextTick(function(){
+                        // alert(images.items1.length);
+                       
+                    })
+                    this.itemindex=this.itemindex+1;                    
+                }                            
                 if (!this.isend) {
                     this.getbychange();
                 };
@@ -190,9 +194,5 @@
                 self.getbychange()
             }
         },
-    })
-
-    Vue.nextTick(function(){
-
     })
 </script> {% endblock %}
