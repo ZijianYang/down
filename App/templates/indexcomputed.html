@@ -87,7 +87,6 @@
             items3: [],
             items4: [],            
             total: '',
-            columnindex:1,
 
             pagesize: 1,
             pageindex: 1,
@@ -115,14 +114,14 @@
                         minheight=currentheight;
                     }
                 }
-                this.columnindex= mincolumnindex;
+                return mincolumnindex;
             },       
             additems(newlist) {
                 this.isend = newlist.length == 0;
                 for (var i = 0; i < newlist.length; i++) {                    
                     newlist[i].pageindex = this.pageindex;
                     newlist[i].title = "scroe:" + newlist[i].score + ";tags:" + newlist[i].tags;                    
-                    switch(this.columnindex){
+                    switch(this.mincolumnindex()){
                         case 1:                        
                             this.items1.push(newlist[i]);
                             break;
@@ -135,10 +134,7 @@
                         case 4:                        
                             this.items4.push(newlist[i]);
                             break;
-                    }    
-                    Vue.nextTick(function(){
-                        images.mincolumnindex();                       
-                    })                                  
+                    }                                  
                 }                            
                 if (!this.isend) {
                     this.getbychange();
