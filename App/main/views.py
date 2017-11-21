@@ -9,12 +9,12 @@ def index():
     return render_template('index.html', name='test')
 
 @main.route('/fix')
-def indexfixcolumn():
+def indexfix():
     """首页"""
     return render_template('indexfix.html', name='test')
 
 @main.route('/computed')
-def indexfixcolumn():
+def indexcomputed():
     """首页"""
     return render_template('indexcomputed.html', name='test')
 
