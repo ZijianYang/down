@@ -1,21 +1,34 @@
-{% extends "base.html" %}
-{% block csses %}
+{% extends "base.html" %} {% block csses %}
 <style>
-    .list > div{
-        padding:3px;
-        width:24%;
-        height: 400px;
-        min-width: 200px;
-        float: left;
+    * {
+        padding: 0;
+        margin: 0;
     }
 
-    .list > div img{
-        width:100%;
-        /* height: 100%; */
+    .waterwall {
+        -webkit-column-count: 4;
+        -moz-column-count: 4;
+        column-count: 4;
+        -moz-column-gap: 5px;
+        -webkit-column-gap: 5px;
+        column-gap: 5px;
+        padding: 5px;
+        min-width: 800px;
+    }
+
+    .box {
+        padding: 3px;
+        /* border: solid 2px #eeeeee; */
+        /* border-radius: 4px; */
+        /* margin-bottom: 15px; */
+        cursor: pointer;
+    }
+
+    .box img {
+        width: 100%;
     }
 </style>
-{% endblock %}
-{% block page_content %}
+{% endblock %} {% block page_content %}
 <span>{{ name }}</span>
 <div id="images">
     <div>
@@ -31,16 +44,17 @@
     </div>
     <div>
         <span v-text="total"></span>
-        <!-- <button type="button" v-on:click="get(false)">继续</button> -->
     </div>
-    <div class="list">
-        <div v-for="item in items"  v-on:click="gotodetail(item.id)">
-            <img v-bind:src="item.url" v-bind:title="item.title"/>
-        </div>        
+    <div class="waterwall">
+        <div class="box" >
+            <div v-for="item in items" v-on:click="gotodetail(item.id)">
+                <!-- <img v-bind:src="item.url" v-bind:title="item.title"/> -->
+                {{item.md5}}
+            </div>
+        </div>
     </div>
 </div>
-{% endblock %}
-{% block scripts %}
+{% endblock %} {% block scripts %}
 <script>
     var images = new Vue({
         el: '#images',
@@ -59,159 +73,61 @@
         },
         methods: {
             additems(newlist) {
-                this.isend = newlist.length==0;
+                this.isend = newlist.length == 0;
                 for (var i = 0; i < newlist.length; i++) {
-                    newlist[i].pageindex=this.pageindex;
-                    newlist[i].title="scroe:"+newlist[i].score+";tags:"+newlist[i].tags;
+                    newlist[i].pageindex = this.pageindex;
+                    newlist[i].title = "scroe:" + newlist[i].score + ";tags:" + newlist[i].tags;
                     this.items.push(newlist[i]);
                 }
-                if(!this.isend){                    
+                if (!this.isend) {
                     this.getbychange(false);
                 };
             },
-            get(isfirst=true) {
-                if(isfirst){
+            get(isfirst = true) {
+                if (isfirst) {
                     this.items = [];
                     this.pageindex = 1;
                 }
-                else{
+                else {
                     this.pageindex = this.pageindex + 1;
-                    if(this.isend)
+                    if (this.isend)
                         return;
                 }
                 axios.get('/api/images/' + this.pageindex, this.paramesdata)
                     .then((response) => {
                         console.log(response);
-                        if(response.status=200){
+                        if (response.status = 200) {
                             this.total = response.data.count;
                             this.additems(response.data.list);
                         }
                     })
                     .catch(function (error) {
                         console.log(error);
-                    });                
+                    });
             },
-            getbychange(){
+            getbychange() {
                 //滚动条所在位置的高度
                 totalheight = parseFloat($(window).height()) + parseFloat($(window).scrollTop());
                 //当前文档高度   小于或等于   滚动条所在位置高度  则是页面底部
-                if(($(document).height()) <= totalheight+10) {
+                if (($(document).height()) <= totalheight + 10) {
                     //页面到达底部
                     this.get(false)
-                } 
+                }
             },
-            gotodetail(id){
+            gotodetail(id) {
                 //window.location.href=''
-                window.open("detail?id="+id+"&pageindex="+this.pageindex+"&score="+this.score+"$tag="+this.tag);
+                window.open("detail?id=" + id + "&pageindex=" + this.pageindex + "&score=" + this.score + "$tag=" + this.tag);
             }
         },
         mounted: function () {
-            this.get()    
-            self = this;        
-            $(window).scroll(function(){
+            this.get()
+            self = this;
+            $(window).scroll(function () {
                 self.getbychange()
             });
-            window.onresize = function(){
+            window.onresize = function () {
                 self.getbychange()
             }
-        },   
-    })
-</script> 
-{% endblock %}
-
-
-
-<!-- <!DOCTYPE html>
-<html>
-
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>resources</title>
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-    <script src="https://cdn.bootcss.com/axios/0.17.1/axios.js" /></script>
-    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
-    <style>
-        * {
-            padding: 0;
-            margin: 0;
-          }
-          #waterwall {
-            -webkit-column-count: 4;
-            -moz-column-count: 4;
-            column-count: 4;
-            -moz-column-gap:5px;
-            -webkit-column-gap:5px;
-            column-gap:5px;
-            padding: 5px;
-            min-width: 800px;
-          }
-          .box {
-            padding: 3px;
-            /* border: solid 2px #eeeeee; */
-            /* border-radius: 4px; */
-            /* margin-bottom: 15px; */
-            cursor: pointer;
-          }
-          .box img {
-            width: 100%;
-          }
-    </style>
-</head>
-
-<body>
-    <div id="waterwall">
-        <div class="box">
-            <div v-for="item in items">
-                <img v-bind:src="item.url" />
-                adsfasdfsdf
-            </div>
-        </div>
-    </div>
-</body>
-<script>
-    var waterwall = new Vue({
-        el: '#waterwall',
-        data: {
-            items: [
-                { url: "./results/0.jpg" },
-                { url: "./results/2.jpg" },
-                { url: "./results/3.jpg" },
-                { url: "./results/4.jpg" },
-                { url: "./results/5.jpg" },
-                { url: "./results/6.jpg" },
-                { url: "./results/7.jpg" },
-                { url: "./results/8.jpg" },
-                { url: "./results/9.jpg" },
-                { url: "./results/10.jpg" },
-                { url: "./results/11.jpg" },
-                { url: "./results/12.jpg" },
-                { url: "./results/13.jpg" },
-                { url: "./results/14.jpeg" },
-                { url: "./results/15.jpg" },
-                { url: "./results/16.jpeg" },
-                { url: "./results/17.png" },
-                { url: "./results/18.jpg" },
-                { url: "./results/19.jpg" },
-                { url: "./results/20.jpg" },
-                { url: "./results/21.jpg" },
-                { url: "./results/22.jpg" },
-                { url: "./results/23.jpg" },
-                { url: "./results/24.jpg" },
-                { url: "./results/25.jpg" },
-                { url: "./results/26.jpg" },
-                { url: "./results/27.jpg" },
-                { url: "./results/28.jpg" },
-                { url: "./results/29.jpg" },
-                { url: "./results/30.jpg" },
-                { url: "./results/31.jpg" },
-                { url: "./results/32.jpg" },
-                { url: "./results/33.jpg" },
-                { url: "./results/34.jpg" },
-                { url: "./results/35.jpg" },
-                { url: "./results/36.jpg" },
-            ],
         },
     })
-</script>
-
-</html> -->
+</script> {% endblock %}
