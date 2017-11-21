@@ -7,6 +7,7 @@ def images(pageindex):
     """查询"""
     args = request.args
     tag = args.get("tag", None, type=str)
+    tag = tag.split(" ")
     pagesize = args.get("pagesize", 10, type=int)
     score = args.get("score", 0, type=int)
     pageindex = pageindex-1
