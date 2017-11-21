@@ -159,8 +159,7 @@
                         console.log(response);
                         if (response.status = 200) {
                             this.total = response.data.count;
-                            this.items = response.data.list;
-                            // this.additems(response.data.list);
+                            this.additems(response.data.list);
                         }
                     })
                     .catch(function (error) {
