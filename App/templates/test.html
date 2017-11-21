@@ -89,7 +89,7 @@
             total: '',
             columnindex:1,
 
-            pagesize: 1,
+            pagesize: 10,
             pageindex: 1,
             score: 0,
             tag: '',
@@ -137,7 +137,9 @@
                             break;
                     }    
                     Vue.nextTick(function(){
-                        images.mincolumnindex();                       
+                        images.mincolumnindex();
+                        // alert(images.items1.length);
+                       
                     })                                  
                 }                            
                 if (!this.isend) {

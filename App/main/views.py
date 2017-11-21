@@ -18,6 +18,11 @@ def indexcomputed():
     """首页"""
     return render_template('indexcomputed.html', name='test')
 
+@main.route('/test')
+def test():
+    """首页"""
+    return render_template('test.html', name='test')
+
 
 @main.route('/detail')
 def detail():
