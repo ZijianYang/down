@@ -29,24 +29,27 @@
     }
 </style>
 {% endblock %} {% block page_content %}
-<span>{{ name }}</span>
+<span style="display:none;">{{ name }}</span>
 <div id="images">
-    <div>
-        <label for="score"></label>
-        <select v-model="score">
-            <option>0</option>
-            <option>10</option>
-            <option>50</option>
-        </select>
-        <label for="tag"></label>
-        <input name="tag" type="text" v-model="tag" />
-        <button type="button" v-on:click="get()">查询</button>
-    </div>
-    <div>
-        <span v-text="total"></span>
+    <div style="margin:5px 5px 0px 15px;">
+        <div>
+            <label for="score"></label>
+            <select v-model="score">
+                <option>0</option>
+                <option>19</option>
+                <option>49</option>
+                <option>99</option>
+            </select>
+            <label for="tag"></label>
+            <input name="tag" type="text" v-model="tag" />
+            <button type="button" v-on:click="get()">查询</button>
+        </div>
+        <div>
+            <span v-text="'共:'+total"></span>
+        </div>
     </div>
     <div class="waterwall">
-        <div class="box" >
+        <div class="box">
             <div v-for="item in items" v-on:click="gotodetail(item.id)">
                 <!-- <img v-bind:src="item.url" v-bind:title="item.title"/> -->
                 {{item.md5}}
