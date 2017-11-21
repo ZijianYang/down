@@ -50,7 +50,7 @@
         </template>
     </div>
     <div class="waterwall">
-        <div class="box">
+        <div class="box" id="box1">
             <div v-for="item in items1" v-on:click="gotodetail(item.id)">
                 <img v-bind:src="item.url" v-bind:title="item.title"/>
                 <!-- {{item.md5}} -->
@@ -127,7 +127,7 @@
                     this.itemindex=this.itemindex+1;
                 }
                 if (!this.isend) {
-                    this.getbychange(false);
+                    this.getbychange();
                 };
             },
             get(isfirst = true) {
