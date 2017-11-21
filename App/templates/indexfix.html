@@ -6,21 +6,14 @@
     }
 
     .waterwall {
-        -webkit-column-count: 4;
-        -moz-column-count: 4;
-        column-count: 4;
-        -moz-column-gap: 5px;
-        -webkit-column-gap: 5px;
-        column-gap: 5px;
         padding: 15px 5px 0px 5px;
         min-width: 800px;
     }
 
     .waterwall .box {
+        width: 24%;
+        float: left;
         padding: 3px;
-        /* border: solid 2px #eeeeee; */
-        /* border-radius: 4px; */
-        /* margin-bottom: 15px; */
         cursor: pointer;
     }
 
@@ -58,7 +51,25 @@
     </div>
     <div class="waterwall">
         <div class="box">
-            <div v-for="item in items" v-on:click="gotodetail(item.id)">
+            <div v-for="item in items1" v-on:click="gotodetail(item.id)">
+                <img v-bind:src="item.url" v-bind:title="item.title"/>
+                <!-- {{item.md5}} -->
+            </div>
+        </div>
+        <div class="box">
+            <div v-for="item in items2" v-on:click="gotodetail(item.id)">
+                <img v-bind:src="item.url" v-bind:title="item.title"/>
+                <!-- {{item.md5}} -->
+            </div>
+        </div>
+        <div class="box">
+            <div v-for="item in items3" v-on:click="gotodetail(item.id)">
+                <img v-bind:src="item.url" v-bind:title="item.title"/>
+                <!-- {{item.md5}} -->
+            </div>
+        </div>
+        <div class="box">
+            <div v-for="item in items4" v-on:click="gotodetail(item.id)">
                 <img v-bind:src="item.url" v-bind:title="item.title"/>
                 <!-- {{item.md5}} -->
             </div>
@@ -70,8 +81,12 @@
     var images = new Vue({
         el: '#images',
         data: {
-            items: [],
+            items1: [],
+            items2: [],
+            items3: [],
+            items4: [],            
             total: '',
+            itemindex:0,
 
             pagesize: 10,
             pageindex: 1,
@@ -91,10 +106,25 @@
             },
             additems(newlist) {
                 this.isend = newlist.length == 0;
-                for (var i = 0; i < newlist.length; i++) {
+                for (var i = 0; i < newlist.length; i++) {                    
                     newlist[i].pageindex = this.pageindex;
                     newlist[i].title = "scroe:" + newlist[i].score + ";tags:" + newlist[i].tags;
-                    this.items.push(newlist[i]);
+                    var columnindex=(this.itemindex+1)%4+1;
+                    switch(columnindex){
+                        case 1:                        
+                            this.items1.push(newlist[i]);
+                            break;
+                        case 2:                        
+                            this.items2.push(newlist[i]);
+                            break;
+                        case 3:                        
+                            this.items3.push(newlist[i]);
+                            break;
+                        case 4:                        
+                            this.items4.push(newlist[i]);
+                            break;
+                    }
+                    this.itemindex=this.itemindex+1;
                 }
                 if (!this.isend) {
                     this.getbychange(false);
