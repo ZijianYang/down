@@ -53,25 +53,25 @@
         <div class="box" id="box1">
             <div v-for="item in items1" v-on:click="gotodetail(item.detailurl)">
                 {{item.md5}}
-                <img v-bind:src="item.url" v-bind:title="item.title" />
+                <!-- <img v-bind:src="item.url" v-bind:title="item.title" /> -->
             </div>
         </div>
         <div class="box">
             <div v-for="item in items2" v-on:click="gotodetail(item.detailurl)">
                 {{item.md5}}
-                <img v-bind:src="item.url" v-bind:title="item.title" />
+                <!-- <img v-bind:src="item.url" v-bind:title="item.title" /> -->
             </div>
         </div>
         <div class="box">
             <div v-for="item in items3" v-on:click="gotodetail(item.detailurl)">
                 {{item.md5}}
-                <img v-bind:src="item.url" v-bind:title="item.title" />
+                <!-- <img v-bind:src="item.url" v-bind:title="item.title" /> -->
             </div>
         </div>
         <div class="box">
             <div v-for="item in items4" v-on:click="gotodetail(item.detailurl)">
                 {{item.md5}}
-                <img v-bind:src="item.url" v-bind:title="item.title" />
+                <!-- <img v-bind:src="item.url" v-bind:title="item.title" /> -->
             </div>
         </div>
     </div>
@@ -143,7 +143,6 @@
         el: '#images',
         store,
         data: {
-            items: [],
             items1: [],
             items2: [],
             items3: [],
