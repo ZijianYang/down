@@ -2,16 +2,16 @@ from flask import jsonify, request
 from . import api
 import Store
 
-@api.route('/images/<int:pageindex>', methods=['GET', 'POST'])
-def images(pageindex):
+@api.route('/images/<int:pagenumber>', methods=['GET', 'POST'])
+def images(pagenumber):
     """查询"""
     args = request.args
     tag = args.get("tag", None, type=str)
     tag = tag.split(" ")
     pagesize = args.get("pagesize", 10, type=int)
     score = args.get("score", 0, type=int)
-    pageindex = pageindex-1
-    print('1：%s;2：%s;3：%s;4：%s;' % (score, tag, pagesize, pageindex))
+    pageindex = pagenumber-1
+    print('score：%s;tag：%s;pagesize：%s;pageindex：%s;' % (score, tag, pagesize, pageindex))
     data = Store.FileHistoryRepository().getspage(score, tag, pageindex,
                                                   pagesize)
     #print(ClassToDict.todict(data["list"][0]))

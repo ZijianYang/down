@@ -88,3 +88,4 @@ var VueExtend = {
 }
 
 Vue.use(VueExtend)
+Vue.use(Vuex)

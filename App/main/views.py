@@ -3,7 +3,7 @@ from . import main
 
 
 
-@main.route('/')
+@main.route('/index')
 def index():
     """首页"""
     return render_template('index.html', name='test')
@@ -18,7 +18,7 @@ def indexcomputed():
     """首页"""
     return render_template('indexcomputed.html', name='test')
 
-@main.route('/test')
+@main.route('/')
 def test():
     """首页"""
     return render_template('test.html', name='test')
