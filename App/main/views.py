@@ -16,6 +16,11 @@ def indexfix():
 @main.route('/computed')
 def indexcomputed():
     """首页"""
+    return render_template('indexcomputed.html', name='test')
+
+@main.route('/css')
+def indexcss():
+    """首页"""
     return render_template('indexcss.html', name='test')
 
 @main.route('/test')
