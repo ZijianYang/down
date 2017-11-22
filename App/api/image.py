@@ -16,14 +16,14 @@ def images(pagenumber):
                                                   pagesize)
     #print(ClassToDict.todict(data["list"][0]))
     return jsonify({
-        'list': [{
+        'items': [{
             'id': item.id,
             'url': item.filepath.replace("\\", "/"),
             'md5': item.md5,
             'score': item.remark1,
             'tags': item.remark2
         } for item in data["list"]],
-        'count':
+        'total':
         data["total"]
     })
 
