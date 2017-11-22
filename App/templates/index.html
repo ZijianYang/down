@@ -51,22 +51,22 @@
     </div>
     <div class="waterwall">
         <div class="box" id="box1">
-            <div v-for="item in items1" v-on:click="gotodetail(item.id)">
+            <div v-for="item in items1" v-on:click="gotodetail(item.detailurl)">
                 {{item.md5}}
             </div>
         </div>
         <div class="box">
-            <div v-for="item in items2" v-on:click="gotodetail(item.id)">
+            <div v-for="item in items2" v-on:click="gotodetail(item.detailurl)">
                 {{item.md5}}
             </div>
         </div>
         <div class="box">
-            <div v-for="item in items3" v-on:click="gotodetail(item.id)">
+            <div v-for="item in items3" v-on:click="gotodetail(item.detailurl)">
                 {{item.md5}}
             </div>
         </div>
         <div class="box">
-            <div v-for="item in items4" v-on:click="gotodetail(item.id)">
+            <div v-for="item in items4" v-on:click="gotodetail(item.detailurl)">
                 {{item.md5}}
             </div>
         </div>
@@ -108,6 +108,7 @@
                                 if(list.length>0){
                                     for (var i = 0; i < list.length; i++) {
                                         list[i].title = "scroe:" + list[i].score + ";tags:" + list[i].tags;
+                                        list[i].detailurl ="detail?id=" + list[i].id + "&pageindex=" + pagenumber + "&score=" + obj.score + "$tag=" + obj.tag;
                                         state.imagedata.items.push(list[i]);
                                     }                                     
                                     state.imagedata.currentindex=currentindex+1;    
@@ -211,9 +212,9 @@
                     this.get(false)
                 }
             },
-            gotodetail(id) {
+            gotodetail(url) {
                 //window.location.href=''
-                window.open("detail?id=" + id + "&pageindex=" + this.pageindex + "&score=" + this.score + "$tag=" + this.tag);
+                window.open(url);
             },
         },
         mounted: function () {
