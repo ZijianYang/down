@@ -6,21 +6,14 @@
     }
 
     .waterwall {
-        -webkit-column-count: 4;
-        -moz-column-count: 4;
-        column-count: 4;
-        -moz-column-gap: 5px;
-        -webkit-column-gap: 5px;
-        column-gap: 5px;
         padding: 15px 5px 0px 5px;
         min-width: 800px;
     }
 
     .waterwall .box {
+        width: 24%;
+        float: left;
         padding: 3px;
-        /* border: solid 2px #eeeeee; */
-        /* border-radius: 4px; */
-        /* margin-bottom: 15px; */
         cursor: pointer;
     }
 
@@ -28,8 +21,8 @@
         width: 100%;
     }
 
-    .select{
-        margin:5px 5px 0px 15px;
+    .select {
+        margin: 5px 5px 0px 15px;
         position: fixed;
     }
 </style>
@@ -57,71 +50,157 @@
         </template>
     </div>
     <div class="waterwall">
+        <div class="box" id="box1">
+            <div v-for="item in items1" v-on:click="gotodetail(item.id)">
+                {{item.md5}}
+            </div>
+        </div>
         <div class="box">
-            <div v-for="item in items" v-on:click="gotodetail(item.id)">
-                <img v-bind:src="item.url" v-bind:title="item.title"/>
-                <!-- {{item.md5}} -->
+            <div v-for="item in items2" v-on:click="gotodetail(item.id)">
+                {{item.md5}}
+            </div>
+        </div>
+        <div class="box">
+            <div v-for="item in items3" v-on:click="gotodetail(item.id)">
+                {{item.md5}}
+            </div>
+        </div>
+        <div class="box">
+            <div v-for="item in items4" v-on:click="gotodetail(item.id)">
+                {{item.md5}}
             </div>
         </div>
     </div>
 </div>
 {% endblock %} {% block scripts %}
 <script>
+    const store = new Vuex.Store({
+        state: {
+            imagedata: {
+                items:[],
+                total:0,
+                currentindex:-1,                
+                isend:0,
+                pageindex:0,
+                pagesize:20,
+            }
+        },
+        getters: {
+            imagecurrentindex: state => {
+                return state.imagedata.items.currentindex;
+            }
+        },
+        mutations: {
+            imagenext(state,obj){
+                var items=state.imagedata.items; 
+                var currentindex=state.imagedata.currentindex; 
+                var isend=state.imagedata.isend; 
+                if(currentindex+1>items.length&&!isend){
+                    var pagenumber=state.imagedata.pageindex+1;
+                    var pagesize=state.imagedata.pagesize;
+                    var paramesdata={ params: { score: obj.score, tag: obj.tag ,pagesize: pagesize} }
+                    axios.get('/api/images/' + pagenumber, paramesdata)
+                        .then((response) => {
+                            console.log(response);
+                            if (response.status = 200) {
+                                state.imagedata.total = response.data.total;
+                                var list=response.data.items;
+                                if(list.length>0){
+                                    for (var i = 0; i < list.length; i++) {
+                                        list[i].title = "scroe:" + list[i].score + ";tags:" + list[i].tags;
+                                        state.imagedata.items.push(list[i]);
+                                    }                                     
+                                    state.imagedata.currentindex=currentindex+1;    
+                                    state.imagedata.pageindex=pagenumber;  
+                                }
+                                else{
+                                    state.imagedata.isend=true;
+                                }
+                            }
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+                }
+                else{
+                    state.imagedata.currentindex=currentindex+1;
+                }
+            },
+        },
+        actions: {
+            imagenext (context,obj) {
+                context.commit('imagenext',obj)
+            }
+        }
+    })
+
     var images = new Vue({
         el: '#images',
+        store,
         data: {
             items: [],
-            total: '',
-
-            pagesize: 10,
-            pageindex: 1,
+            items1: [],
+            items2: [],
+            items3: [],
+            items4: [],
             score: 0,
             tag: '',
-
             isshowselect: false,
         },
         computed: {
-            paramesdata: function () {
-                return { params: { score: this.score, tag: this.tag } }
+            imagecurrentindex:function(){
+                return store.state.imagedata.currentindex;
+            },
+            total:function() {
+                return store.state.imagedata.total;
+            }
+        },
+        watch: {
+            imagecurrentindex() {                
+                var image=store.state.imagedata.items[this.imagecurrentindex];
+                if(image!=undefined)
+                    this.addimage(image);
+                Vue.nextTick(function(){
+                    images.getbychange();  
+                }); 
             }
         },
         methods: {
             showselect() {
                 this.isshowselect = true;
             },
-            additems(newlist) {
-                this.isend = newlist.length == 0;
-                for (var i = 0; i < newlist.length; i++) {
-                    newlist[i].pageindex = this.pageindex;
-                    newlist[i].title = "scroe:" + newlist[i].score + ";tags:" + newlist[i].tags;
-                    this.items.push(newlist[i]);
-                }
-                if (!this.isend) {
-                    this.getbychange();
-                };
+            addimage(image) {  
+                var mincolumnindex = 1;
+                var minheight = $($('.box')[0]).height();
+                for (var i = 1; i <= 4; i++) {
+                    var currentheight = $($('.box')[i]).height();
+                    if (minheight > currentheight) {
+                        mincolumnindex = i + 1;
+                        minheight = currentheight;
+                    }
+                }    
+                switch (mincolumnindex) {
+                    case 1:
+                        this.items1.push(image);
+                        break;
+                    case 2:
+                        this.items2.push(image);
+                        break;
+                    case 3:
+                        this.items3.push(image);
+                        break;
+                    case 4:
+                        this.items4.push(image);
+                        break;
+                }             
             },
             get(isfirst = true) {
                 this.isshowselect = false;
                 if (isfirst) {
-                    this.items = [];
-                    this.pageindex = 1;
+                    this.items1 = []; this.items2 = []; this.items3 = []; this.items4 = [];
                 }
-                else {
-                    this.pageindex = this.pageindex + 1;
-                    if (this.isend)
-                        return;
-                }
-                axios.get('/api/images/' + this.pageindex, this.paramesdata)
-                    .then((response) => {
-                        console.log(response);
-                        if (response.status = 200) {
-                            this.total = response.data.total;
-                            this.additems(response.data.items);
-                        }
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+                // 以载荷形式分发
+                store.dispatch('imagenext',{tag:this.tag,score:this.score})
             },
             getbychange() {
                 //滚动条所在位置的高度
