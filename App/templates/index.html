@@ -53,21 +53,25 @@
         <div class="box" id="box1">
             <div v-for="item in items1" v-on:click="gotodetail(item.detailurl)">
                 {{item.md5}}
+                <img v-bind:src="item.url" v-bind:title="item.title" />
             </div>
         </div>
         <div class="box">
             <div v-for="item in items2" v-on:click="gotodetail(item.detailurl)">
                 {{item.md5}}
+                <img v-bind:src="item.url" v-bind:title="item.title" />
             </div>
         </div>
         <div class="box">
             <div v-for="item in items3" v-on:click="gotodetail(item.detailurl)">
                 {{item.md5}}
+                <img v-bind:src="item.url" v-bind:title="item.title" />
             </div>
         </div>
         <div class="box">
             <div v-for="item in items4" v-on:click="gotodetail(item.detailurl)">
                 {{item.md5}}
+                <img v-bind:src="item.url" v-bind:title="item.title" />
             </div>
         </div>
     </div>
@@ -77,12 +81,12 @@
     const store = new Vuex.Store({
         state: {
             imagedata: {
-                items:[],
-                total:0,
-                currentindex:-1,                
-                isend:0,
-                pageindex:0,
-                pagesize:20,
+                items: [],
+                total: 0,
+                currentindex: -1,
+                isend: 0,
+                pageindex: 0,
+                pagesize: 20,
             }
         },
         getters: {
@@ -91,31 +95,31 @@
             }
         },
         mutations: {
-            imagenext(state,obj){
-                var items=state.imagedata.items; 
-                var currentindex=state.imagedata.currentindex; 
-                var isend=state.imagedata.isend; 
-                if(currentindex+1>items.length&&!isend){
-                    var pagenumber=state.imagedata.pageindex+1;
-                    var pagesize=state.imagedata.pagesize;
-                    var paramesdata={ params: { score: obj.score, tag: obj.tag ,pagesize: pagesize} }
+            imagenext(state, obj) {
+                var items = state.imagedata.items;
+                var currentindex = state.imagedata.currentindex;
+                var isend = state.imagedata.isend;
+                if (currentindex + 1 > items.length && !isend) {
+                    var pagenumber = state.imagedata.pageindex + 1;
+                    var pagesize = state.imagedata.pagesize;
+                    var paramesdata = { params: { score: obj.score, tag: obj.tag, pagesize: pagesize } }
                     axios.get('/api/images/' + pagenumber, paramesdata)
                         .then((response) => {
                             console.log(response);
                             if (response.status = 200) {
                                 state.imagedata.total = response.data.total;
-                                var list=response.data.items;
-                                if(list.length>0){
+                                var list = response.data.items;
+                                if (list.length > 0) {
                                     for (var i = 0; i < list.length; i++) {
                                         list[i].title = "scroe:" + list[i].score + ";tags:" + list[i].tags;
-                                        list[i].detailurl ="detail?id=" + list[i].id + "&pageindex=" + pagenumber + "&score=" + obj.score + "$tag=" + obj.tag;
+                                        list[i].detailurl = "detail?id=" + list[i].id + "&pageindex=" + pagenumber + "&score=" + obj.score + "$tag=" + obj.tag;
                                         state.imagedata.items.push(list[i]);
-                                    }                                     
-                                    state.imagedata.currentindex=currentindex+1;    
-                                    state.imagedata.pageindex=pagenumber;  
+                                    }
+                                    state.imagedata.currentindex = currentindex + 1;
+                                    state.imagedata.pageindex = pagenumber;
                                 }
-                                else{
-                                    state.imagedata.isend=true;
+                                else {
+                                    state.imagedata.isend = true;
                                 }
                             }
                         })
@@ -123,14 +127,14 @@
                             console.log(error);
                         });
                 }
-                else{
-                    state.imagedata.currentindex=currentindex+1;
+                else {
+                    state.imagedata.currentindex = currentindex + 1;
                 }
             },
         },
         actions: {
-            imagenext (context,obj) {
-                context.commit('imagenext',obj)
+            imagenext(context, obj) {
+                context.commit('imagenext', obj)
             }
         }
     })
@@ -149,28 +153,28 @@
             isshowselect: false,
         },
         computed: {
-            imagecurrentindex:function(){
+            imagecurrentindex: function () {
                 return store.state.imagedata.currentindex;
             },
-            total:function() {
+            total: function () {
                 return store.state.imagedata.total;
             }
         },
         watch: {
-            imagecurrentindex() {                
-                var image=store.state.imagedata.items[this.imagecurrentindex];
-                if(image!=undefined)
+            imagecurrentindex() {
+                var image = store.state.imagedata.items[this.imagecurrentindex];
+                if (image != undefined)
                     this.addimage(image);
-                Vue.nextTick(function(){
-                    images.getbychange();  
-                }); 
+                Vue.nextTick(function () {
+                    images.getbychange();
+                });
             }
         },
         methods: {
             showselect() {
                 this.isshowselect = true;
             },
-            addimage(image) {  
+            addimage(image) {
                 var mincolumnindex = 1;
                 var minheight = $($('.box')[0]).height();
                 for (var i = 1; i <= 4; i++) {
@@ -179,7 +183,7 @@
                         mincolumnindex = i + 1;
                         minheight = currentheight;
                     }
-                }    
+                }
                 switch (mincolumnindex) {
                     case 1:
                         this.items1.push(image);
@@ -193,7 +197,7 @@
                     case 4:
                         this.items4.push(image);
                         break;
-                }             
+                }
             },
             get(isfirst = true) {
                 this.isshowselect = false;
@@ -201,7 +205,7 @@
                     this.items1 = []; this.items2 = []; this.items3 = []; this.items4 = [];
                 }
                 // 以载荷形式分发
-                store.dispatch('imagenext',{tag:this.tag,score:this.score})
+                store.dispatch('imagenext', { tag: this.tag, score: this.score })
             },
             getbychange() {
                 //滚动条所在位置的高度
@@ -220,12 +224,13 @@
         mounted: function () {
             this.get()
             self = this;
-            $(window).scroll(function () {
-                self.getbychange()
-            });
-            window.onresize = function () {
-                self.getbychange()
-            }
+            // $(window).scroll(function () {
+            //     self.getbychange()
+            // });
+            $(window).scroll(Vue.Debounce(self.getbychange(), 2000, true));
+            // window.onresize = Vue.Debounce(function () {
+            //     self.getbychange()
+            // },2000)
         },
     })
 </script> {% endblock %}

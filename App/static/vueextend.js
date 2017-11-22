@@ -22,7 +22,7 @@ var VueExtend = {
             for (var k in date) {
                 if (new RegExp("(" + k + ")").test(format)) {
                     format = format.replace(RegExp.$1, RegExp.$1.length === 1
-                           ? date[k] : ("00" + date[k]).substr(("" + date[k]).length));
+                        ? date[k] : ("00" + date[k]).substr(("" + date[k]).length));
                 }
             }
             return format;
@@ -83,6 +83,22 @@ var VueExtend = {
                 return t.split("").reverse().join("");
             else
                 return t.split("").reverse().join("") + "." + r
+        }
+        Vue.Debounce = function (func, threshold, execAsap) {//debounce 接受 3 个参数，后两个可选；第一个是要 debounce 的函数， 第二个代表 debouce 的时间间隔，第三个在时间段的开始还是结束执行函数;
+            var timeout;
+            return function debounced() {
+                var obj = this, args = arguments;
+                function delayed() {
+                    if (!execAsap)
+                        func.apply(obj, args);
+                    timeout = null;
+                };
+                if (timeout)
+                    clearTimeout(timeout);
+                else if (execAsap)
+                    func.apply(obj, args);
+                timeout = setTimeout(delayed, threshold || 100);
+            };
         }
     }
 }
