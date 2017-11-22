@@ -128,7 +128,8 @@
                         });
                 }
                 else {
-                    state.imagedata.currentindex = currentindex + 1;
+                    if(!isend)
+                        state.imagedata.currentindex = currentindex + 1;
                 }
             },
         },
@@ -162,6 +163,7 @@
                 if (image != undefined)
                     this.addimage(image);
                 Vue.nextTick(function () {
+                    alert(store.state.imagedata.currentindex);
                     images.getbychange();
                 });
             }
@@ -211,10 +213,10 @@
             // $(window).scroll(function () {
             //     self.getbychange()
             // });
-            $(window).scroll(Vue.Debounce(self.getbychange(), 1000, true));
-            // window.onresize = Vue.Debounce(function () {
-            //     self.getbychange()
-            // },2000)
+            $(window).scroll(function(){Vue.Debounce(self.getbychange(), 1000, true)});
+            window.onresize = Vue.Debounce(function () {
+                self.getbychange()
+            },2000)
         },
     })
 </script> {% endblock %}
