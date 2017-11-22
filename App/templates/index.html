@@ -7,7 +7,7 @@
 
     .waterwall {
         padding: 15px 5px 0px 5px;
-        /* min-width: 800px; */
+        min-width: 800px;
     }
 
     .waterwall .box {
@@ -50,26 +50,26 @@
         </template>
     </div>
     <div class="waterwall">
-        <div class="box" id="box1">
-            <div v-for="item in items1" v-on:click="gotodetail(item.detailurl)">
+        <div class="box">
+            <div v-for="item in items[0]" v-on:click="gotodetail(item.detailurl)">
                 {{item.md5}}
                 <!-- <img v-bind:src="item.url" v-bind:title="item.title" /> -->
             </div>
         </div>
         <div class="box">
-            <div v-for="item in items2" v-on:click="gotodetail(item.detailurl)">
+            <div v-for="item in items[1]" v-on:click="gotodetail(item.detailurl)">
                 {{item.md5}}
                 <!-- <img v-bind:src="item.url" v-bind:title="item.title" /> -->
             </div>
         </div>
         <div class="box">
-            <div v-for="item in items3" v-on:click="gotodetail(item.detailurl)">
+            <div v-for="item in items[2]" v-on:click="gotodetail(item.detailurl)">
                 {{item.md5}}
                 <!-- <img v-bind:src="item.url" v-bind:title="item.title" /> -->
             </div>
         </div>
         <div class="box">
-            <div v-for="item in items4" v-on:click="gotodetail(item.detailurl)">
+            <div v-for="item in items[3]" v-on:click="gotodetail(item.detailurl)">
                 {{item.md5}}
                 <!-- <img v-bind:src="item.url" v-bind:title="item.title" /> -->
             </div>
@@ -143,10 +143,7 @@
         el: '#images',
         store,
         data: {
-            items1: [],
-            items2: [],
-            items3: [],
-            items4: [],
+            items:[[],[],[],[]],
             score: 0,
             tag: '',
             isshowselect: false,
@@ -174,37 +171,25 @@
                 this.isshowselect = true;
             },
             addimage(image) {
-                var mincolumnindex = 1;
+                var mincolumnindex = 0;
                 var minheight = $($('.box')[0]).height();
-                for (var i = 1; i <= 4; i++) {
+                for (var i = 1; i < 4; i++) {
                     var currentheight = $($('.box')[i]).height();
                     if (minheight > currentheight) {
-                        mincolumnindex = i + 1;
+                        mincolumnindex = i;
                         minheight = currentheight;
                     }
                 }
-                switch (mincolumnindex) {
-                    case 1:
-                        this.items1.push(image);
-                        break;
-                    case 2:
-                        this.items2.push(image);
-                        break;
-                    case 3:
-                        this.items3.push(image);
-                        break;
-                    case 4:
-                        this.items4.push(image);
-                        break;
-                }
+                this.items[mincolumnindex].push(image);
             },
             get(isfirst = true) {
                 this.isshowselect = false;
                 if (isfirst) {
-                    this.items1 = []; this.items2 = []; this.items3 = []; this.items4 = [];
+                    this.items=[[],[],[],[]];
                 }
                 // 以载荷形式分发
                 store.dispatch('imagenext', { tag: this.tag, score: this.score })
+                // store.commit('imagenext', { tag: this.tag, score: this.score })
             },
             getbychange() {
                 //滚动条所在位置的高度
