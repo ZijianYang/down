@@ -53,8 +53,8 @@
         <div class="box" v-for="columns in items">
             <div v-for="item in columns" v-on:click="gotodetail(item.detailurl)">
             <!-- <div v-for="item in columns"> -->
-                <!-- {{item.id}} -->
-                <img v-bind:src="item.url" v-bind:title="item.title" />
+                {{item.id}}
+                <!-- <img v-bind:src="item.url" v-bind:title="item.title" /> -->
             </div>
         </div>
     </div>
@@ -74,7 +74,10 @@
         },
         getters: {
             imagecurrent: state => {
-                return store.state.imagedata.items[store.state.imagedata.currentindex];;
+                return store.state.imagedata.items[store.state.imagedata.currentindex];
+            },
+            imagepagenumber: state => {
+                return parseInt((store.state.imagedata.currentindex+1)/store.state.imagedata.pagesize)+1;
             }
         },
         mutations: {
@@ -89,7 +92,7 @@
                 var isend = context.state.imagedata.isend;
                 if (!isend) {//未结束才进行尝试
                     if (currentindex + 1 >= items.length) {//刚开始或数据到结尾
-                        var pagenumber = context.state.imagedata.pageindex + 1;
+                        var pagenumber = context.getters.imagepagenumber;
                         var pagesize = context.state.imagedata.pagesize;
                         var paramesdata = { params: { score: obj.score, tag: obj.tag, pagesize: pagesize } }
                         axios.get('/api/images/' + pagenumber, paramesdata)
@@ -105,7 +108,6 @@
                                             context.state.imagedata.items.push(list[i]);
                                         }
                                         context.commit('imagenext')
-                                        context.state.imagedata.pageindex = pagenumber;
                                     }
                                     else {
                                         context.state.imagedata.isend = true;
@@ -145,11 +147,8 @@
             imagecurrentindex() {
                 var image = store.getters.imagecurrent;
                 if (image != undefined)
-                    this.addimage(image);
-                this.$nextTick(function () {
-                    // alert(store.state.imagedata.currentindex);
-                    images.getbychange();
-                });
+                    this.addimage(image);                    
+                images.getbychange();
             }
         },
         methods: {
@@ -178,13 +177,15 @@
                 // store.commit('imagenext', { tag: this.tag, score: this.score })
             },
             getbychange() {
-                //滚动条所在位置的高度
-                totalheight = parseFloat($(window).height()) + parseFloat($(window).scrollTop());
-                //当前文档高度   小于或等于   滚动条所在位置高度  则是页面底部
-                if (($(document).height()) <= totalheight + 10) {
-                    //页面到达底部
-                    this.get(false)
-                }
+                this.$nextTick(function () {                
+                    //滚动条所在位置的高度
+                    totalheight = parseFloat($(window).height()) + parseFloat($(window).scrollTop());
+                    //当前文档高度   小于或等于   滚动条所在位置高度  则是页面底部
+                    if (($(document).height()) <= totalheight + 10) {
+                        //页面到达底部
+                        this.get(false)
+                    }
+                });
             },
             gotodetail(url) {
                 //window.location.href=''
