@@ -51,10 +51,10 @@
     </div>
     <div class="waterwall">
         <div class="box" v-for="columns in items">
-            <!-- <div v-for="item in columns" v-on:click="gotodetail(item.detailurl)"> -->
-            <div v-for="item in columns">
-                {{item.id}}
-                <!-- <img v-bind:src="item.url" v-bind:title="item.title" /> -->
+            <div v-for="item in columns" v-on:click="gotodetail(item.detailurl)">
+            <!-- <div v-for="item in columns"> -->
+                <!-- {{item.id}} -->
+                <img v-bind:src="item.url" v-bind:title="item.title" />
             </div>
         </div>
     </div>
@@ -78,32 +78,37 @@
             }
         },
         mutations: {
-            imagenext(state, obj) {
-                var items = state.imagedata.items;
-                var currentindex = state.imagedata.currentindex;
-                var isend = state.imagedata.isend;
+            imagenext(state) {
+                state.imagedata.currentindex = state.imagedata.currentindex + 1;               
+            },
+        },
+        actions: {
+            imagenext(context, obj) {                
+                var items = context.state.imagedata.items;
+                var currentindex = context.state.imagedata.currentindex;
+                var isend = context.state.imagedata.isend;
                 if (!isend) {//未结束才进行尝试
-                    if (currentindex==-1||currentindex + 1 > items.length) {//刚开始或数据到结尾
-                        var pagenumber = state.imagedata.pageindex + 1;
-                        var pagesize = state.imagedata.pagesize;
+                    if (currentindex + 1 >= items.length) {//刚开始或数据到结尾
+                        var pagenumber = context.state.imagedata.pageindex + 1;
+                        var pagesize = context.state.imagedata.pagesize;
                         var paramesdata = { params: { score: obj.score, tag: obj.tag, pagesize: pagesize } }
                         axios.get('/api/images/' + pagenumber, paramesdata)
                             .then((response) => {
                                 console.log(response);
                                 if (response.status = 200) {
-                                    state.imagedata.total = response.data.total;
+                                    context.state.imagedata.total = response.data.total;
                                     var list = response.data.items;
                                     if (list.length > 0) {
                                         for (var i = 0; i < list.length; i++) {
                                             list[i].title = "scroe:" + list[i].score + ";tags:" + list[i].tags;
                                             list[i].detailurl = "detail?id=" + list[i].id + "&pageindex=" + pagenumber + "&score=" + obj.score + "$tag=" + obj.tag;
-                                            state.imagedata.items.push(list[i]);
+                                            context.state.imagedata.items.push(list[i]);
                                         }
-                                        state.imagedata.currentindex = currentindex + 1;
-                                        state.imagedata.pageindex = pagenumber;
+                                        context.commit('imagenext')
+                                        context.state.imagedata.pageindex = pagenumber;
                                     }
                                     else {
-                                        state.imagedata.isend = true;
+                                        context.state.imagedata.isend = true;
                                     }
                                 }
                             })
@@ -112,14 +117,9 @@
                             });
                     }
                     else {
-                        state.imagedata.currentindex = currentindex + 1;
+                        context.commit('imagenext')
                     }
                 }
-            },
-        },
-        actions: {
-            imagenext(context, obj) {
-                context.commit('imagenext', obj)
             }
         }
     })
