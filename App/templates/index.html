@@ -153,7 +153,7 @@
                 var image = store.getters.imagecurrent;
                 if (image != undefined) {
                     this.addimage(image);
-                    console.log('Id' + image.id + ";index" + store.state.imagedata.currentindex);
+                    // console.log('Id' + image.id + ";index" + store.state.imagedata.currentindex);
                 }
                 this.$nextTick(function () {
                     images.getbychange();
@@ -174,10 +174,10 @@
                         minheight = currentheight;
                     }
                 }
-                return mincolumnindex;
+                return {index:mincolumnindex,height:minheight};
             },
             addimage(image) {                
-                this.items[this.getmincolumn()].push(image);
+                this.items[this.getmincolumn().index].push(image);
             },
             get(isfirst = true) {
                 this.isshowselect = false;
@@ -193,7 +193,13 @@
                 totalheight = parseFloat($(window).height()) + parseFloat($(window).scrollTop());
                 //当前文档高度   小于或等于   滚动条所在位置高度  则是页面底部
                 if (($(document).height()) <= totalheight + 10) {
-                    console.log(new Date())
+                    // console.log(new Date())
+                    //页面到达底部
+                    this.get(false)
+                }
+
+                if (this.getmincolumn().height <= totalheight + 10) {
+                    // console.log(new Date())
                     //页面到达底部
                     this.get(false)
                 }
