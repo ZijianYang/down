@@ -53,8 +53,8 @@
         <div class="box" v-for="columns in items">
             <div v-for="item in columns" v-on:click="gotodetail(item.detailurl)">
                 <!-- <div v-for="item in columns"> -->
-                {{item.id}}
-                <!-- <img v-bind:src="item.url" v-bind:title="item.title" /> -->
+                <!-- {{item.id}} -->
+                <img v-bind:src="item.url" v-bind:title="item.title" />
             </div>
         </div>
     </div>
@@ -93,8 +93,8 @@
                 if (!isend) {//未结束才进行尝试
                     if (currentindex + 1 >= items.length) {//刚开始或数据到结尾
                         var pagenumber = context.getters.imagepagenumber;
-                        console.log(pagenumber);
-                        console.log(currentindex);
+                        // console.log(pagenumber);
+                        // console.log(currentindex);
                         var pagesize = context.state.imagedata.pagesize;
                         var paramesdata = { params: { score: obj.score, tag: obj.tag, pagesize: pagesize } }
                         axios.get('/api/images/' + pagenumber, paramesdata)
@@ -150,7 +150,7 @@
                 var image = store.getters.imagecurrent;
                 if (image != undefined) {
                     this.addimage(image);
-                    console.log('Id' + image.id + ";index" + store.state.imagedata.currentindex);
+                    // console.log('Id' + image.id + ";index" + store.state.imagedata.currentindex);
                 }
                 this.$nextTick(function () {
                     images.getbychange();
