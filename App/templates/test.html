@@ -28,53 +28,196 @@
 </style>
 {% endblock %} {% block page_content %}
 <span style="display:none;">{{ name }}</span>
-<div id="test" style="height:1000px">
-    <button>开始</button>
+<div id="images">
+    <div class="select">
+        <template v-if="isshowselect">
+            <div>
+                <label for="score"></label>
+                <select v-model="score">
+                    <option>0</option>
+                    <option>19</option>
+                    <option>49</option>
+                    <option>99</option>
+                </select>
+                <label for="tag"></label>
+                <input name="tag" type="text" v-model="tag" />
+                <button type="button" v-on:click="get()">查询</button>
+            </div>
+        </template>
+        <template v-else>
+            <span v-text="'共:'+total"></span>
+            <button type="button" v-on:click="showselect()">查询</button>
+        </template>
+    </div>
+    <div class="waterwall">
+        <div class="box" v-for="columns in items">
+            <div v-for="item in columns" v-on:click="gotodetail(item.detailurl)">
+                <!-- <div v-for="item in columns"> -->
+                {{item.id}}
+                <img v-bind:src="item.url" v-bind:title="item.title" />
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %} {% block scripts %}
 <script>
-    var number = 0;
+    const store = new Vuex.Store({
+        state: {
+            imagedata: {
+                items: [],
+                total: 0,
+                currentindex: -1,
+                isend: 0,
+                pageindex: 0,
+                pagesize: 10,
+                isloading:false,
+            }
+        },
+        getters: {
+            imagecurrent: state => {
+                return store.state.imagedata.items[store.state.imagedata.currentindex];
+            },
+            imagepagenumber: state => {
+                return parseInt((store.state.imagedata.currentindex + 1) / store.state.imagedata.pagesize) + 1;
+            }
+        },
+        mutations: {
+            imagenext(state) {
+                state.imagedata.currentindex = state.imagedata.currentindex + 1;
+            },
+        },
+        actions: {
+            imagenext(context, obj) {
+                var items = context.state.imagedata.items;
+                var currentindex = context.state.imagedata.currentindex;
+                var isend = context.state.imagedata.isend;
+                if (!isend&&!context.state.imagedata.isloading) {//未结束才进行尝试,且未正在读取数据                    
+                    if (currentindex + 1 >= items.length) {//刚开始或数据到结尾
+                        context.state.imagedata.isloading=true;
+                        var pagenumber = context.getters.imagepagenumber;
+                        // console.log(pagenumber);
+                        // console.log(currentindex);
+                        var pagesize = context.state.imagedata.pagesize;
+                        var paramesdata = { params: { score: obj.score, tag: obj.tag, pagesize: pagesize } }
+                        axios.get('/api/images/' + pagenumber, paramesdata)
+                            .then((response) => {
+                                console.log(response);
+                                if (response.status = 200) {
+                                    context.state.imagedata.total = response.data.total;
+                                    var list = response.data.items;
+                                    if (list.length > 0) {
+                                        for (var i = 0; i < list.length; i++) {
+                                            list[i].title = "scroe:" + list[i].score + ";tags:" + list[i].tags;
+                                            list[i].detailurl = "detail?id=" + list[i].id + "&pageindex=" + pagenumber + "&score=" + obj.score + "$tag=" + obj.tag;
+                                            context.state.imagedata.items.push(list[i]);
+                                        }                                        
+                                        context.state.imagedata.isloading=false;
+                                        context.commit('imagenext')
+                                    }
+                                    else {
+                                        context.state.imagedata.isend = true;
+                                    }
+                                }
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            });
+                    }
+                    else {
+                        context.commit('imagenext')
+                    }
+                }
+            }
+        }
+    })
 
-    var debounce = function (func, threshold, execAsap) {  
-        var timeout;  
-        return function debounced () {  
-            var obj = this, args = arguments;  
-            function delayed () {  
-                if (!execAsap)  
-                func.apply(obj, args);  
-                timeout = null;  
-            };  
-            if (timeout)  
-                clearTimeout(timeout);  
-            else if (execAsap)  
-                func.apply(obj, args);  
-            timeout = setTimeout(delayed, threshold || 100);  
-        };  
-    } 
-    // window.onresize = debounce( function(){  
-    //     console.log( 'hello world');  
-    // }, 1000, true) 
-    var test = new Vue({
-        el: "test",
+    var images = new Vue({
+        el: '#images',
+        store,
         data: {
-            number: 0,
+            items: [[], [], [], []],
+            score: 0,
+            tag: '',
+            isshowselect: false,
+        },
+        computed: {
+            imagecurrentindex: function () {
+                return store.state.imagedata.currentindex;
+            },
+            total: function () {
+                return store.state.imagedata.total;
+            }
+        },
+        watch: {
+            imagecurrentindex() {
+                var image = store.getters.imagecurrent;
+                if (image != undefined) {
+                    this.addimage(image);
+                    console.log('Id' + image.id + ";index" + store.state.imagedata.currentindex);
+                }
+                this.$nextTick(function () {
+                    images.getbychange();
+                });
+            }
         },
         methods: {
-            show() {
-                this.number = this.number + 1;
-                console.log(this.number);
+            showselect() {
+                this.isshowselect = true;
+            },
+            getmincolumn(){
+                var mincolumnindex = 0;
+                var minheight = $($('.box')[0]).height();
+                for (var i = 1; i < 4; i++) {
+                    var currentheight = $($('.box')[i]).height();
+                    if (minheight > currentheight) {
+                        mincolumnindex = i;
+                        minheight = currentheight;
+                    }
+                }
+                return mincolumnindex;
+            },
+            addimage(image) {                
+                this.items[this.getmincolumn()].push(image);
+            },
+            get(isfirst = true) {
+                this.isshowselect = false;
+                if (isfirst) {
+                    this.items = [[], [], [], []];
+                }
+                // 以载荷形式分发
+                store.dispatch('imagenext', { tag: this.tag, score: this.score })
+                // store.commit('imagenext', { tag: this.tag, score: this.score })
+            },
+            getbychange() {
+                //滚动条所在位置的高度
+                totalheight = parseFloat($(window).height()) + parseFloat($(window).scrollTop());
+                //当前文档高度   小于或等于   滚动条所在位置高度  则是页面底部
+                if (($(document).height()) <= totalheight + 10) {
+                    console.log(new Date())
+                    //页面到达底部
+                    this.get(false)
+                }
+            },
+            gotodetail(url) {
+                //window.location.href=''
+                window.open(url);
             },
         },
         mounted: function () {
+            this.get()
             self = this;
-            $(window).scroll( Vue.Debounce(function () {
-                self.show()
-            }, 1000, true));
-            window.onresize = Vue.Debounce(function () {
-                self.show()
-            }, 2000)
-           
+            $(window).scroll(function () {
+                self.getbychange()
+            });
+            $(window).resize(function () {
+                self.getbychange()
+            });
+            // $(window).scroll( Vue.Debounce(function () {
+            //     self.getbychange()
+            // }, 100, true) );
+            // window.onresize = Vue.Debounce(function () {
+            //     self.getbychange()
+            // }, 100)
         },
-    });
-
+    })
 </script> {% endblock %}
