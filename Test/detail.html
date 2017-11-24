@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>resources</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://cdn.bootcss.com/axios/0.17.1/axios.js" /></script>
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
+    <style>
+        .orign {}
+
+        .adapt {}
+
+        .adaptw {
+            width: 100%;
+        }
+
+        .adapth {
+            height: 100%；
+        }
+
+        #list>div {
+            float: left;
+        }
+
+        table,
+        tr,
+        td {
+            margin: 0px;
+            padding: 0px;
+            height: 100%;
+        }
+
+        table tr td {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        #list>table {
+            min-height: 600px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="list" style="display:-webkit-flex;display:flex;flex-wrap: nowrap;justify-content: flex-start;">
+        <div v-if="isshowmenu" style="order:0;flex:none;width:100px;height:auto;">
+            <select v-model="imgtype">
+                <option value="orign">原图</option>
+                <option value="adapt">合适</option>
+                <option value="adaptw">适应宽</option>
+                <option value="adapth">适应高</option>
+            </select>
+        </div>
+        <div style="width:5px;height:auto;background-color:black;order:1;flex:none;" v-on:click="setshowleft()">
+        </div>
+        <div style="order:2;flex:1 1 auto;">
+            <div style="width: 100%;height:400px;border:1px solid #000">
+                <img style="width:100%;height:100%;overflow:auto;border:1px solid rgb(175, 71, 71);" src="./results/36.jpg" />
+            </div>
+            <div style="width: 100%;height:400px;border:1px solid #000;overflow:auto;">
+                <img style="width:100%;border:1px solid rgb(175, 71, 71);" src="./results/36.jpg" />
+            </div>
+            <div style="width: 100%;height:400px;border:1px solid #000;overflow:auto;">
+                <img style="height:100%;border:1px solid rgb(175, 71, 71);" src="./results/36.jpg" />
+            </div>
+            <div style="width: 100%;height:400px;border:1px solid #000;overflow:auto;">
+                <img style="border:1px solid rgb(175, 71, 71);" src="./results/36.jpg" />
+            </div>
+        </div>
+    </div>
+    <!-- <table id="list">
+        <tbody>
+            <tr>
+                <td style="width:100px" valign="top" v-if="isshowmenu">
+                    <div>
+                        <select v-model="imgtype">
+                            <option value="orign">原图</option>
+                            <option value="adapt">合适</option>
+                            <option value="adaptw">适应宽</option>
+                            <option value="adapth">适应高</option>
+                        </select>
+                    </div>
+                </td>
+                <td style="min-width:5px;background-color:black;" v-on:click="setshowleft()">
+                </td>
+                <td style="width:100%">                    
+                    <div style="height:400px;border:1px solid #000">
+                        <img style="width:100%;height:100%;overflow:auto;border:1px solid rgb(175, 71, 71);" src="./results/36.jpg"/>
+                    </div>
+                    <div style="height:400px;border:1px solid #000;overflow:auto;">
+                        <img style="width:100%;border:1px solid rgb(175, 71, 71);" src="./results/36.jpg"/>
+                    </div>
+                    <div style="height:400px;border:1px solid #000;overflow:auto;">
+                        <img style="height:100%;border:1px solid rgb(175, 71, 71);" src="./results/36.jpg"/>
+                    </div>
+                    <div style="height:400px;border:1px solid #000;overflow:auto;">
+                        <img style="border:1px solid rgb(175, 71, 71);" src="./results/36.jpg"/>
+                    </div>
+                    <div style="width:100px;height:200px;background-image: url(./results/36.jpg);"></div>
+                    <div style="width:100px;height:200px;background-image: url(./results/36.jpg);background-size:30% 60%;"></div>
+                    <div style="width:100px;height:200px;background-image: url(./results/36.jpg);background-size:100% 100%;"></div>                    
+                    <div style="width:100px;height:200px;background-image: url(./results/36.jpg);background-size:100%"></div>
+                    
+                    <div style="width:100px;height:200px;background-image: url(./results/36.jpg);background-size:cover;"></div>
+                    
+                    <div style="width:400px;height:200px;background-image: url(./results/36.jpg);background-size:contain;"></div>
+                    
+                    <div style="width:100px;height:200px;background-image: url(./results/36.jpg);background-size:auto;"></div>
+                </td>
+            </tr>
+        </tbody>
+    </table> -->
+</body>
+<script>
+    var images = new Vue({
+        el: '#list',
+        data: {
+            isshowmenu: true,
+            imgtype: "orign",
+            items: [
+                { url: "./results/0.jpg" },
+                { url: "./results/2.jpg" },
+                { url: "./results/3.jpg" },
+                { url: "./results/4.jpg" },
+                { url: "./results/5.jpg" },
+                { url: "./results/6.jpg" },
+                { url: "./results/7.jpg" },
+                { url: "./results/8.jpg" },
+                { url: "./results/9.jpg" },
+                { url: "./results/10.jpg" },
+                { url: "./results/11.jpg" },
+                { url: "./results/12.jpg" },
+                { url: "./results/13.jpg" },
+                { url: "./results/14.jpeg" },
+                { url: "./results/15.jpg" },
+                { url: "./results/16.jpeg" },
+                { url: "./results/17.png" },
+                { url: "./results/18.jpg" },
+                { url: "./results/19.jpg" },
+                { url: "./results/20.jpg" },
+                { url: "./results/21.jpg" },
+                { url: "./results/22.jpg" },
+                { url: "./results/23.jpg" },
+                { url: "./results/24.jpg" },
+                { url: "./results/25.jpg" },
+                { url: "./results/26.jpg" },
+                { url: "./results/27.jpg" },
+                { url: "./results/28.jpg" },
+                { url: "./results/29.jpg" },
+                { url: "./results/30.jpg" },
+                { url: "./results/31.jpg" },
+                { url: "./results/32.jpg" },
+                { url: "./results/33.jpg" },
+                { url: "./results/34.jpg" },
+                { url: "./results/35.jpg" },
+                { url: "./results/36.jpg" },
+            ],
+            windowheight: 0,
+        },
+        computed: {
+            imagecss: function () {
+                return {
+                    orign: this.imgtype == "orign",
+                    adapt: this.imgtype == "adapt",
+                    adaptw: this.imgtype == "adaptw",
+                    adapth: this.imgtype == "adapth",
+                }
+            },
+            tablecss: function () {
+                return {
+                    height: this.windowheight - 3,
+                    overflow: 'auto',
+                }
+            }
+        },
+        methods: {
+            setshowleft() {
+                this.isshowmenu = !this.isshowmenu;
+            },
+        },
+        mounted: function () {
+            this.windowheight = $(window).height();
+            window.onresize = function () {
+                this.windowheight = $(window).height()
+            }
+        },
+    })
+</script>
+
+</html>
