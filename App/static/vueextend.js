@@ -100,6 +100,29 @@ var VueExtend = {
                 timeout = setTimeout(delayed, threshold || 100);
             };
         },
+        /////////////////例子///////////////////////
+        // var test = new Vue({
+        //     el: "test",
+        //     data: {
+        //         number: 0,
+        //     },
+        //     methods: {
+        //         show() {
+        //             this.number = this.number + 1;
+        //             console.log(this.number);
+        //         },
+        //     },
+        //     mounted: function () {
+        //         self = this;
+        //         $(window).scroll( Vue.Debounce(function () {
+        //             self.show()
+        //         }, 1000, true));
+        //         window.onresize = Vue.Debounce(function () {
+        //             self.show()
+        //         }, 2000)
+               
+        //     },
+        // });
         Vue.Throttle = function (func, duration) {
             // duration 以秒计
             let last
