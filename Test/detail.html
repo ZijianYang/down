@@ -47,25 +47,29 @@
     <div id="list" style="display:-webkit-flex;display:flex;flex-wrap: nowrap;justify-content: flex-start;">
         <div v-if="isshowmenu" style="order:0;flex:none;width:100px;height:auto;">
             <select v-model="imgtype">
-                <option value="orign">原图</option>
-                <option value="adapt">合适</option>
                 <option value="adaptw">适应宽</option>
+                <option value="adapt">合适</option>
+                <option value="repeat">平铺</option>
+                <option value="orign">原图</option>
                 <option value="adapth">适应高</option>
             </select>
         </div>
         <div style="width:5px;height:auto;background-color:black;order:1;flex:none;" v-on:click="setshowleft()">
         </div>
         <div style="order:2;flex:1 1 auto;">
-            <div style="width: 100%;height:400px;border:1px solid #000">
+            <div v-if="imgtype=='repeat'" style="width: 100%;height:400px;border:1px solid #000">
                 <img style="width:100%;height:100%;overflow:auto;border:1px solid rgb(175, 71, 71);" src="./results/36.jpg" />
             </div>
-            <div style="width: 100%;height:400px;border:1px solid #000;overflow:auto;">
-                <img style="width:100%;border:1px solid rgb(175, 71, 71);" src="./results/36.jpg" />
+            <div v-if="imgtype=='adaptw'" style="width: 100%;height:400px;border:1px solid #000;overflow:auto;">
+                <img style="width:100%;border:1px solid rgb(175, 71, 71);margin:-2px" src="./results/36.jpg" />
             </div>
-            <div style="width: 100%;height:400px;border:1px solid #000;overflow:auto;">
+            <div v-if="imgtype=='adapth'" style="width: 100%;height:400px;border:1px solid #000;overflow:auto;">
                 <img style="height:100%;border:1px solid rgb(175, 71, 71);" src="./results/36.jpg" />
             </div>
-            <div style="width: 100%;height:400px;border:1px solid #000;overflow:auto;">
+            <div v-if="imgtype=='orign'" style="width: 100%;height:400px;border:1px solid #000;overflow:auto;">
+                <img style="border:1px solid rgb(175, 71, 71);" src="./results/36.jpg" />
+            </div>
+            <div v-if="imgtype=='adapt'" style="width: 100%;height:400px;border:1px solid #000;overflow:auto;">
                 <img style="border:1px solid rgb(175, 71, 71);" src="./results/36.jpg" />
             </div>
         </div>
