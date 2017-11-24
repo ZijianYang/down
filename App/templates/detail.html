@@ -1,38 +1,120 @@
-{% extends "base.html" %}
-{% block csses %}
-{% endblock %}
-{% block page_content %}
+{% extends "base.html" %} {% block csses %}
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+    }
+
+    #image {
+        display: -webkit-flex;
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+    }
+
+    .image_menu {
+        order: 0;
+        flex: none;
+        width: 100px;
+        height: auto;
+    }
+
+    .image_middle {
+        width: 5px;
+        height: auto;
+        background-color: black;
+        order: 1;
+        flex: none;
+    }
+
+    .image_right {
+        order: 2;
+        flex: 1 1 auto;
+    }
+
+    .image_right>div {
+        width: 100%;
+        margin:0px -2px;
+        overflow:auto;
+    }
+</style>
+{% endblock %} {% block page_content %}
+
 <div id="image">
-    <!-- {{image.md5}} -->
-    <img v-bind:src="image.url"/>
+
+    <div class="image_menu" v-if="isshowmenu">
+        <select v-model="imgtype">
+            <option value="adaptw">适应宽</option>
+            <option value="adapt">合适</option>
+            <option value="repeat">平铺</option>
+            <option value="orign">原图</option>
+            <option value="adapth">适应高</option>
+        </select>
+    </div>
+    <div class="image_middle" v-on:click="setshowleft()">
+    </div>
+    <div class="image_right">
+        <div v-if="imgtype=='repeat'"  v-bind:style="rightcss">
+            <img style="width:100%;height:100%;" v-bind:src="image.url" />
+        </div>
+        <div v-if="imgtype=='adaptw'" style="overflow:auto;"  v-bind:style="rightcss">
+            <img style="width:100%;margin:-2px" v-bind:src="image.url" />
+        </div>
+        <div v-if="imgtype=='adapth'"  v-bind:style="rightcss">
+            <img style="height:100%;" v-bind:src="image.url" />
+        </div>
+        <div v-if="imgtype=='orign'"  v-bind:style="rightcss">
+            <img v-bind:src="image.url" />
+        </div>
+        <div v-if="imgtype=='adapt'"  v-bind:style="rightcss">
+            <img v-bind:src="image.url" />
+        </div>
+    </div>
 </div>
-{% endblock %}
-{% block scripts %}
+{% endblock %} {% block scripts %}
 <script>
     var image = new Vue({
         el: '#image',
         data: {
             items: [],
             image: '',
+            isshowmenu: true,
+            imgtype: "adaptw",
+            windowheight: 0,
+        },
+        computed: {
+            rightcss: function () {
+                return {height:this.windowheight+'px'};
+            },
         },
         methods: {
+            setshowleft() {
+                this.isshowmenu = !this.isshowmenu;
+            },
+            setheight() {
+                this.windowheight = $(window).height()
+            },
             get() {
                 axios.get('/api/image/' + this.id)
                     .then((response) => {
                         console.log(response);
-                        if(response.status=200){                            
+                        if (response.status = 200) {
                             this.image = response.data;
                         }
                     })
                     .catch(function (error) {
                         console.log(error);
-                    });                
+                    });
             },
         },
         mounted: function () {
             this.id = Vue.GetUrlParam("id");
-            this.get()
-        },   
+            this.get();
+            this.setheight();
+            self = this;
+            $(window).resize(function () {
+                self.setheight();
+            });
+        },
     })
-</script> 
-{% endblock %}
+</script> {% endblock %}

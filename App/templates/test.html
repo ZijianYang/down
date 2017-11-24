@@ -5,219 +5,116 @@
         margin: 0;
     }
 
-    .waterwall {
-        padding: 15px 5px 0px 5px;
-        min-width: 800px;
+    #image {
+        display: -webkit-flex;
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
     }
 
-    .waterwall .box {
-        width: 24%;
-        float: left;
-        padding: 3px;
-        cursor: pointer;
+    .image_menu {
+        order: 0;
+        flex: none;
+        width: 100px;
+        height: auto;
     }
 
-    .waterwall .box img {
+    .image_middle {
+        width: 5px;
+        height: auto;
+        background-color: black;
+        order: 1;
+        flex: none;
+    }
+
+    .image_right {
+        order: 2;
+        flex: 1 1 auto;
+    }
+
+    .image_right>div {
         width: 100%;
-    }
-
-    .select {
-        margin: 5px 5px 0px 15px;
-        position: fixed;
+        margin:0px -2px;
+        overflow:auto;
     }
 </style>
 {% endblock %} {% block page_content %}
-<span style="display:none;">{{ name }}</span>
-<div id="images">
-    <div class="select">
-        <template v-if="isshowselect">
-            <div>
-                <label for="score"></label>
-                <select v-model="score">
-                    <option>0</option>
-                    <option>19</option>
-                    <option>49</option>
-                    <option>99</option>
-                </select>
-                <label for="tag"></label>
-                <input name="tag" type="text" v-model="tag" />
-                <button type="button" v-on:click="get()">查询</button>
-            </div>
-        </template>
-        <template v-else>
-            <span v-text="'共:'+total"></span>
-            <button type="button" v-on:click="showselect()">查询</button>
-        </template>
+
+<div id="image">
+
+    <div class="image_menu" v-if="isshowmenu">
+        <select v-model="imgtype">
+            <option value="adaptw">适应宽</option>
+            <option value="adapt">合适</option>
+            <option value="repeat">平铺</option>
+            <option value="orign">原图</option>
+            <option value="adapth">适应高</option>
+        </select>
     </div>
-    <div class="waterwall">
-        <div class="box" v-for="columns in items">
-            <div v-for="item in columns" v-on:click="gotodetail(item.detailurl)">
-                <!-- <div v-for="item in columns"> -->
-                {{item.id}}
-                <img v-bind:src="item.url" v-bind:title="item.title" />
-            </div>
+    <div class="image_middle" v-on:click="setshowleft()">
+    </div>
+    <div class="image_right">
+        <div v-if="imgtype=='repeat'"  v-bind:style="rightcss">
+            <img style="width:100%;height:100%;" v-bind:src="image.url" />
+        </div>
+        <div v-if="imgtype=='adaptw'" style="overflow:auto;"  v-bind:style="rightcss">
+            <img style="width:100%;margin:-2px" v-bind:src="image.url" />
+        </div>
+        <div v-if="imgtype=='adapth'"  v-bind:style="rightcss">
+            <img style="height:100%;" v-bind:src="image.url" />
+        </div>
+        <div v-if="imgtype=='orign'"  v-bind:style="rightcss">
+            <img v-bind:src="image.url" />
+        </div>
+        <div v-if="imgtype=='adapt'"  v-bind:style="rightcss">
+            <img v-bind:src="image.url" />
         </div>
     </div>
 </div>
 {% endblock %} {% block scripts %}
 <script>
-    const store = new Vuex.Store({
-        state: {
-            imagedata: {
-                items: [],
-                total: 0,
-                currentindex: -1,
-                isend: 0,
-                pageindex: 0,
-                pagesize: 10,
-                isloading:false,
-            }
-        },
-        getters: {
-            imagecurrent: state => {
-                return store.state.imagedata.items[store.state.imagedata.currentindex];
-            },
-            imagepagenumber: state => {
-                return parseInt((store.state.imagedata.currentindex + 1) / store.state.imagedata.pagesize) + 1;
-            }
-        },
-        mutations: {
-            imagenext(state) {
-                state.imagedata.currentindex = state.imagedata.currentindex + 1;
-            },
-        },
-        actions: {
-            imagenext(context, obj) {
-                var items = context.state.imagedata.items;
-                var currentindex = context.state.imagedata.currentindex;
-                var isend = context.state.imagedata.isend;
-                if (!isend&&!context.state.imagedata.isloading) {//未结束才进行尝试,且未正在读取数据                    
-                    if (currentindex + 1 >= items.length) {//刚开始或数据到结尾
-                        context.state.imagedata.isloading=true;
-                        var pagenumber = context.getters.imagepagenumber;
-                        // console.log(pagenumber);
-                        // console.log(currentindex);
-                        var pagesize = context.state.imagedata.pagesize;
-                        var paramesdata = { params: { score: obj.score, tag: obj.tag, pagesize: pagesize } }
-                        axios.get('/api/images/' + pagenumber, paramesdata)
-                            .then((response) => {
-                                console.log(response);
-                                if (response.status = 200) {
-                                    context.state.imagedata.total = response.data.total;
-                                    var list = response.data.items;
-                                    if (list.length > 0) {
-                                        for (var i = 0; i < list.length; i++) {
-                                            list[i].title = "scroe:" + list[i].score + ";tags:" + list[i].tags;
-                                            list[i].detailurl = "detail?id=" + list[i].id + "&pageindex=" + pagenumber + "&score=" + obj.score + "$tag=" + obj.tag;
-                                            context.state.imagedata.items.push(list[i]);
-                                        }                                        
-                                        context.state.imagedata.isloading=false;
-                                        context.commit('imagenext')
-                                    }
-                                    else {
-                                        context.state.imagedata.isend = true;
-                                    }
-                                }
-                            })
-                            .catch(function (error) {
-                                console.log(error);
-                            });
-                    }
-                    else {
-                        context.commit('imagenext')
-                    }
-                }
-            }
-        }
-    })
-
-    var images = new Vue({
-        el: '#images',
-        store,
+    var image = new Vue({
+        el: '#image',
         data: {
-            items: [[], [], [], []],
-            score: 0,
-            tag: '',
-            isshowselect: false,
+            items: [],
+            image: '',
+            isshowmenu: true,
+            imgtype: "adaptw",
+            windowheight: 0,
         },
         computed: {
-            imagecurrentindex: function () {
-                return store.state.imagedata.currentindex;
+            rightcss: function () {
+                return {height:this.windowheight+'px'};
             },
-            total: function () {
-                return store.state.imagedata.total;
-            }
-        },
-        watch: {
-            imagecurrentindex() {
-                var image = store.getters.imagecurrent;
-                if (image != undefined) {
-                    this.addimage(image);
-                    console.log('Id' + image.id + ";index" + store.state.imagedata.currentindex);
-                }
-                this.$nextTick(function () {
-                    images.getbychange();
-                });
-            }
         },
         methods: {
-            showselect() {
-                this.isshowselect = true;
+            setshowleft() {
+                this.isshowmenu = !this.isshowmenu;
             },
-            getmincolumn(){
-                var mincolumnindex = 0;
-                var minheight = $($('.box')[0]).height();
-                for (var i = 1; i < 4; i++) {
-                    var currentheight = $($('.box')[i]).height();
-                    if (minheight > currentheight) {
-                        mincolumnindex = i;
-                        minheight = currentheight;
-                    }
-                }
-                return mincolumnindex;
+            setheight() {
+                this.windowheight = $(window).height()
             },
-            addimage(image) {                
-                this.items[this.getmincolumn()].push(image);
-            },
-            get(isfirst = true) {
-                this.isshowselect = false;
-                if (isfirst) {
-                    this.items = [[], [], [], []];
-                }
-                // 以载荷形式分发
-                store.dispatch('imagenext', { tag: this.tag, score: this.score })
-                // store.commit('imagenext', { tag: this.tag, score: this.score })
-            },
-            getbychange() {
-                //滚动条所在位置的高度
-                totalheight = parseFloat($(window).height()) + parseFloat($(window).scrollTop());
-                //当前文档高度   小于或等于   滚动条所在位置高度  则是页面底部
-                if (($(document).height()) <= totalheight + 10) {
-                    console.log(new Date())
-                    //页面到达底部
-                    this.get(false)
-                }
-            },
-            gotodetail(url) {
-                //window.location.href=''
-                window.open(url);
+            get() {
+                axios.get('/api/image/' + this.id)
+                    .then((response) => {
+                        console.log(response);
+                        if (response.status = 200) {
+                            this.image = response.data;
+                        }
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
             },
         },
         mounted: function () {
-            this.get()
+            this.id = Vue.GetUrlParam("id");
+            this.get();
+            this.setheight();
             self = this;
-            $(window).scroll(function () {
-                self.getbychange()
-            });
             $(window).resize(function () {
-                self.getbychange()
+                self.setheight();
             });
-            // $(window).scroll( Vue.Debounce(function () {
-            //     self.getbychange()
-            // }, 100, true) );
-            // window.onresize = Vue.Debounce(function () {
-            //     self.getbychange()
-            // }, 100)
         },
     })
 </script> {% endblock %}
