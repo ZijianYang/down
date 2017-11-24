@@ -203,7 +203,9 @@
             // $(window).scroll(function () {
             //     self.getbychange()
             // });
-            $(window).scroll(function () { Vue.Debounce(self.getbychange(), 1000, true) });
+            $(window).scroll( Vue.Debounce(function () {
+                self.getbychange()
+            }, 1000, true) );
             window.onresize = Vue.Debounce(function () {
                 self.getbychange()
             }, 2000)
