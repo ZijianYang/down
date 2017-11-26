@@ -82,6 +82,14 @@
             }
         },
         mutations: {
+            pardonstart(state) {       
+                store.state.imagedata.items=[];
+                store.state.imagedata.total=0;         
+                store.state.imagedata.pageindex=0;
+                store.state.imagedata.isend=0;
+                store.state.imagedata.currentindex=-1;
+                store.state.imagedata.isloading=false;  
+            },
             imagenext(state) {
                 state.imagedata.currentindex = state.imagedata.currentindex + 1;
             },
@@ -183,6 +191,7 @@
                 this.isshowselect = false;
                 if (isfirst) {
                     this.items = [[], [], [], []];
+                    store.commit('pardonstart')
                 }
                 // 以载荷形式分发
                 store.dispatch('imagenext', { tag: this.tag, score: this.score })
