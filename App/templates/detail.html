@@ -162,14 +162,15 @@
                         obj = { width: "100%", height: "100%" };
                         break;
                     case "adaptw":
-                        obj = { width: "100%", margin: "-2px" };
+                        obj = { width: "100%"};
                         break;
                     case "adapth":
                         obj = { height: "100%" };
                         break;
                     case "adapt":
                         var box=$("#image_box");
-                        if(this.height/this.width>box.height()/box.width()){
+                        var img=$("#image_box img")[0];
+                        if(img.naturalWidth/img.naturalHeight>box.height()/box.width()){
                             obj = { height: "100%" };
                         }else{
                             obj = { width: "100%", margin: "-2px" };
@@ -187,19 +188,11 @@
             },
             setheight() {
                 this.windowheight = $(window).height()
-            },
-            gettruesize(url){         
-                self=this;
-                $("<img/>").attr("src", url).load(function() {
-                    self.imgwidth = this.width;
-                    self.imgheight = this.height;            
-                });                
-            },
+            },   
             get() {
                 self = this;
                 API.image.get(function (data) {
-                    self.currentimage = data                    
-                    self.gettruesize(data.url);
+                    self.currentimage = data    
                 }, this.id);
             },
             getother(isup) {
