@@ -55,7 +55,7 @@
     <div class="image_middle" v-on:click="setshowleft()">
     </div>
     <div class="image_right">
-        <div  align="center" v-bind:style="rightcontentcss">
+        <div align="center" v-bind:style="rightcontentcss">
             <img v-bind:style="rightimgcss" v-bind:src="currentimage.url" />
         </div>
     </div>
@@ -71,7 +71,7 @@
                 isend: 0,
                 pageindex: 0,
                 pagesize: 10,
-                isloading:false,
+                isloading: false,
             }
         },
         getters: {
@@ -92,9 +92,9 @@
                 var items = context.state.imagedata.items;
                 var currentindex = context.state.imagedata.currentindex;
                 var isend = context.state.imagedata.isend;
-                if (!isend&&!context.state.imagedata.isloading) {//未结束才进行尝试,且未正在读取数据                    
+                if (!isend && !context.state.imagedata.isloading) {//未结束才进行尝试,且未正在读取数据                    
                     if (currentindex + 1 >= items.length) {//刚开始或数据到结尾
-                        context.state.imagedata.isloading=true;
+                        context.state.imagedata.isloading = true;
                         var pagenumber = context.getters.imagepagenumber;
                         // console.log(pagenumber);
                         // console.log(currentindex);
@@ -111,8 +111,8 @@
                                             list[i].title = "scroe:" + list[i].score + ";tags:" + list[i].tags;
                                             list[i].detailurl = "detail?id=" + list[i].id + "&pageindex=" + pagenumber + "&score=" + obj.score + "$tag=" + obj.tag;
                                             context.state.imagedata.items.push(list[i]);
-                                        }                                        
-                                        context.state.imagedata.isloading=false;
+                                        }
+                                        context.state.imagedata.isloading = false;
                                         context.commit('imagenext')
                                     }
                                     else {
@@ -131,7 +131,7 @@
             }
         }
     })
-    
+
     var image = new Vue({
         el: '#image',
         data: {
@@ -179,10 +179,26 @@
                 this.windowheight = $(window).height()
             },
             get() {
-                self=this;
-                API.image.get(function(data){
+                self = this;
+                API.image.get(function (data) {
                     self.currentimage = data
-                },this.id);
+                }, this.id);
+            },
+            otherget(){
+                scrollheight = parseFloat($(window).scrollTop());                
+                if(scrollheight==0){
+                    console.log(scrollheight);
+                    this.id=this.id-1;
+                    this.get();
+                }
+                else if($(window).height()+scrollheight>$('#right img').height()-3){
+                    console.log(scrollheight);
+                    console.log($(window).height());
+                    console.log($('#right img').height());
+                    $(window).scrollTop(0);
+                    this.id=this.id+1;
+                    this.get();
+                }
             },
         },
         mounted: function () {
@@ -192,6 +208,15 @@
             self = this;
             $(window).resize(function () {
                 self.setheight();
+            });
+            $('#box').bind('mousewheel', function (event, delta) {
+                var dir = delta > 0 ? 'Up' : 'Down';
+                if (dir == 'Up') {
+                    console.log("向上滚动");
+                } else {
+                    console.log("向下滚动");
+                }
+                return false;
             });
         },
     })
