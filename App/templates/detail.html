@@ -147,7 +147,7 @@
         },
         computed: {
             rightcontentcss: function () {
-                var obj = { height: this.windowheight + 'px' };
+                var obj = { height: this.windowheight-2 + 'px' };
                 switch (this.imgtype) {
                     case "adaptw":
                         obj.overflow = "auto";
@@ -173,7 +173,7 @@
                         if(img.naturalWidth/img.naturalHeight>box.height()/box.width()){
                             obj = { height: "100%" };
                         }else{
-                            obj = { width: "100%", margin: "-2px" };
+                            obj = { width: "100%"};
                         }
                         break;
                     case "orign":
@@ -197,9 +197,9 @@
             },
             getother(isup) {
                 scrollheight = parseFloat($('#image_box').scrollTop());
-                config.log(scrollheight);
-                config.log($('#image_box').height());
-                config.log($('#image_box img').height());
+                // config.log(scrollheight);
+                // config.log($('#image_box').height());
+                // config.log($('#image_box img').height());
                 if (isup && scrollheight == 0) {
                     this.id = parseInt(this.id) - 1;
                     this.get();
