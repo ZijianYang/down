@@ -148,7 +148,7 @@
         },
         computed: {
             rightcontentcss: function () {
-                var obj = { height: this.windowheight-2 + 'px' };
+                var obj = { 'box-sizing':'border-box', height: this.windowheight-10 + 'px' };
                 switch (this.imgtype) {
                     case "adaptw":
                         obj.overflow = "auto";
@@ -157,7 +157,7 @@
                 return obj;
             },
             rightblackcss: function () {
-                var obj = { 'line-height': this.windowheight-2 + 'px' };
+                var obj = { 'line-height': this.windowheight-10 + 'px' };
                 return obj;
             },
             rightimgcss: function () {
@@ -211,7 +211,7 @@
                 // config.log(scrollheight);
                 // config.log($('#image_box').height());
                 // config.log($('#image_box img').height());
-                if (isup && scrollheight == 0) {
+                if (isup && scrollheight < 3) {
                     this.id = parseInt(this.id) - 1;
                     this.get();
                 }

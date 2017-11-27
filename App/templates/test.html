@@ -56,11 +56,14 @@
     </div>
     <div class="image_right">
         <div id="image_box" align="center" v-bind:style="rightcontentcss">
-            <img v-bind:style="rightimgcss" v-bind:src="currentimage.url" />
+            <span v-bind:style="rightblackcss"></span>
+            <img style="vertical-align:middle" v-bind:style="rightimgcss" v-bind:src="currentimage.url" />
         </div>
     </div>
 </div>
 {% endblock %} {% block scripts %}
+<script type="text/javascript" language="javascript" src="/App/static/jquery.mousewheel.js" charset="utf-8"></script>
+
 <script>
     const store = new Vuex.Store({
         state: {
@@ -71,7 +74,7 @@
                 isend: 0,
                 pageindex: 0,
                 pagesize: 10,
-                isloading:false,
+                isloading: false,
             }
         },
         getters: {
@@ -92,9 +95,9 @@
                 var items = context.state.imagedata.items;
                 var currentindex = context.state.imagedata.currentindex;
                 var isend = context.state.imagedata.isend;
-                if (!isend&&!context.state.imagedata.isloading) {//未结束才进行尝试,且未正在读取数据                    
+                if (!isend && !context.state.imagedata.isloading) {//未结束才进行尝试,且未正在读取数据                    
                     if (currentindex + 1 >= items.length) {//刚开始或数据到结尾
-                        context.state.imagedata.isloading=true;
+                        context.state.imagedata.isloading = true;
                         var pagenumber = context.getters.imagepagenumber;
                         // console.log(pagenumber);
                         // console.log(currentindex);
@@ -111,8 +114,8 @@
                                             list[i].title = "scroe:" + list[i].score + ";tags:" + list[i].tags;
                                             list[i].detailurl = "detail?id=" + list[i].id + "&pageindex=" + pagenumber + "&score=" + obj.score + "$tag=" + obj.tag;
                                             context.state.imagedata.items.push(list[i]);
-                                        }                                        
-                                        context.state.imagedata.isloading=false;
+                                        }
+                                        context.state.imagedata.isloading = false;
                                         context.commit('imagenext')
                                     }
                                     else {
@@ -131,7 +134,7 @@
             }
         }
     })
-    
+
     var image = new Vue({
         el: '#image',
         data: {
@@ -145,12 +148,16 @@
         },
         computed: {
             rightcontentcss: function () {
-                var obj = { height: this.windowheight + 'px' };
+                var obj = { 'box-sizing':'border-box', height: this.windowheight-10 + 'px' };
                 switch (this.imgtype) {
                     case "adaptw":
                         obj.overflow = "auto";
                         break;
                 };
+                return obj;
+            },
+            rightblackcss: function () {
+                var obj = { 'line-height': this.windowheight-10 + 'px' };
                 return obj;
             },
             rightimgcss: function () {
@@ -160,17 +167,17 @@
                         obj = { width: "100%", height: "100%" };
                         break;
                     case "adaptw":
-                        obj = { width: "100%", margin: "-2px" };
+                        obj = { width: "100%"};
                         break;
                     case "adapth":
                         obj = { height: "100%" };
                         break;
                     case "adapt":
                         var box=$("#image_box");
-                        if(this.height/this.width>box.height()/box.width()){
+                        if(this.imgwidth!=0&&this.imgheight/this.imgwidth>box.height()/box.width()){
                             obj = { height: "100%" };
                         }else{
-                            obj = { width: "100%", margin: "-2px" };
+                            obj = { width: "100%"};
                         }
                         break;
                     case "orign":
@@ -185,29 +192,34 @@
             },
             setheight() {
                 this.windowheight = $(window).height()
-            },
-            gettruesize(){         
-                self=this;   
-                //这里做下说明，$("<img/>")这里是创建一个临时的img标签，类似js创建一个new Image()对象！
-                $("<img/>").attr("src", this.url).load(function() {
-                    /*
-                    如果要获取图片的真实的宽度和高度有三点必须注意
-                    1、需要创建一个image对象：如这里的$("<img/>")
-                    2、指定图片的src路径
-                    3、一定要在图片加载完成后执行如.load()函数里执行
-                    */
-                    self.imgwidth = this.width;
-                    self.imgheight = this.height;            
-                });                
-            },
+            },   
             get() {
-                self=this;
-                API.image.get(function(data){
-                    self.currentimage = data
+                self = this;
+                API.image.get(function (data) {
+                    self.currentimage = data;                    
                     self.$nextTick(function(){
-                        self.gettruesize();
-                    });
-                },this.id);
+                        var img=$("#image_box img")[0];
+                        if(img){
+                            self.imgheight=img.naturalHeight;
+                            self.imgwidth=img.naturalWidth;
+                        }
+                    })
+                }, this.id);
+            },
+            getother(isup) {
+                scrollheight = parseFloat($('#image_box').scrollTop());
+                // config.log(scrollheight);
+                // config.log($('#image_box').height());
+                // config.log($('#image_box img').height());
+                if (isup && scrollheight < 3) {
+                    this.id = parseInt(this.id) - 1;
+                    this.get();
+                }
+                else if (!isup && ($('#image_box').height() + scrollheight > $('#image_box img').height() - 3)) {                    
+                    this.id = parseInt(this.id) + 1;
+                    this.get();
+                    $('#image_box').scrollTop(0);
+                }
             },
         },
         mounted: function () {
@@ -218,6 +230,12 @@
             $(window).resize(function () {
                 self.setheight();
             });
+            $('#image_box')
+                .mousewheel(function (event, delta) {
+                    var isup = delta > 0;
+                    config.log(delta);
+                    self.getother(isup);
+                })
         },
     })
 </script> {% endblock %}
