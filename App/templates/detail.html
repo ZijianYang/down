@@ -55,12 +55,14 @@
     <div class="image_middle" v-on:click="setshowleft()">
     </div>
     <div class="image_right">
-        <div align="center" v-bind:style="rightcontentcss">
+        <div id="image_box" align="center" v-bind:style="rightcontentcss">
             <img v-bind:style="rightimgcss" v-bind:src="currentimage.url" />
         </div>
     </div>
 </div>
 {% endblock %} {% block scripts %}
+<script type="text/javascript" language="javascript" src="/App/static/jquery.mousewheel.js" charset="utf-8"></script>
+
 <script>
     const store = new Vuex.Store({
         state: {
@@ -184,19 +186,18 @@
                     self.currentimage = data
                 }, this.id);
             },
-            otherget(){
-                scrollheight = parseFloat($(window).scrollTop());                
-                if(scrollheight==0){
-                    console.log(scrollheight);
-                    this.id=this.id-1;
+            getother(isup) {
+                scrollheight = parseFloat($(window).scrollTop());
+                config.log(scrollheight);
+                config.log($(window).height());
+                config.log($('#image_box img').height());
+                if (isup && scrollheight == 0) {
+                    this.id = parseInt(this.id) - 1;
                     this.get();
                 }
-                else if($(window).height()+scrollheight>$('#right img').height()-3){
-                    console.log(scrollheight);
-                    console.log($(window).height());
-                    console.log($('#right img').height());
+                else if (!isup && ($(window).height() + scrollheight > $('#image_box img').height() - 3)) {
                     $(window).scrollTop(0);
-                    this.id=this.id+1;
+                    this.id = parseInt(this.id) + 1;
                     this.get();
                 }
             },
@@ -209,15 +210,13 @@
             $(window).resize(function () {
                 self.setheight();
             });
-            $('#box').bind('mousewheel', function (event, delta) {
-                var dir = delta > 0 ? 'Up' : 'Down';
-                if (dir == 'Up') {
-                    console.log("向上滚动");
-                } else {
-                    console.log("向下滚动");
-                }
-                return false;
-            });
+            $('#image_box')
+                .mousewheel(function (event, delta) {
+                    var isup = delta > 0;
+                    config.log(delta);
+                    self.getother(isup);
+                    return false;
+                })
         },
     })
 </script> {% endblock %}
