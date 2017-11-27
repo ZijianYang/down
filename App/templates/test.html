@@ -56,7 +56,7 @@
     </div>
     <div class="image_right">
         <div v-bind:style="rightcontentcss">
-            <img v-bind:style="rightimgcss" v-bind:src="image.url" />
+            <img v-bind:style="rightimgcss" v-bind:src="currentimage.url" />
         </div>
     </div>
 </div>
@@ -136,7 +136,7 @@
         el: '#image',
         data: {
             items: [],
-            image: '',
+            currentimage: '',
             isshowmenu: true,
             imgtype: "adaptw",
             windowheight: 0,
@@ -179,16 +179,10 @@
                 this.windowheight = $(window).height()
             },
             get() {
-                axios.get('/api/image/' + this.id)
-                    .then((response) => {
-                        console.log(response);
-                        if (response.status = 200) {
-                            this.image = response.data;
-                        }
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+                self=this;
+                API.image.get(function(data){
+                    self.currentimage = data
+                },this.id);
             },
         },
         mounted: function () {

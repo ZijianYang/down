@@ -53,8 +53,8 @@
         <div class="box" v-for="columns in items">
             <div v-for="item in columns" v-on:click="gotodetail(item.detailurl)">
                 <!-- <div v-for="item in columns"> -->
-                <!-- {{item.id}} -->
-                <img v-bind:src="item.url" v-bind:title="item.title" />
+                {{item.id}}
+                <!-- <img v-bind:src="item.url" v-bind:title="item.title" /> -->
             </div>
         </div>
     </div>
@@ -74,15 +74,24 @@
             }
         },
         getters: {
-            imagecurrent: state => {
+            imagecurrent: state => {//当前焦点对象
                 return store.state.imagedata.items[store.state.imagedata.currentindex];
             },
-            imagepagenumber: state => {
+            imagepagenumber: state => {//页码
                 return parseInt((store.state.imagedata.currentindex + 1) / store.state.imagedata.pagesize) + 1;
-            }
+            },
+            iscanimagenext:state=>{//是否能下一个焦点对象
+                var isend = store.state.imagedata.isend;
+                return !isend&&!store.state.imagedata.isloading
+            },
+            iscanloaddata:state=>{//是否能加载数据
+                var items = store.state.imagedata.items;
+                var currentindex = store.state.imagedata.currentindex;
+                return currentindex + 1 >= items.length
+            },
         },
         mutations: {
-            pardonstart(state) {       
+            pardonstart(state) {    //初始化操作   
                 store.state.imagedata.items=[];
                 store.state.imagedata.total=0;         
                 store.state.imagedata.pageindex=0;
@@ -90,46 +99,38 @@
                 store.state.imagedata.currentindex=-1;
                 store.state.imagedata.isloading=false;  
             },
-            imagenext(state) {
+            imagenext(state) { //下一个焦点对象
                 state.imagedata.currentindex = state.imagedata.currentindex + 1;
+            },
+            imagesnext(state,data){//获取数据成功后操作                   
+                var pagenumber = store.getters.imagepagenumber;
+                state.imagedata.total = data.total;             
+                var list = data.items;
+                if (list.length > 0) {
+                    for (var i = 0; i < list.length; i++) {
+                        list[i].title = "scroe:" + list[i].score + ";tags:" + list[i].tags;
+                        list[i].detailurl = config.urls.image+ "?id=" + list[i].id + "&pageindex=" + pagenumber + "&score=" + data.score + "&tag=" + data.tag;
+                        state.imagedata.items.push(list[i]);
+                    }                                        
+                    state.imagedata.isloading=false;
+                    state.imagedata.currentindex = state.imagedata.currentindex + 1;
+                }
+                else {
+                    state.imagedata.isend = true;
+                }
             },
         },
         actions: {
             imagenext(context, obj) {
-                var items = context.state.imagedata.items;
-                var currentindex = context.state.imagedata.currentindex;
-                var isend = context.state.imagedata.isend;
-                if (!isend&&!context.state.imagedata.isloading) {//未结束才进行尝试,且未正在读取数据                    
-                    if (currentindex + 1 >= items.length) {//刚开始或数据到结尾
+                if (context.getters.iscanimagenext) {//未结束才进行尝试,且未正在读取数据                    
+                    if (context.getters.iscanloaddata) {//刚开始或数据到结尾
                         context.state.imagedata.isloading=true;
                         var pagenumber = context.getters.imagepagenumber;
-                        // console.log(pagenumber);
-                        // console.log(currentindex);
                         var pagesize = context.state.imagedata.pagesize;
-                        var paramesdata = { params: { score: obj.score, tag: obj.tag, pagesize: pagesize } }
-                        axios.get('/api/images/' + pagenumber, paramesdata)
-                            .then((response) => {
-                                console.log(response);
-                                if (response.status = 200) {
-                                    context.state.imagedata.total = response.data.total;
-                                    var list = response.data.items;
-                                    if (list.length > 0) {
-                                        for (var i = 0; i < list.length; i++) {
-                                            list[i].title = "scroe:" + list[i].score + ";tags:" + list[i].tags;
-                                            list[i].detailurl = "detail?id=" + list[i].id + "&pageindex=" + pagenumber + "&score=" + obj.score + "$tag=" + obj.tag;
-                                            context.state.imagedata.items.push(list[i]);
-                                        }                                        
-                                        context.state.imagedata.isloading=false;
-                                        context.commit('imagenext')
-                                    }
-                                    else {
-                                        context.state.imagedata.isend = true;
-                                    }
-                                }
-                            })
-                            .catch(function (error) {
-                                console.log(error);
-                            });
+                        var paramesdata = { params: { score: obj.score, tag: obj.tag, pagesize: pagesize } };
+                        API.image.gets(function(data){                                              
+                            context.commit('imagesnext',data)  
+                        },pagenumber,paramesdata)
                     }
                     else {
                         context.commit('imagenext')
@@ -161,7 +162,6 @@
                 var image = store.getters.imagecurrent;
                 if (image != undefined) {
                     this.addimage(image);
-                    // console.log('Id' + image.id + ";index" + store.state.imagedata.currentindex);
                 }
                 this.$nextTick(function () {
                     images.getbychange();

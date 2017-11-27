@@ -15,7 +15,7 @@
     .image_menu {
         order: 0;
         flex: none;
-        width: 100px;
+        width: 200px;
         height: auto;
     }
 
@@ -50,41 +50,125 @@
             <option value="orign">原图</option>
             <option value="adapth">适应高</option>
         </select>
+        <div></div>
     </div>
     <div class="image_middle" v-on:click="setshowleft()">
     </div>
-    <div class="image_right" id="right" v-bind:style="rightcss">
-        <template v-if="imgtype=='repeat'" >
-            <img style="width:100%;height:100%;" v-bind:src="image.url" />
-        </template>
-        <template v-if="imgtype=='adaptw'" style="overflow:auto;" v-bind:style="rightcss">
-            <img style="width:100%;margin:-2px" v-bind:src="image.url" />
-        </template>
-        <template v-if="imgtype=='adapth'" >
-            <img style="height:100%;" v-bind:src="image.url" />
-        </template>
-        <template v-if="imgtype=='orign'">
-            <img v-bind:src="image.url" />
-        </template>
-        <template v-if="imgtype=='adapt'" >
-            <img v-bind:src="image.url" />
-        </template>
+    <div class="image_right">
+        <div v-bind:style="rightcontentcss">
+            <img v-bind:style="rightimgcss" v-bind:src="currentimage.url" />
+        </div>
     </div>
 </div>
 {% endblock %} {% block scripts %}
 <script>
+    const store = new Vuex.Store({
+        state: {
+            imagedata: {
+                items: [],
+                total: 0,
+                currentindex: -1,
+                isend: 0,
+                pageindex: 0,
+                pagesize: 10,
+                isloading:false,
+            }
+        },
+        getters: {
+            imagecurrent: state => {
+                return store.state.imagedata.items[store.state.imagedata.currentindex];
+            },
+            imagepagenumber: state => {
+                return parseInt((store.state.imagedata.currentindex + 1) / store.state.imagedata.pagesize) + 1;
+            }
+        },
+        mutations: {
+            imagenext(state) {
+                state.imagedata.currentindex = state.imagedata.currentindex + 1;
+            },
+        },
+        actions: {
+            imagenext(context, obj) {
+                var items = context.state.imagedata.items;
+                var currentindex = context.state.imagedata.currentindex;
+                var isend = context.state.imagedata.isend;
+                if (!isend&&!context.state.imagedata.isloading) {//未结束才进行尝试,且未正在读取数据                    
+                    if (currentindex + 1 >= items.length) {//刚开始或数据到结尾
+                        context.state.imagedata.isloading=true;
+                        var pagenumber = context.getters.imagepagenumber;
+                        // console.log(pagenumber);
+                        // console.log(currentindex);
+                        var pagesize = context.state.imagedata.pagesize;
+                        var paramesdata = { params: { score: obj.score, tag: obj.tag, pagesize: pagesize } }
+                        axios.get('/api/images/' + pagenumber, paramesdata)
+                            .then((response) => {
+                                console.log(response);
+                                if (response.status = 200) {
+                                    context.state.imagedata.total = response.data.total;
+                                    var list = response.data.items;
+                                    if (list.length > 0) {
+                                        for (var i = 0; i < list.length; i++) {
+                                            list[i].title = "scroe:" + list[i].score + ";tags:" + list[i].tags;
+                                            list[i].detailurl = "detail?id=" + list[i].id + "&pageindex=" + pagenumber + "&score=" + obj.score + "$tag=" + obj.tag;
+                                            context.state.imagedata.items.push(list[i]);
+                                        }                                        
+                                        context.state.imagedata.isloading=false;
+                                        context.commit('imagenext')
+                                    }
+                                    else {
+                                        context.state.imagedata.isend = true;
+                                    }
+                                }
+                            })
+                            .catch(function (error) {
+                                console.log(error);
+                            });
+                    }
+                    else {
+                        context.commit('imagenext')
+                    }
+                }
+            }
+        }
+    })
+    
     var image = new Vue({
         el: '#image',
         data: {
             items: [],
-            image: '',
+            currentimage: '',
             isshowmenu: true,
             imgtype: "adaptw",
             windowheight: 0,
         },
         computed: {
-            rightcss: function () {
-                return { height: this.windowheight + 'px' };
+            rightcontentcss: function () {
+                var obj = { height: this.windowheight + 'px' };
+                switch (this.imgtype) {
+                    case "adaptw":
+                        obj.overflow = "auto";
+                        break;
+                };
+                return obj;
+            },
+            rightimgcss: function () {
+                var obj = {};
+                switch (this.imgtype) {
+                    case "repeat":
+                        obj = { width: "100%", height: "100%" };
+                        break;
+                    case "adaptw":
+                        obj = { width: "100%", margin: "-2px" };
+                        break;
+                    case "adapth":
+                        obj = { height: "100%" };
+                        break;
+                    case "adapt":
+                        break;
+                    case "orign":
+                        break;
+                };
+                return obj;
             },
         },
         methods: {
@@ -95,32 +179,10 @@
                 this.windowheight = $(window).height()
             },
             get() {
-                axios.get('/api/image/' + this.id)
-                    .then((response) => {
-                        console.log(response);
-                        if (response.status = 200) {
-                            this.image = response.data;
-                        }
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
-            },
-            otherget(){
-                scrollheight = parseFloat($(window).scrollTop());                
-                if(scrollheight==0){
-                    console.log(scrollheight);
-                    this.id=this.id-1;
-                    this.get();
-                }
-                else if($(window).height()+scrollheight>$('#right img').height()-3){
-                    console.log(scrollheight);
-                    console.log($(window).height());
-                    console.log($('#right img').height());
-                    $(window).scrollTop(0);
-                    this.id=this.id+1;
-                    this.get();
-                }
+                self=this;
+                API.image.get(function(data){
+                    self.currentimage = data
+                },this.id);
             },
         },
         mounted: function () {
@@ -130,12 +192,6 @@
             self = this;
             $(window).resize(function () {
                 self.setheight();
-            });
-
-            $('#right').bind('mousewheel', function (event) {
-
-                self.otherget();
-      
             });
         },
     })
