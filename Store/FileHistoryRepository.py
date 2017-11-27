@@ -4,6 +4,7 @@ from Store.Entity.FileHistory import FileHistory
 from Store.Entity.UrlDetail import UrlDetail
 from Store.Entity.Url import Url
 import sqlalchemy
+import random
 
 
 class FileHistoryRepository(RepositoryBase):
@@ -59,16 +60,31 @@ class FileHistoryRepository(RepositoryBase):
         items = entities[star:end]
         return {"total": total, "list": items}
 
-    def getspage(self, score=0, tag=None, pageindex=0, pagesize=10):
+    def getspage(self, score=0, tag=None, pageindex=0, pagesize=10, sort="score"):
         """分页查询"""
         entities = self.session.query(FileHistory).filter(
             FileHistory.remark1 >= score)
         if tag:
             for item in tag:
                 entities = entities.filter(FileHistory.remark2.like('%'+item+'%'))
+        if sort == "score":
+            entities = entities.order_by(FileHistory.remark1.desc())
         star = pageindex * pagesize
         end = (pageindex + 1) * pagesize
         total = entities.count()
+        items = entities[star:end]
+        return {"total": total, "list": items}
+
+    def getsradom(self, score=0, tag=None, pagesize=10):
+        """分页查询"""
+        entities = self.session.query(FileHistory).filter(
+            FileHistory.remark1 >= score)
+        if tag:
+            for item in tag:
+                entities = entities.filter(FileHistory.remark2.like('%'+item+'%'))
+        total = entities.count()
+        star = random.random(0, total-pagesize)
+        end = star + pagesize
         items = entities[star:end]
         return {"total": total, "list": items}
 

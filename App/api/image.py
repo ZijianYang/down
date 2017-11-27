@@ -2,6 +2,7 @@ from flask import jsonify, request
 from . import api
 import Store
 
+
 @api.route('/images/<int:pagenumber>', methods=['GET', 'POST'])
 def images(pagenumber):
     """查询"""
@@ -10,10 +11,15 @@ def images(pagenumber):
     tag = tag.split(" ")
     pagesize = args.get("pagesize", 10, type=int)
     score = args.get("score", 0, type=int)
-    pageindex = pagenumber-1
-    print('score：%s;tag：%s;pagesize：%s;pageindex：%s;' % (score, tag, pagesize, pageindex))
-    data = Store.FileHistoryRepository().getspage(score, tag, pageindex,
-                                                  pagesize)
+    sort = args.get("sort", "score", type=str)
+    pageindex = pagenumber - 1
+    print('score：%s;tag：%s;pagesize：%s;pageindex：%s;sort: %s' %
+          (score, tag, pagesize, pageindex, sort))
+    if sort == "random":
+        data = Store.FileHistoryRepository().getsradom(score, tag, pagesize)
+    else:
+        data = Store.FileHistoryRepository().getspage(score, tag, pageindex,
+                                                      pagesize, sort)
     #print(ClassToDict.todict(data["list"][0]))
     return jsonify({
         'items': [{
