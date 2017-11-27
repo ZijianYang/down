@@ -189,7 +189,7 @@
             gettruesize(){         
                 self=this;   
                 //这里做下说明，$("<img/>")这里是创建一个临时的img标签，类似js创建一个new Image()对象！
-                $("<img/>").attr("src", $(img).attr("src")).load(function() {
+                $("<img/>").attr("src", this.url).load(function() {
                     /*
                     如果要获取图片的真实的宽度和高度有三点必须注意
                     1、需要创建一个image对象：如这里的$("<img/>")
