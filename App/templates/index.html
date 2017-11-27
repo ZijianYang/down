@@ -53,8 +53,8 @@
         <div class="box" v-for="columns in items">
             <div v-for="item in columns" v-on:click="gotodetail(item.detailurl)">
                 <!-- <div v-for="item in columns"> -->
-                {{item.id}}
-                <!-- <img v-bind:src="item.url" v-bind:title="item.title" /> -->
+                <!-- {{item.id}} -->
+                <img v-bind:src="item.url" v-bind:title="item.title" />
             </div>
         </div>
     </div>
