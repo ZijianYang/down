@@ -56,7 +56,8 @@
     </div>
     <div class="image_right">
         <div id="image_box" align="center" v-bind:style="rightcontentcss">
-            <img v-bind:style="rightimgcss" v-bind:src="currentimage.url" />
+            <span v-bind:style="rightblackcss"></span>
+            <img style="vertical-align:middle" v-bind:style="rightimgcss" v-bind:src="currentimage.url" />
         </div>
     </div>
 </div>
@@ -155,6 +156,10 @@
                 };
                 return obj;
             },
+            rightblackcss: function () {
+                var obj = { 'line-height': this.windowheight-2 + 'px' };
+                return obj;
+            },
             rightimgcss: function () {
                 var obj = {};
                 switch (this.imgtype) {
@@ -169,8 +174,7 @@
                         break;
                     case "adapt":
                         var box=$("#image_box");
-                        var img=$("#image_box img")[0];
-                        if(img.naturalWidth/img.naturalHeight>box.height()/box.width()){
+                        if(img.imgwidth!=0&&img.imgheight/img.imgwidth>box.height()/box.width()){
                             obj = { height: "100%" };
                         }else{
                             obj = { width: "100%"};
@@ -192,7 +196,14 @@
             get() {
                 self = this;
                 API.image.get(function (data) {
-                    self.currentimage = data    
+                    self.currentimage = data;                    
+                    self.$nextTick(function(){
+                        var img=$("#image_box img")[0];
+                        if(img){
+                            self.imgheight=img.naturalHeight;
+                            self.imgwidth=img.naturalWidth;
+                        }
+                    })
                 }, this.id);
             },
             getother(isup) {
