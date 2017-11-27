@@ -83,7 +83,10 @@ class FileHistoryRepository(RepositoryBase):
             for item in tag:
                 entities = entities.filter(FileHistory.remark2.like('%'+item+'%'))
         total = entities.count()
-        star = random.random(0, total-pagesize)
+        if total > pagesize:
+            star = random.randint(0, total-pagesize)
+        else:
+            star = 0
         end = star + pagesize
         items = entities[star:end]
         return {"total": total, "list": items}

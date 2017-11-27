@@ -32,7 +32,13 @@
     <div class="select">
         <template v-if="isshowselect">
             <div>
-                <label for="score"></label>
+                <label for="sort">排序:</label>
+                <select v-model="sort" name="sort">
+                    <option>score</option>
+                    <option>noraml</option>
+                    <option>random</option>
+                </select>
+                <label for="score" name="score">分数:</label>
                 <select v-model="score">
                     <option>0</option>
                     <option>19</option>
@@ -53,8 +59,8 @@
         <div class="box" v-for="columns in items">
             <div v-for="item in columns" v-on:click="gotodetail(item.detailurl)">
                 <!-- <div v-for="item in columns"> -->
-                <!-- {{item.id}} -->
-                <img v-bind:src="item.url" v-bind:title="item.title" />
+                {{item.id}}
+                <!-- <img v-bind:src="item.url" v-bind:title="item.title" /> -->
             </div>
         </div>
     </div>
@@ -127,7 +133,7 @@
                         context.state.imagedata.isloading=true;
                         var pagenumber = context.getters.imagepagenumber;
                         var pagesize = context.state.imagedata.pagesize;
-                        var paramesdata = { params: { score: obj.score, tag: obj.tag, pagesize: pagesize } };
+                        var paramesdata = { params: { score: obj.score, tag: obj.tag, pagesize: pagesize,sort:obj.sort } };
                         API.image.gets(function(data){                                              
                             context.commit('imagesnext',data)  
                         },pagenumber,paramesdata)
@@ -147,6 +153,7 @@
             items: [[], [], [], []],
             score: 0,
             tag: '',
+            sort:'score',
             isshowselect: false,
         },
         computed: {
@@ -194,7 +201,7 @@
                     store.commit('pardonstart')
                 }
                 // 以载荷形式分发
-                store.dispatch('imagenext', { tag: this.tag, score: this.score })
+                store.dispatch('imagenext', { tag: this.tag, score: this.score, sort:this.sort })
                 // store.commit('imagenext', { tag: this.tag, score: this.score })
             },
             getbychange() {
