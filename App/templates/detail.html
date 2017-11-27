@@ -196,18 +196,18 @@
                 }, this.id);
             },
             getother(isup) {
-                scrollheight = parseFloat($(window).scrollTop());
+                scrollheight = parseFloat($('#image_box').scrollTop());
                 config.log(scrollheight);
-                config.log($(window).height());
+                config.log($('#image_box').height());
                 config.log($('#image_box img').height());
                 if (isup && scrollheight == 0) {
                     this.id = parseInt(this.id) - 1;
                     this.get();
                 }
-                else if (!isup && ($(window).height() + scrollheight > $('#image_box img').height() - 3)) {
-                    $(window).scrollTop(0);
+                else if (!isup && ($('#image_box').height() + scrollheight > $('#image_box img').height() - 3)) {                    
                     this.id = parseInt(this.id) + 1;
                     this.get();
+                    $('#image_box').scrollTop(0);
                 }
             },
         },
