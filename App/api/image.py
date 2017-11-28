@@ -34,6 +34,32 @@ def images(pagenumber):
     })
 
 
+@api.route('/images/<int:star>/<int:end>', methods=['GET', 'POST'])
+def imagesbysection(star, end):
+    """查询"""
+    args = request.args
+    tag = args.get("tag", None, type=str)
+    tag = tag.split(" ")
+    score = args.get("score", 0, type=int)
+    sort = args.get("sort", "score", type=str)
+    print('score：%s;tag：%s;star%s;end%s;sort: %s' % (score, tag, star, end,
+                                                     sort))
+    if sort == "random":
+        sectionlength = end - star
+        data = Store.FileHistoryRepository().getsradom(score, tag,
+                                                       sectionlength)
+    else:
+        data = Store.FileHistoryRepository().getsbysection(
+            score, tag, star, end, sort)
+    return jsonify([{
+        'id': item.id,
+        'url': item.filepath.replace("\\", "/"),
+        'md5': item.md5,
+        'score': item.remark1,
+        'tags': item.remark2
+    } for item in data])
+
+
 @api.route('/image/<int:imageid>', methods=['GET', 'POST'])
 def image(imageid):
     """查询"""

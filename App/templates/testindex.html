@@ -1,0 +1,245 @@
+{% extends "base.html" %} {% block csses %}
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+    }
+
+    .waterwall {
+        padding: 15px 5px 0px 5px;
+        min-width: 800px;
+    }
+
+    .waterwall .box {
+        width: 24%;
+        float: left;
+        padding: 3px;
+        cursor: pointer;
+    }
+
+    .waterwall .box img {
+        width: 100%;
+    }
+
+    .select {
+        margin: 5px 5px 0px 15px;
+        position: fixed;
+    }
+</style>
+{% endblock %} {% block page_content %}
+<span style="display:none;">{{ name }}</span>
+<div id="images">
+    <div class="select">
+        <template v-if="isshowselect">
+            <div>
+                <label for="sort">排序:</label>
+                <select v-model="sort" name="sort">
+                    <option>score</option>
+                    <option>noraml</option>
+                    <option>random</option>
+                </select>
+                <label for="score" name="score">分数:</label>
+                <select v-model="score">
+                    <option>0</option>
+                    <option>19</option>
+                    <option>49</option>
+                    <option>99</option>
+                </select>
+                <label for="tag"></label>
+                <input name="tag" type="text" v-model="tag" />
+                <button type="button" v-on:click="get()">查询</button>
+            </div>
+        </template>
+        <template v-else>
+            <span v-text="'共:'+total"></span>
+            <button type="button" v-on:click="showselect()">查询</button>
+        </template>
+    </div>
+    <div class="waterwall">
+        <div class="box" v-for="columns in items">
+            <div v-for="item in columns" v-on:click="gotodetail(item.detailurl)">
+                <!-- <div v-for="item in columns"> -->
+                {{item.id}}
+                <!-- <img v-bind:src="item.url" v-bind:title="item.title" /> -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} {% block scripts %}
+<script>
+    const store = new Vuex.Store({
+        state: {
+            imagedata: {
+                items: [],
+                total: 0,
+                currentindex: -1,
+                isend: 0,
+                pageindex: 0,
+                pagesize: 10,
+                isloading:false,
+            }
+        },
+        getters: {
+            imagecurrent: state => {//当前焦点对象
+                return store.state.imagedata.items[store.state.imagedata.currentindex];
+            },
+            imagepagenumber: state => {//页码
+                return parseInt((store.state.imagedata.currentindex + 1) / store.state.imagedata.pagesize) + 1;
+            },
+            iscanimagenext:state=>{//是否能下一个焦点对象
+                var isend = store.state.imagedata.isend;
+                return !isend&&!store.state.imagedata.isloading
+            },
+            iscanloaddata:state=>{//是否能加载数据
+                var items = store.state.imagedata.items;
+                var currentindex = store.state.imagedata.currentindex;
+                return currentindex + 1 >= items.length
+            },
+        },
+        mutations: {
+            pardonstart(state) {    //初始化操作   
+                store.state.imagedata.items=[];
+                store.state.imagedata.total=0;         
+                store.state.imagedata.pageindex=0;
+                store.state.imagedata.isend=0;
+                store.state.imagedata.currentindex=-1;
+                store.state.imagedata.isloading=false;  
+            },
+            imagenext(state) { //下一个焦点对象
+                state.imagedata.currentindex = state.imagedata.currentindex + 1;
+            },
+            imagesnext(state,data){//获取数据成功后操作                   
+                var pagenumber = store.getters.imagepagenumber;
+                state.imagedata.total = data.total;             
+                var list = data.items;
+                if (list.length > 0) {
+                    for (var i = 0; i < list.length; i++) {
+                        list[i].title = "scroe:" + list[i].score + ";tags:" + list[i].tags;
+                        list[i].detailurl = config.urls.image+ "?index=" + (state.imagedata.currentindex+i) + "&score=" + data.score + "&tag=" + data.tag+ "&sort=" + data.sort ;
+                        state.imagedata.items.push(list[i]);
+                    }                                        
+                    state.imagedata.isloading=false;
+                    state.imagedata.currentindex = state.imagedata.currentindex + 1;
+                }
+                else {
+                    state.imagedata.isend = true;
+                }
+            },
+        },
+        actions: {
+            imagenext(context, obj) {
+                if (context.getters.iscanimagenext) {//未结束才进行尝试,且未正在读取数据                    
+                    if (context.getters.iscanloaddata) {//刚开始或数据到结尾
+                        context.state.imagedata.isloading=true;
+                        var pagenumber = context.getters.imagepagenumber;
+                        var pagesize = context.state.imagedata.pagesize;
+                        var paramesdata = { params: { score: obj.score, tag: obj.tag, pagesize: pagesize,sort:obj.sort } };
+                        API.image.gets(function(data){                                              
+                            context.commit('imagesnext',data)  
+                        },pagenumber,paramesdata)
+                    }
+                    else {
+                        context.commit('imagenext')
+                    }
+                }
+            }
+        }
+    })
+
+    var images = new Vue({
+        el: '#images',
+        store,
+        data: {
+            items: [[], [], [], []],
+            score: 0,
+            tag: '',
+            sort:'score',
+            isshowselect: false,
+        },
+        computed: {
+            imagecurrentindex: function () {
+                return store.state.imagedata.currentindex;
+            },
+            total: function () {
+                return store.state.imagedata.total;
+            }
+        },
+        watch: {
+            imagecurrentindex() {
+                var image = store.getters.imagecurrent;
+                if (image != undefined) {
+                    this.addimage(image);
+                }
+                this.$nextTick(function () {
+                    images.getbychange();
+                });
+            }
+        },
+        methods: {
+            showselect() {
+                this.isshowselect = true;
+            },
+            getmincolumn(){
+                var mincolumnindex = 0;
+                var minheight = $($('.box')[0]).height();
+                for (var i = 1; i < 4; i++) {
+                    var currentheight = $($('.box')[i]).height();
+                    if (minheight > currentheight) {
+                        mincolumnindex = i;
+                        minheight = currentheight;
+                    }
+                }
+                return {index:mincolumnindex,height:minheight};
+            },
+            addimage(image) {                
+                this.items[this.getmincolumn().index].push(image);
+            },
+            get(isfirst = true) {
+                this.isshowselect = false;
+                if (isfirst) {
+                    this.items = [[], [], [], []];
+                    store.commit('pardonstart')
+                }
+                // 以载荷形式分发
+                store.dispatch('imagenext', { tag: this.tag, score: this.score, sort:this.sort })
+                // store.commit('imagenext', { tag: this.tag, score: this.score })
+            },
+            getbychange() {
+                //滚动条所在位置的高度
+                totalheight = parseFloat($(window).height()) + parseFloat($(window).scrollTop());
+                //当前文档高度   小于或等于   滚动条所在位置高度  则是页面底部
+                // if (($(document).height()) <= totalheight + 10) {
+                //     // console.log(new Date())
+                //     //页面到达底部
+                //     this.get(false)
+                // }
+
+                if (this.getmincolumn().height <= totalheight + 10) {
+                    // console.log(new Date())
+                    //页面到达底部
+                    this.get(false)
+                }
+            },
+            gotodetail(url) {
+                //window.location.href=''
+                window.open(url);
+            },
+        },
+        mounted: function () {
+            this.get()
+            self = this;
+            $(window).scroll(function () {
+                self.getbychange()
+            });
+            $(window).resize(function () {
+                self.getbychange()
+            });
+            // $(window).scroll( Vue.Debounce(function () {
+            //     self.getbychange()
+            // }, 100, true) );
+            // window.onresize = Vue.Debounce(function () {
+            //     self.getbychange()
+            // }, 100)
+        },
+    })
+</script> {% endblock %}

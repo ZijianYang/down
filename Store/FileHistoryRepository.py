@@ -91,6 +91,18 @@ class FileHistoryRepository(RepositoryBase):
         items = entities[star:end]
         return {"total": total, "list": items}
 
+    def getsbysection(self, score=0, tag=None, star=0, end=10, sort="score"):
+        """分页查询"""
+        entities = self.session.query(FileHistory).filter(
+            FileHistory.remark1 >= score)
+        if tag:
+            for item in tag:
+                entities = entities.filter(FileHistory.remark2.like('%'+item+'%'))
+        if sort == "score":
+            entities = entities.order_by(FileHistory.remark1.desc())
+        items = entities[star:end]
+        return items
+
     def getbyid(self, imageid):
         """分页查询"""
         entity = self.session.query(FileHistory).filter(FileHistory.id == imageid).first()

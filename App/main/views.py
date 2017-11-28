@@ -18,13 +18,22 @@ def indexcss():
     """首页"""
     return render_template('indexcss.html', name='test')
 
+@main.route('/detail')
+def detail():
+    """首页"""
+    return render_template('detail.html')
+
 @main.route('/test')
 def test():
     """首页"""
     return render_template('test.html', name='test')
 
-
-@main.route('/detail')
-def detail():
+@main.route('/test/')
+def testindex():
     """首页"""
-    return render_template('detail.html')
+    return render_template('testindex.html', name='test')
+
+@main.route('/test/detail')
+def testdetail():
+    """首页"""
+    return render_template('testdetail.html')

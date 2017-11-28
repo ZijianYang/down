@@ -77,7 +77,14 @@ API.image={
         axios.get(config.apiurls.images + pagenumber, paramesdata)
         .then((response) => {       
             response.data.score=paramesdata.params.score;
-            response.data.tag=paramesdata.params.tag;    
+            response.data.tag=paramesdata.params.tag;   
+            response.data.sort=paramesdata.params.sort;  
+            successfunc(response.data);         
+        })
+    },
+    getsbusection:function(successfunc,star,end,paramesdata){
+        axios.get(config.apiurls.images + star+'/'+end, paramesdata)
+        .then((response) => {        
             successfunc(response.data);         
         })
     },
