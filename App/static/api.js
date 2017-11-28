@@ -82,7 +82,7 @@ API.image={
             successfunc(response.data);         
         })
     },
-    getsbusection:function(successfunc,star,end,paramesdata){
+    getsbysection:function(successfunc,star,end,paramesdata){
         axios.get(config.apiurls.images + star+'/'+end, paramesdata)
         .then((response) => {        
             successfunc(response.data);         

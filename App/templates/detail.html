@@ -125,16 +125,22 @@
             },   
             get() {
                 self = this;
-                API.image.get(function (data) {
-                    self.currentimage = data;                    
-                    self.$nextTick(function(){
-                        var img=$("#image_box img")[0];
-                        if(img){
-                            self.imgheight=img.naturalHeight;
-                            self.imgwidth=img.naturalWidth;
+                API.image.getsbysection(
+                    function (data) {
+                        if(data&&data.length>0){
+                            self.currentimage = data[0];                    
+                            self.$nextTick(function(){
+                                var img=$("#image_box img")[0];
+                                if(img){
+                                    self.imgheight=img.naturalHeight;
+                                    self.imgwidth=img.naturalWidth;
+                                }
+                            })
                         }
-                    })
-                }, this.id);
+                    },
+                    this.index,
+                    parseInt(this.index)+1,
+                    { params: { tag: this.tag, score: this.score, sort:this.sort }});
             },
             getother(isup) {
                 scrollheight = parseFloat($('#image_box').scrollTop());
@@ -142,18 +148,22 @@
                 // config.log($('#image_box').height());
                 // config.log($('#image_box img').height());
                 if (isup && scrollheight < 3) {
-                    this.id = parseInt(this.id) - 1;
-                    this.get();
+                    this.index = parseInt(this.index) - 1;
+                    if(this.index>-1)
+                        this.get();
                 }
                 else if (!isup && ($('#image_box').height() + scrollheight > $('#image_box img').height() - 3)) {                    
-                    this.id = parseInt(this.id) + 1;
+                    this.index = parseInt(this.index) + 1;
                     this.get();
                     $('#image_box').scrollTop(0);
                 }
             },
         },
         mounted: function () {
-            this.id = Vue.GetUrlParam("id");
+            this.index = Vue.GetUrlParam("index");
+            this.tag = Vue.GetUrlParam("tag");
+            this.score = Vue.GetUrlParam("score");
+            this.sort = Vue.GetUrlParam("sort");
             this.get();
             this.setheight();
             self = this;
