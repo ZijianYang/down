@@ -106,7 +106,11 @@
                 store.state.imagedata.isloading=false;  
             },
             imagenext(state) { //下一个焦点对象
-                state.imagedata.currentindex = state.imagedata.currentindex + 1;
+                if(state.imagedata.currentindex+1>=state.imagedata.total)
+                    store.state.imagedata.isend=true;
+                else
+                    state.imagedata.currentindex = state.imagedata.currentindex + 1;
+                
             },
             imagesnext(state,data){//获取数据成功后操作                   
                 var pagenumber = store.getters.imagepagenumber;
@@ -119,11 +123,11 @@
                         state.imagedata.items.push(list[i]);
                     }                                        
                     state.imagedata.isloading=false;
-                    state.imagedata.currentindex = state.imagedata.currentindex + 1;
-                }
-                else {
-                    state.imagedata.isend = true;
-                }
+                    if(state.imagedata.currentindex+1>=state.imagedata.total)
+                        store.state.imagedata.isend=true;
+                    else
+                        state.imagedata.currentindex = state.imagedata.currentindex + 1;
+                }              
             },
         },
         actions: {

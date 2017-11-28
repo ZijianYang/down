@@ -39,7 +39,6 @@ def imagesbysection(star, end):
     """查询"""
     args = request.args
     tag = args.get("tag", None, type=str)
-    print(tag)
     if tag:
         tag = tag.split(" ")
     score = args.get("score", 0, type=int)
