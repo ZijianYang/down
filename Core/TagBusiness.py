@@ -19,7 +19,8 @@ def detail():
             print(item)
             tags = item.remark2.split(" ")
             for tag in tags:
-                Store.TagRepository().addorupdate(tag)
+                if tag:
+                    Store.TagRepository().addorupdate(tag)
             successcount = successcount + 1
             progressbar.move("成功%s;" % (successcount))
         if len(datapage["list"]) == 0:

@@ -10,12 +10,12 @@ class TagRepository(RepositoryBase):
 
     def addorupdate(self, tag):
         """新增"""
-        tag = self.session.query(Tag).filter(Tag.tag == tag).first()
-        if tag:
-            tag.update({Tag.count: tag.count + 1})
+        entities = self.session.query(Tag).filter(Tag.tag == tag)
+        if entities and entities.count()>0:
+            entities.update({Tag.count: entities.first().count + 1})
         else:
-            tag = Tag(tag, 1)
-            self.session.add(tag)
+            entity = Tag(tag, 1)
+            self.session.add(entity)
         self.session.commit()
 
     def gets(self, tag, count=10):
