@@ -145,7 +145,7 @@ Vue.use(Vuex)
 // 提示组件
 Vue.component('my-prompt', {
     template:
-        '<div class="prompt_box">' +
+        '<div class="prompt_box"  style="background-color:bisque">' +
             '<span v-if="Total!=0" v-text="Total"></span>' +  
             '<ul>' +    
                 '<li v-for="(item,index) in myItems">'+
