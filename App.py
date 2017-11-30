@@ -89,6 +89,8 @@ def main(argv):
         elif opt in ('--history', ):
             if arg == "detail":
                 Core.FileHistoryBusiness.detail()
+            elif arg == "tag":
+                Core.TagBusiness.detail()
             else:
                 if content == "":
                     print("缺少参数")

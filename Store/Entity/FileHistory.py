@@ -38,6 +38,6 @@ class FileHistory(EntityBase):
             self.md5 = md5
 
     def __str__(self):
-        return 'Url,filepath:%s; md5:%s;' % (self.filepath, self.md5)
+        return 'Url,filepath:%s; md5:%s;remark1:%s;remark2:%s;' % (self.filepath, self.md5, self.remark1, self.remark2)
 
     __repr__ = __str__

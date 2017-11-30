@@ -12,11 +12,12 @@ def detail():
     total = data["total"]
     progressbar = Tool.ProgressBar(total=total)
     successcount = 0
+    pageindex = 0
     while True:
-        pageindex = 0        
         datapage = Store.FileHistoryRepository().getspage(pageindex=pageindex)
         for item in datapage["list"]:
-            tags = item.remrk2.split(" ")
+            print(item)
+            tags = item.remark2.split(" ")
             for tag in tags:
                 Store.TagRepository().addorupdate(tag)
             successcount = successcount + 1
