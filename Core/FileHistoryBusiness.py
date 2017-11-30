@@ -62,7 +62,7 @@ def detail():
     successcount = 0
     while True:
         pageindex = 0
-        sucesscountcurrent = 0
+        sucesscountcurrent = 0##当前循环成功数量
         while True:
             datapage = Store.FileHistoryRepository().getsremarknull(pageindex, pagesize)
             for item in datapage["list"]:
