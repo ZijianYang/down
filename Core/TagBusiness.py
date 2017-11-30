@@ -16,7 +16,7 @@ def detail():
     while True:
         datapage = Store.FileHistoryRepository().getspage(pageindex=pageindex)
         for item in datapage["list"]:
-            print(item)
+            # print(item)
             tags = item.remark2.split(" ")
             for tag in tags:
                 if tag:
