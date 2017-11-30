@@ -95,3 +95,13 @@ API.image={
         })
     }
 };
+
+
+API.tag={
+    gets:function(successfunc, tag){
+        axios.get(config.apiurls.tag + tag)
+        .then((response) => {
+            successfunc(response.data);
+        })
+    }
+}

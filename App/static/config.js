@@ -6,6 +6,7 @@ var config = {
     apiurls: {
         images: '/images/',//
         image: '/image/',//
+        tag: '/tag/',//
     },
     urls: {
         images: '/',//首页地址
