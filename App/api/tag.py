@@ -7,7 +7,7 @@ import Store
 def tag(tag):
     """查询"""
     data = Store.TagRepository().gets(tag)
-    return jsonify({
-        'tag': data.tag,
-        'count': data.count,
-    } if data else {})
+    return jsonify([{
+        'tag': item.tag,
+        'count': item.count,
+    } for item in data])

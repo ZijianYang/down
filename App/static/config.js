@@ -4,8 +4,8 @@ var config = {
     pageSize: 10,//默认页面数据量
     baseUrl: 'http://127.0.0.1:5000/api',//接口地址
     apiurls: {
-        images: '/images/',//申请token的地址  
-        image: '/image/',//图片验证码接口地址
+        images: '/images/',//
+        image: '/image/',//
     },
     urls: {
         images: '/',//首页地址

@@ -139,3 +139,37 @@ var VueExtend = {
 
 Vue.use(VueExtend)
 Vue.use(Vuex)
+
+
+
+// 提示组件
+Vue.component('my-prompt', {
+    template:
+        '<div class="prompt_box">' +
+            '<span v-if="Total!=0" v-text="Total"></span>' +  
+            '<ul>' +    
+                '<li v-for="(item,index) in myItems">'+
+                    '<span v-text="item" v-on:click="Selected(item)"></span>'+
+                '</li>'+
+            '</ul>' +          
+        '</div>',
+    props: {
+        myItems: {
+            type: Object,
+            default: function () {
+              return []
+            }
+        },
+    },
+    computed: {            
+        Total: function () {
+            var data = this.myItems.length;
+            return data;
+        }
+    },
+    methods: {
+        Selected: function (content) {
+            this.$emit('selected', content);
+        },
+    },
+});

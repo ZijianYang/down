@@ -11,7 +11,7 @@ class TagRepository(RepositoryBase):
     def addorupdate(self, tag):
         """新增"""
         entities = self.session.query(Tag).filter(Tag.tag == tag)
-        if entities and entities.count()>0:
+        if entities and entities.count() > 0:
             entities.update({Tag.count: entities.first().count + 1})
         else:
             entity = Tag(tag, 1)
