@@ -42,7 +42,7 @@
 
 <div id="image">
 
-    <div class="image_menu" v-if="isshowmenu">
+    <div class="image_menu" v-if="isshowmenu" v-bind:style="rightmenucss">
         <select v-model="imgtype">
             <option value="adaptw">适应宽</option>
             <option value="adapt">合适</option>
@@ -199,6 +199,10 @@
                     return this.Images[this.CurrentIndex]
                 else
                     return { url: '' };
+            },
+            rightmenucss: function () {
+                var obj = { overflow:'hidden','box-sizing': 'border-box', height: this.windowheight - 10 + 'px' };
+                return obj;
             },
             rightcontentcss: function () {
                 var obj = { 'box-sizing': 'border-box', height: this.windowheight - 10 + 'px' };
