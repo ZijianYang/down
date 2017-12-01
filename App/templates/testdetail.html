@@ -50,8 +50,13 @@
             <option value="orign">原图</option>
             <option value="adapth">适应高</option>
         </select>
-        <div v-for="item in Images">            
-            <img style="width:90px;height:90px"v-bind:src="item.url" />
+        <div v-for="(item,index) in Images">
+            <template v-if="index==CurrentIndex">
+                <img style="width:100%;height:90px;border:1px solid" v-bind:src="'../'+item.url" />
+            </template>
+            <template v-if="index!=CurrentIndex">
+                <img style="width:100%;height:90px" v-bind:src="'../'+item.url" />
+            </template>
         </div>
     </div>
     <div class="image_middle" v-on:click="setshowleft()">
@@ -59,7 +64,7 @@
     <div class="image_right">
         <div id="image_box" align="center" v-bind:style="rightcontentcss">
             <span v-bind:style="rightblackcss"></span>
-            <img style="vertical-align:middle" v-bind:style="rightimgcss" v-bind:src="CurrentImage.url" />
+            <img style="vertical-align:middle" v-bind:style="rightimgcss" v-bind:src="'../'+CurrentImage.url" />
         </div>
     </div>
 </div>
@@ -71,19 +76,19 @@
         state: {
             ImageData: {
                 Items: [],
-                CurrentIndex: -1,                
+                CurrentIndex: -1,
             },
-            SelectData:{
-                Index:-1,  
-                StarIndex:-1,
+            SelectData: {
+                Index: -1,
+                StarIndex: -1,
                 Section: 10,
-                IsEnd:false,                
+                IsEnd: false,
                 IsLoading: false,
-                Params:{
-                    params:{
-                        Tag:'',
-                        Score: 0, 
-                        Sort:'',
+                Params: {
+                    params: {
+                        Tag: '',
+                        Score: 0,
+                        Sort: '',
                     }
                 }
             },
@@ -97,81 +102,70 @@
             // },
         },
         mutations: {
-            imagechange(state,isUp){
-                if(isUp){
-                    if(state.SelectData.StarIndex==0)
-                        if(state.ImageData.Items.length<3)
-                            state.ImageData.CurrentIndex = state.ImageData.CurrentIndex - 1;
-                        else
-                            state.ImageData.CurrentIndex = 3 - 1
-                }
-                else{
-                    if(state.SelectData.IsEnd)
-                        if(state.ImageData.Items.length<3)
-                            state.ImageData.CurrentIndex = state.ImageData.CurrentIndex + 1;
-                }   
-                state.ImageData.CurrentIndex = 3 - 1;
+            imagechange(state, isUp) {
+                state.ImageData.CurrentIndex = 0;
             },
-            startdata(state, obj){
-                state.SelectData.Index=obj.Index;
-                if(obj.Index-3>-1){     
-                    state.SelectData.StarIndex=obj.Index-3;
-                    state.ImageData.CurrentIndex=3-1;
-                }else{
-                    state.SelectData.StarIndex=obj.Index;
-                    state.ImageData.CurrentIndex=obj.Index;
-                }           
-                state.SelectData.Params.params.Tag=obj.Tag;
-                state.SelectData.Params.params.Score=obj.Score;
-                state.SelectData.Params.params.Sort=obj.Sort;
+            startdata(state, obj) {
+                state.SelectData.Index = obj.Index;
+                if (obj.Index - 3 > -1) {
+                    state.SelectData.StarIndex = obj.Index - 3;
+                    state.ImageData.CurrentIndex = 3 - 1;
+                } else {
+                    state.SelectData.StarIndex = obj.Index;
+                    state.ImageData.CurrentIndex = obj.Index;
+                }
+                state.SelectData.Params.params.Tag = obj.Tag;
+                state.SelectData.Params.params.Score = obj.Score;
+                state.SelectData.Params.params.Sort = obj.Sort;
             }
         },
-        actions: {    
-            start(context){
+        actions: {
+            start(context) {
                 API.image.getsbysection(
                     function (data) {
-                        if(data&&data.length>0){
+                        if (data && data.length > 0) {
                             data.forEach(element => {
-                                state.context.state.ImageData.Items.push(element);
-                            });                            
+                                context.state.ImageData.Items.push(element);
+                            });
+                            context.commit("imagechange", false);
                         }
                     },
-                    context.state.SelectData.index,
-                    context.state.SelectData.index+state.SelectData.section,
-                    context.state.SelectData.Params)  
-            },        
+                    context.state.SelectData.Index,
+                    context.state.SelectData.Index + context.state.SelectData.Section,
+                    context.state.SelectData.Params)
+            },
             change(context, isUp) {
-                starIndex,endIndex;
+                starIndex, endIndex;
                 index = context.state.SelectData.Index;
                 section = context.state.SelectData.Section;
-                if(isUp){
-                    if(context.state.SelectData.Index<=0)
+                if (isUp) {
+                    if (context.state.SelectData.Index <= 0)
                         return;
-                    else{
-                        starIndex=context.state.SelectData.StarIndex-1;                        
-                        endIndex=starIndex+1;
+                    else {
+                        starIndex = context.state.SelectData.StarIndex - 1;
+                        endIndex = starIndex + 1;
                     }
                 }
-                else{
-                    if(context.state.SelectData.IsEnd)
+                else {
+                    if (context.state.SelectData.IsEnd)
                         return;
-                    else{
-                        starIndex=context.state.SelectData.StarIndex+context.state.SelectData.Section-1;                         
-                        endIndex=starIndex+1;
+                    else {
+                        starIndex = context.state.SelectData.StarIndex + context.state.SelectData.Section - 1;
+                        endIndex = starIndex + 1;
                     }
                 }
                 if (!context.state.SelectData.IsLoading) {//未结束才进行尝试,且未正在读取数据                    
-                    if (currentindex !=0) {//刚开始或数据到结尾
+                    if (currentindex != 0) {//刚开始或数据到结尾
                         context.state.imagedata.isloading = true;
                         API.image.getsbysection(
                             function (data) {
-                                if(data&&data.length>0){
+                                if (data && data.length > 0) {
                                     context.state.ImageData.Items.push(data[0]);
                                 }
                             },
                             context.state.SelectData.index,
-                            context.state.SelectData.index+1,
-                            context.state.SelectData.Params)         
+                            context.state.SelectData.index + 1,
+                            context.state.SelectData.Params)
                     }
                     else {
                         context.commit('imagechange')
@@ -186,25 +180,28 @@
         store,
         data: {
             items: [],
-            currentindex:0,
+            currentindex: 0,
             isshowmenu: true,
             imgtype: "adaptw",
             windowheight: 0,
-            imgheight:0,
-            imgwidth:0,
+            imgheight: 0,
+            imgwidth: 0,
         },
         computed: {
-            CurrentImage:function(){
-                if(store.state.ImageData.Items.length>0&&store.state.ImageData.CurrentIndex>-1)
-                    return store.state.ImageData.Items[store.state.ImageData.CurrentIndex]
-                else
-                    return {url:''};
-            },
-            Images:function(){
+            Images: function () {
                 return store.state.ImageData.Items;
             },
+            CurrentIndex: function () {
+                return store.state.ImageData.CurrentIndex;
+            },
+            CurrentImage: function () {
+                if (this.Images.length > 0 && this.CurrentIndex > -1)
+                    return this.Images[this.CurrentIndex]
+                else
+                    return { url: '' };
+            },
             rightcontentcss: function () {
-                var obj = { 'box-sizing':'border-box', height: this.windowheight-10 + 'px' };
+                var obj = { 'box-sizing': 'border-box', height: this.windowheight - 10 + 'px' };
                 switch (this.imgtype) {
                     case "adaptw":
                         obj.overflow = "auto";
@@ -213,7 +210,7 @@
                 return obj;
             },
             rightblackcss: function () {
-                var obj = { 'line-height': this.windowheight-10 + 'px' };
+                var obj = { 'line-height': this.windowheight - 10 + 'px' };
                 return obj;
             },
             rightimgcss: function () {
@@ -223,17 +220,17 @@
                         obj = { width: "100%", height: "100%" };
                         break;
                     case "adaptw":
-                        obj = { width: "100%"};
+                        obj = { width: "100%" };
                         break;
                     case "adapth":
                         obj = { height: "100%" };
                         break;
                     case "adapt":
-                        var box=$("#image_box");
-                        if(this.imgwidth!=0&&this.imgheight/this.imgwidth>box.height()/box.width()){
+                        var box = $("#image_box");
+                        if (this.imgwidth != 0 && this.imgheight / this.imgwidth > box.height() / box.width()) {
                             obj = { height: "100%" };
-                        }else{
-                            obj = { width: "100%"};
+                        } else {
+                            obj = { width: "100%" };
                         }
                         break;
                     case "orign":
@@ -245,13 +242,13 @@
         watch: {
             CurrentImage() {
                 self = this;
-                self.$nextTick(function(){
-                    var img=$("#image_box img")[0];
-                    if(img){
-                        self.imgheight=img.naturalHeight;
-                        self.imgwidth=img.naturalWidth;
+                self.$nextTick(function () {
+                    var img = $("#image_box img")[0];
+                    if (img) {
+                        self.imgheight = img.naturalHeight;
+                        self.imgwidth = img.naturalWidth;
                     }
-                });          
+                });
             },
         },
         methods: {
@@ -260,14 +257,14 @@
             },
             setheight() {
                 this.windowheight = $(window).height()
-            },   
+            },
             change(isup) {
                 scrollheight = parseFloat($('#image_box').scrollTop());
                 if (isup && scrollheight < 3) {
                     this.id = parseInt(this.id) - 1;
                     store.dispatch('change', true)
                 }
-                else if (!isup && ($('#image_box').height() + scrollheight > $('#image_box img').height() - 3)) {                    
+                else if (!isup && ($('#image_box').height() + scrollheight > $('#image_box img').height() - 3)) {
                     this.id = parseInt(this.id) + 1;
                     store.dispatch('change', false)
                     $('#image_box').scrollTop(0);
@@ -275,7 +272,7 @@
             },
         },
         mounted: function () {
-            store.commit("startdata",{ Index:parseInt(Vue.GetUrlParam("index")),Tag: Vue.GetUrlParam("tag"), Score:  Vue.GetUrlParam("score"), Sort:Vue.GetUrlParam("sort") })
+            store.commit("startdata", { Index: parseInt(Vue.GetUrlParam("index")), Tag: Vue.GetUrlParam("tag"), Score: Vue.GetUrlParam("score"), Sort: Vue.GetUrlParam("sort") })
             store.dispatch('start')
             this.setheight();
             self = this;
