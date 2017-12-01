@@ -14,6 +14,9 @@ def create_app():
     from App.main import main as main_blueprint
     app.register_blueprint(main_blueprint)
 
+    from App.mobile import mobile as mobile_blueprint
+    app.register_blueprint(mobile_blueprint, url_prefix='/mobile')
+
     from App.api import api as api_blueprint
     app.register_blueprint(api_blueprint, url_prefix='/api')
 

@@ -4,71 +4,10 @@
         padding: 0;
         margin: 0;
     }
-
-    .waterwall {
-        padding: 15px 5px 0px 5px;
-        min-width: 800px;
-    }
-
-    .waterwall .box {
-        width: 24%;
-        float: left;
-        padding: 3px;
-        cursor: pointer;
-    }
-
-    .waterwall .box img {
-        width: 100%;
-    }
-
-    .select {
-        margin: 5px 5px 0px 15px;
-        position: fixed;
-    }
 </style>
 {% endblock %} {% block page_content %}
-<span style="display:none;">{{ name }}</span>
 <div id="images">
-    <div class="select">
-        <template v-if="isshowselect">
-            <div>
-                <label for="sort">排序:</label>
-                <select v-model="sort" name="sort">
-                    <option>score</option>
-                    <option>noraml</option>
-                    <option>random</option>
-                </select>
-                <label for="score" name="score">分数:</label>
-                <select v-model="score">
-                    <option>0</option>
-                    <option>19</option>
-                    <option>49</option>
-                    <option>99</option>
-                </select>
-                <label for="tag"></label>
-                <input name="tag" type="text" v-model="tag" />
-                <my-prompt v-bind:my-Items="Prompts" v-on:selected="ValueSelected"></my-prompt>
-                <button type="button" v-on:click="get()">查询</button>
-            </div>
-        </template>
-        <template v-else>
-            <span v-text="'共:'+total"></span>
-            <button type="button" v-on:click="showselect()">查询</button>
-        </template>
-    </div>
-    <div class="waterwall">
-        <div class="box" v-for="columns in items">
-            <div v-for="item in columns" v-on:click="gotodetail(item.detailurl)">
-                <!-- <div v-for="item in columns"> -->
-                <template v-if="!IsShowImg">
-                    {{item.id}}
-                </template>
-                <template v-if="IsShowImg">
-                    <img v-bind:src="item.url" v-bind:title="item.title" />
-                </template>
-            </div>
-        </div>
-    </div>
+    111111111
 </div>
 {% endblock %} {% block scripts %}
 <script>
