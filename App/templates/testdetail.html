@@ -50,14 +50,16 @@
             <option value="orign">原图</option>
             <option value="adapth">适应高</option>
         </select>
-        <div></div>
+        <div v-for="item in Images">            
+            <img style="width:90px;height:90px"v-bind:src="item.url" />
+        </div>
     </div>
     <div class="image_middle" v-on:click="setshowleft()">
     </div>
     <div class="image_right">
         <div id="image_box" align="center" v-bind:style="rightcontentcss">
             <span v-bind:style="rightblackcss"></span>
-            <img style="vertical-align:middle" v-bind:style="rightimgcss" v-bind:src="currentimage.url" />
+            <img style="vertical-align:middle" v-bind:style="rightimgcss" v-bind:src="CurrentImage.url" />
         </div>
     </div>
 </div>
@@ -67,74 +69,112 @@
 <script>
     const store = new Vuex.Store({
         state: {
-            imagedata: {
-                items: [],
-                currentindex: -1,
-                endindex: 0,
-                starindex: 0,
-                starisend:false,
-                endisend:false,
-                section: 10,
-                isloading: false,
-            }
+            ImageData: {
+                Items: [],
+                CurrentIndex: -1,                
+            },
+            SelectData:{
+                Index:-1,  
+                StarIndex:-1,
+                Section: 10,
+                IsEnd:false,                
+                IsLoading: false,
+                Params:{
+                    params:{
+                        Tag:'',
+                        Score: 0, 
+                        Sort:'',
+                    }
+                }
+            },
         },
         getters: {
-            imagecurrent: state => {
-                return store.state.imagedata.items[store.state.imagedata.currentindex];
-            },
-            imagepagenumber: state => {
-                return parseInt((store.state.imagedata.currentindex + 1) / store.state.imagedata.pagesize) + 1;
-            }
+            // CurrentImage: state => {
+            //     if(CurrentIndex>-1)
+            //         return store.state.ImageData.Items[store.state.ImageData.CurrentIndex];
+            //     else
+            //         return null;
+            // },
         },
         mutations: {
-            imagenext(state, isdown) {
-                if(isdown)                
-                    state.imagedata.currentindex = state.imagedata.currentindex - 1;
-                else
-                    state.imagedata.currentindex = state.imagedata.currentindex + 1;                
+            imagechange(state,isUp){
+                if(isUp){
+                    if(state.SelectData.StarIndex==0)
+                        if(state.ImageData.Items.length<3)
+                            state.ImageData.CurrentIndex = state.ImageData.CurrentIndex - 1;
+                        else
+                            state.ImageData.CurrentIndex = 3 - 1
+                }
+                else{
+                    if(state.SelectData.IsEnd)
+                        if(state.ImageData.Items.length<3)
+                            state.ImageData.CurrentIndex = state.ImageData.CurrentIndex + 1;
+                }   
+                state.ImageData.CurrentIndex = 3 - 1;
             },
+            startdata(state, obj){
+                state.SelectData.Index=obj.Index;
+                if(obj.Index-3>-1){     
+                    state.SelectData.StarIndex=obj.Index-3;
+                    state.ImageData.CurrentIndex=3-1;
+                }else{
+                    state.SelectData.StarIndex=obj.Index;
+                    state.ImageData.CurrentIndex=obj.Index;
+                }           
+                state.SelectData.Params.params.Tag=obj.Tag;
+                state.SelectData.Params.params.Score=obj.Score;
+                state.SelectData.Params.params.Sort=obj.Sort;
+            }
         },
-        actions: {
-            imagenext(context, obj) {
-            },
-            imageprevious(context, obj) {
-                var items = context.state.imagedata.items;
-                var currentindex = context.state.imagedata.currentindex;
-                var isend = context.state.imagedata.isend;
-                if (!isend && !context.state.imagedata.isloading) {//未结束才进行尝试,且未正在读取数据                    
-                    if (currentindex + 1 >= items.length) {//刚开始或数据到结尾
+        actions: {    
+            start(context){
+                API.image.getsbysection(
+                    function (data) {
+                        if(data&&data.length>0){
+                            data.forEach(element => {
+                                state.context.state.ImageData.Items.push(element);
+                            });                            
+                        }
+                    },
+                    context.state.SelectData.index,
+                    context.state.SelectData.index+state.SelectData.section,
+                    context.state.SelectData.Params)  
+            },        
+            change(context, isUp) {
+                starIndex,endIndex;
+                index = context.state.SelectData.Index;
+                section = context.state.SelectData.Section;
+                if(isUp){
+                    if(context.state.SelectData.Index<=0)
+                        return;
+                    else{
+                        starIndex=context.state.SelectData.StarIndex-1;                        
+                        endIndex=starIndex+1;
+                    }
+                }
+                else{
+                    if(context.state.SelectData.IsEnd)
+                        return;
+                    else{
+                        starIndex=context.state.SelectData.StarIndex+context.state.SelectData.Section-1;                         
+                        endIndex=starIndex+1;
+                    }
+                }
+                if (!context.state.SelectData.IsLoading) {//未结束才进行尝试,且未正在读取数据                    
+                    if (currentindex !=0) {//刚开始或数据到结尾
                         context.state.imagedata.isloading = true;
-                        var pagenumber = context.getters.imagepagenumber;
-                        // console.log(pagenumber);
-                        // console.log(currentindex);
-                        var pagesize = context.state.imagedata.pagesize;
-                        var paramesdata = { params: { score: obj.score, tag: obj.tag, pagesize: pagesize } }
-                        axios.get('/api/images/' + pagenumber, paramesdata)
-                            .then((response) => {
-                                console.log(response);
-                                if (response.status = 200) {
-                                    context.state.imagedata.total = response.data.total;
-                                    var list = response.data.items;
-                                    if (list.length > 0) {
-                                        for (var i = 0; i < list.length; i++) {
-                                            list[i].title = "scroe:" + list[i].score + ";tags:" + list[i].tags;
-                                            list[i].detailurl = "detail?id=" + list[i].id + "&pageindex=" + pagenumber + "&score=" + obj.score + "$tag=" + obj.tag;
-                                            context.state.imagedata.items.push(list[i]);
-                                        }
-                                        context.state.imagedata.isloading = false;
-                                        context.commit('imagenext')
-                                    }
-                                    else {
-                                        context.state.imagedata.isend = true;
-                                    }
+                        API.image.getsbysection(
+                            function (data) {
+                                if(data&&data.length>0){
+                                    context.state.ImageData.Items.push(data[0]);
                                 }
-                            })
-                            .catch(function (error) {
-                                console.log(error);
-                            });
+                            },
+                            context.state.SelectData.index,
+                            context.state.SelectData.index+1,
+                            context.state.SelectData.Params)         
                     }
                     else {
-                        context.commit('imagenext')
+                        context.commit('imagechange')
                     }
                 }
             }
@@ -143,6 +183,7 @@
 
     var image = new Vue({
         el: '#image',
+        store,
         data: {
             items: [],
             currentindex:0,
@@ -153,6 +194,15 @@
             imgwidth:0,
         },
         computed: {
+            CurrentImage:function(){
+                if(store.state.ImageData.Items.length>0&&store.state.ImageData.CurrentIndex>-1)
+                    return store.state.ImageData.Items[store.state.ImageData.CurrentIndex]
+                else
+                    return {url:''};
+            },
+            Images:function(){
+                return store.state.ImageData.Items;
+            },
             rightcontentcss: function () {
                 var obj = { 'box-sizing':'border-box', height: this.windowheight-10 + 'px' };
                 switch (this.imgtype) {
@@ -192,6 +242,18 @@
                 return obj;
             },
         },
+        watch: {
+            CurrentImage() {
+                self = this;
+                self.$nextTick(function(){
+                    var img=$("#image_box img")[0];
+                    if(img){
+                        self.imgheight=img.naturalHeight;
+                        self.imgwidth=img.naturalWidth;
+                    }
+                });          
+            },
+        },
         methods: {
             setshowleft() {
                 this.isshowmenu = !this.isshowmenu;
@@ -199,38 +261,22 @@
             setheight() {
                 this.windowheight = $(window).height()
             },   
-            get() {
-                self = this;
-                API.image.get(function (data) {
-                    self.currentimage = data;                    
-                    self.$nextTick(function(){
-                        var img=$("#image_box img")[0];
-                        if(img){
-                            self.imgheight=img.naturalHeight;
-                            self.imgwidth=img.naturalWidth;
-                        }
-                    })
-                }, this.id);
-            },
-            getother(isup) {
+            change(isup) {
                 scrollheight = parseFloat($('#image_box').scrollTop());
-                // config.log(scrollheight);
-                // config.log($('#image_box').height());
-                // config.log($('#image_box img').height());
                 if (isup && scrollheight < 3) {
                     this.id = parseInt(this.id) - 1;
-                    this.get();
+                    store.dispatch('change', true)
                 }
                 else if (!isup && ($('#image_box').height() + scrollheight > $('#image_box img').height() - 3)) {                    
                     this.id = parseInt(this.id) + 1;
-                    this.get();
+                    store.dispatch('change', false)
                     $('#image_box').scrollTop(0);
                 }
             },
         },
         mounted: function () {
-            this.id = Vue.GetUrlParam("id");
-            this.get();
+            store.commit("startdata",{ Index:parseInt(Vue.GetUrlParam("index")),Tag: Vue.GetUrlParam("tag"), Score:  Vue.GetUrlParam("score"), Sort:Vue.GetUrlParam("sort") })
+            store.dispatch('start')
             this.setheight();
             self = this;
             $(window).resize(function () {
@@ -239,8 +285,7 @@
             $('#image_box')
                 .mousewheel(function (event, delta) {
                     var isup = delta > 0;
-                    config.log(delta);
-                    self.getother(isup);
+                    self.change(isup);
                 })
         },
     })
