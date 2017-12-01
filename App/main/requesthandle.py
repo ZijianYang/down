@@ -4,5 +4,6 @@ import Tool
 
 @main.before_request  
 def before_request():  
-    Tool.IsMobile.get()
-    return redirect(url_for('.index'))
+    ismobile = Tool.IsMobile.get()  
+    if ismobile:
+        return redirect("mobile", code=302)
