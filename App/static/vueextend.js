@@ -178,31 +178,17 @@ Vue.component('my-prompt', {
 // 图片显示组件（带遮罩提示）
 Vue.component('my-imgshow', {
     template:
-        '<div class="prompt_box"  style="background-color:bisque">' +
-            '<span v-if="Total!=0" v-text="Total"></span>' +  
-            '<ul>' +    
-                '<li v-for="(item,index) in myItems">'+
-                    '<span v-text="item" v-on:click="Selected(item)"></span>'+
-                '</li>'+
-            '</ul>' +          
+        '<div style="float:left;position:relative;cursor:pointer;">'+
+            '<img v-bind:src="mySrc"/>'+
+            // '<span v-text="mySrc"/>'+
+            '<div style="width:100%;height:100%;position:absolute;left:0;top:0;">' +
+                '<slot name="tip"></slot>' + 
+            '</div>' + 
         '</div>',
     props: {
-        myItems: {
-            type: Object,
-            default: function () {
-              return []
-            }
-        },
-    },
-    computed: {            
-        Total: function () {
-            var data = this.myItems.length;
-            return data;
-        }
-    },
-    methods: {
-        Selected: function (content) {
-            this.$emit('selected', content);
+        mySrc: {
+            type: String,
+            required: true
         },
     },
 });
