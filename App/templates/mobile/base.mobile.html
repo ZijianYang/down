@@ -1,0 +1,25 @@
+{% extends "base.html" %} 
+{% block csses %}
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+    }    
+</style>
+    {% block mobile_csses %}
+    {% endblock %} 
+{% endblock %}
+{% block before_scripts %}
+    <script type="text/javascript" language="javascript" src="/App/static/hammer.js" charset="utf-8"></script>        
+{% endblock %}
+{% block page_content %}
+    <!-- <span>aaa</span> -->
+    {% block mobile_page_content %}
+
+    {% endblock %} 
+{% endblock %} 
+{% block scripts %}
+    {% block mobile_scripts %}
+
+    {% endblock %}
+{% endblock %}

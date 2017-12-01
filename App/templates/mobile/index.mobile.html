@@ -1,15 +1,15 @@
-{% extends "base.html" %} {% block csses %}
+{% extends "mobile/base.mobile.html" %} {% block mobile_csses %}
 <style>
     * {
         padding: 0;
         margin: 0;
     }
 </style>
-{% endblock %} {% block page_content %}
+{% endblock %} {% block mobile_page_content %}
 <div id="images">
     111111111
 </div>
-{% endblock %} {% block scripts %}
+{% endblock %} {% block mobile_scripts %}
 <script>
     const store = new Vuex.Store({
         state: {
