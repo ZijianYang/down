@@ -41,9 +41,30 @@
 {% endblock %} {% block page_content %}
 <span style="display:none;">{{ name }}</span>
 <div id="images">
+    <div class="waterwall">
+        <div class="box" v-for="columns in items">
+            <div v-for="item in columns" v-on:click="gotodetail(item.detailurl)">
+                <!-- <div v-for="item in columns"> -->
+                <template v-if="ShowType==''">
+                    {{item.id}}
+                </template>
+                <template v-if="ShowType=='Img'">
+                    <my-imgshow v-bind:my-Src="item.url">
+                        <div class="tip" style="float:left;position:relative;" slot="tip">
+                            <div style="width:100%;height:auto;position:absolute;left:0;bottom:0;padding:5px;box-sizing:border-box;">
+                                <span style="word-wrap:break-word;" v-text="item.md5"></span>
+                                </p>
+                                <span style="word-wrap:break-word;" v-text="item.title"></span>
+                            </div>
+                        </div>
+                    </my-imgshow>
+                </template>
+            </div>
+        </div>
+    </div>
     <div class="select">
         <template v-if="isshowselect">
-            <div>
+            <div style="z-index:9999">
                 <label for="sort">排序:</label>
                 <select v-model="sort" name="sort">
                     <option>score</option>
@@ -67,27 +88,6 @@
             <span v-text="'共:'+total"></span>
             <button type="button" v-on:click="showselect()">查询</button>
         </template>
-    </div>
-    <div class="waterwall">
-        <div class="box" v-for="columns in items">
-            <div v-for="item in columns" v-on:click="gotodetail(item.detailurl)">
-                <!-- <div v-for="item in columns"> -->
-                <template v-if="ShowType==''">
-                    {{item.id}}
-                </template>
-                <template v-if="ShowType=='Img'">
-                    <my-imgshow v-bind:my-Src="item.url">
-                        <div class="tip" style="float:left;position:relative;" slot="tip">
-                            <div style="width:100%;height:auto;position:absolute;left:0;bottom:0;padding:5px;box-sizing:border-box;">
-                                <span style="word-wrap:break-word;" v-text="item.md5"></span>
-                                </p>
-                                <span style="word-wrap:break-word;" v-text="item.title"></span>
-                            </div>
-                        </div>
-                    </my-imgshow>
-                </template>
-            </div>
-        </div>
     </div>
 </div>
 {% endblock %} {% block scripts %}

@@ -122,7 +122,7 @@
             setheight() {
                 this.windowheight = $(window).height()
             },   
-            get() {
+            get(funsuccess) {
                 self = this;
                 API.image.getsbysection(
                     function (data) {
@@ -133,6 +133,9 @@
                                 if(img){
                                     self.imgheight=img.naturalHeight;
                                     self.imgwidth=img.naturalWidth;
+                                }
+                                if(funsuccess){
+                                    funsuccess();
                                 }
                             })
                         }
@@ -146,14 +149,16 @@
                 // config.log(scrollheight);
                 // config.log($('#image_box').height());
                 // config.log($('#image_box img').height());
+                self=this;
                 if (isup && scrollheight < 3) {
                     this.index = parseInt(this.index) - 1;
                     if(this.index>-1)
                         this.get();
                 }
-                else if (!isup && ($('#image_box').height() + scrollheight > $('#image_box img').height() - 3)) {                    
-                    this.index = parseInt(this.index) + 1;
-                    this.get();
+                else if (!isup && ($('#image_box').height() + scrollheight > $('#image_box img').height() - 3)) {
+                    this.get(function(){
+                        self.index = parseInt(self.index) + 1;
+                    });
                     $('#image_box').scrollTop(0);
                 }
             },
