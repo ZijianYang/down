@@ -102,8 +102,27 @@
             // },
         },
         mutations: {
-            imagechange(state, isUp) {
-                state.ImageData.CurrentIndex = 0;
+            indexstar(state) {
+                if(state.SelectData.Index<3-1)
+                    state.ImageData.CurrentIndex = state.SelectData.Index;
+                else
+                    state.ImageData.CurrentIndex = 3-1;
+            },
+            indexchange(state, isUp) {
+                if(isUp){
+                    if(state.ImageData.Items.length<state.ImageData.CurrentIndex+1)
+                            state.ImageData.CurrentIndex = state.ImageData.Items.length-1;
+                    else
+                        state.ImageData.CurrentIndex = state.ImageData.CurrentIndex-1;
+                }
+                else{
+                    if(state.ImageData.CurrentIndex<3-1){
+                        if(state.ImageData.Items.length<state.ImageData.CurrentIndex+1)
+                            state.ImageData.CurrentIndex = state.ImageData.Items.length-1;
+                        else
+                            state.ImageData.CurrentIndex = state.ImageData.CurrentIndex+1;
+                    }
+                }
             },
             startdata(state, obj) {
                 state.SelectData.Index = obj.Index;
@@ -127,7 +146,7 @@
                             data.forEach(element => {
                                 context.state.ImageData.Items.push(element);
                             });
-                            context.commit("imagechange", false);
+                            context.commit("indexstar", false);
                         }
                     },
                     context.state.SelectData.Index,
@@ -135,7 +154,6 @@
                     context.state.SelectData.Params)
             },
             change(context, isUp) {
-                starIndex, endIndex;
                 index = context.state.SelectData.Index;
                 section = context.state.SelectData.Section;
                 if (isUp) {
@@ -154,22 +172,18 @@
                         endIndex = starIndex + 1;
                     }
                 }
-                if (!context.state.SelectData.IsLoading) {//未结束才进行尝试,且未正在读取数据                    
-                    if (currentindex != 0) {//刚开始或数据到结尾
-                        context.state.imagedata.isloading = true;
-                        API.image.getsbysection(
-                            function (data) {
-                                if (data && data.length > 0) {
-                                    context.state.ImageData.Items.push(data[0]);
-                                }
-                            },
-                            context.state.SelectData.index,
-                            context.state.SelectData.index + 1,
-                            context.state.SelectData.Params)
-                    }
-                    else {
-                        context.commit('imagechange')
-                    }
+                if (!context.state.SelectData.IsLoading) {//未结束才进行尝试,且未正在读取数据 
+                    context.state.imagedata.isloading = true;
+                    API.image.getsbysection(
+                        function (data) {
+                            if (data && data.length > 0) {
+                                context.state.ImageData.Items.push(data[0]);
+                            }                                
+                            context.commit("indexchange", isUp);
+                        },
+                        context.state.SelectData.index,
+                        context.state.SelectData.index + 1,
+                        context.state.SelectData.Params)                    
                 }
             }
         }
