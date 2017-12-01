@@ -76,9 +76,6 @@
                     {{item.id}}
                 </template>
                 <template v-if="ShowType=='Img'">
-                    <img v-bind:src="item.url" v-bind:title="item.title" />
-                </template>
-                <template v-if="ShowType=='Test'">
                     <my-imgshow v-bind:my-Src="item.url">
                         <div class="tip" style="float:left;position:relative;" slot="tip">
                             <div style="width:100%;height:auto;position:absolute;left:0;bottom:0;padding:5px;box-sizing:border-box;">
