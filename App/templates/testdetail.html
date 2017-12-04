@@ -155,37 +155,53 @@
                             return;
                         }
                         else {
-                            starIndex = context.state.SelectData.StarIndex + 1;
+                            starIndex = context.state.SelectData.StarIndex - 1;
                             endIndex = starIndex + 1;
                         }
                     }
                     else {
-                        if (context.state.SelectData.IsEnd) {
-                            if (context.state.ImageData.CurrentIndex < 2) {
-                                if (context.state.ImageData.CurrentIndex + 1 <= context.state.ImageData.Items.length)
-                                    context.state.ImageData.CurrentIndex = context.state.ImageData.CurrentIndex + 1;
-                            }
-                            else {
-                                if (context.state.ImageData.Items.length >= 3) {
-                                    context.state.ImageData.Items.splice(0, 1);
-                                }
-                            }
-                            context.state.SelectData.IsLoading = false;
+                        if(context.state.SelectData.IsEnd&&context.state.ImageData.CurrentIndex == 2&&context.state.ImageData.Items.length > 3){                            
+                            context.state.ImageData.Items.splice(0, 1);//结束情况移除数据但可能遇到isend的边界
+                            context.state.SelectData.StarIndex = context.state.SelectData.StarIndex - 1;
+                        }
+                        if(context.state.ImageData.CurrentIndex < 2&&context.state.ImageData.CurrentIndex + 1 <= context.state.ImageData.Items.length){
+                            context.state.ImageData.CurrentIndex = context.state.ImageData.CurrentIndex + 1;
+                        }
+                        if(context.state.SelectData.IsEnd){
+                            context.state.SelectData.IsLoading = false; 
                             return;
                         }
-                        else {
-                            if (context.state.ImageData.CurrentIndex < 2) {
-                                if (context.state.ImageData.CurrentIndex + 1 <= context.state.ImageData.Items.length) {
-                                    context.state.ImageData.CurrentIndex = context.state.ImageData.CurrentIndex + 1;
-                                    context.state.SelectData.IsLoading = false;
-                                    return;
-                                }
-
-                            }
+                        else {                            
                             starIndex = context.state.SelectData.StarIndex + context.state.ImageData.Items.length;
                             endIndex = starIndex + 1;
                         }
                     }
+                    //     if (context.state.SelectData.IsEnd) {
+                    //         if (context.state.ImageData.CurrentIndex < 2) {
+                    //             if (context.state.ImageData.CurrentIndex + 1 <= context.state.ImageData.Items.length)
+                    //                 context.state.ImageData.CurrentIndex = context.state.ImageData.CurrentIndex + 1;
+                    //         }
+                    //         else {
+                    //             if (context.state.ImageData.Items.length >= 3) {
+                    //                 context.state.ImageData.Items.splice(0, 1);
+                    //             }
+                    //         }
+                    //         context.state.SelectData.IsLoading = false;
+                    //         return;
+                    //     }
+                    //     else {
+                    //         if (context.state.ImageData.CurrentIndex < 2) {
+                    //             if (context.state.ImageData.CurrentIndex + 1 <= context.state.ImageData.Items.length) {
+                    //                 context.state.ImageData.CurrentIndex = context.state.ImageData.CurrentIndex + 1;
+                    //                 context.state.SelectData.IsLoading = false;
+                    //                 return;
+                    //             }
+
+                    //         }
+                    //         starIndex = context.state.SelectData.StarIndex + context.state.ImageData.Items.length;
+                    //         endIndex = starIndex + 1;
+                    //     }
+                    // }
                     API.image.getsbysection(
                         function (data) {
                             context.commit("indexchange", { isup: isUp, data: data });
