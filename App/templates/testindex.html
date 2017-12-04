@@ -133,7 +133,7 @@
                         context.state.imagedata.isloading=true;
                         var pagenumber = context.getters.imagepagenumber;
                         var pagesize = context.state.imagedata.pagesize;
-                        var paramesdata = { params: { score: obj.score, tag: obj.tag, pagesize: pagesize,sort:obj.sort } };
+                        var paramesdata = { score: obj.score, tag: obj.tag, pagesize: pagesize,sort:obj.sort };
                         API.image.gets(function(data){                                              
                             context.commit('imagesnext',data)  
                         },pagenumber,paramesdata)

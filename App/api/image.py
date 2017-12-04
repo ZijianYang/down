@@ -51,13 +51,17 @@ def imagesbysection(star, end):
     else:
         data = Store.FileHistoryRepository().getsbysection(
             score, tag, star, end, sort)
-    return jsonify([{
-        'id': item.id,
-        'url': item.filepath.replace("\\", "/"),
-        'md5': item.md5,
-        'score': item.remark1,
-        'tags': item.remark2
-    } for item in data])
+    return jsonify({
+        'items': [{
+            'id': item.id,
+            'url': item.filepath.replace("\\", "/"),
+            'md5': item.md5,
+            'score': item.remark1,
+            'tags': item.remark2
+        } for item in data["list"]],
+        'total':
+        data["total"]
+    })
 
 
 @api.route('/image/<int:imageid>', methods=['GET', 'POST'])

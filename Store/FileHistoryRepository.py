@@ -101,7 +101,8 @@ class FileHistoryRepository(RepositoryBase):
         if sort == "score":
             entities = entities.order_by(FileHistory.remark1.desc())
         items = entities[star:end]
-        return items
+        total = len(items)
+        return {"total": total, "list": items}
 
     def getbyid(self, imageid):
         """分页查询"""

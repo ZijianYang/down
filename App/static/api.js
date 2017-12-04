@@ -73,17 +73,19 @@ axios.interceptors.response.use(
 var API={};
 
 API.image={
-    gets:function(successfunc,pagenumber,paramesdata){
-        axios.get(config.apiurls.images + pagenumber, paramesdata)
+    gets:function(successfunc,pagenumber,data){
+        parames = {params:data}
+        axios.get(config.apiurls.images + pagenumber, parames)
         .then((response) => {       
-            response.data.score=paramesdata.params.score;
-            response.data.tag=paramesdata.params.tag;   
-            response.data.sort=paramesdata.params.sort;  
+            response.data.score=data.score;
+            response.data.tag=data.tag;   
+            response.data.sort=data.sort;  
             successfunc(response.data);         
         })
     },
-    getsbysection:function(successfunc,star,end,paramesdata){
-        axios.get(config.apiurls.images + star+'/'+end, paramesdata)
+    getsbysection:function(successfunc,star,end,data){
+        parames = {params:data}
+        axios.get(config.apiurls.images + star+'/'+end, parames)
         .then((response) => {        
             successfunc(response.data);         
         })

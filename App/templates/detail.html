@@ -126,8 +126,8 @@
                 self = this;
                 API.image.getsbysection(
                     function (data) {
-                        if(data&&data.length>0){
-                            self.currentimage = data[0];                    
+                        if(data.total>0){
+                            self.currentimage = data.items[0];                    
                             self.$nextTick(function(){
                                 var img=$("#image_box img")[0];
                                 if(img){
@@ -142,7 +142,7 @@
                     },
                     this.index,
                     parseInt(this.index)+1,
-                    { params: { tag: this.tag, score: this.score, sort:this.sort }});
+                    { tag: this.tag, score: this.score, sort:this.sort });
             },
             getother(isup) {
                 scrollheight = parseFloat($('#image_box').scrollTop());
