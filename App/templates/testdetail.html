@@ -15,7 +15,7 @@
     .image_menu {
         order: 0;
         flex: none;
-        width: 200px;
+        width: 100px;
         height: auto;
     }
 
@@ -50,13 +50,19 @@
             <option value="orign">原图</option>
             <option value="adapth">适应高</option>
         </select>
-        <div v-for="(item,index) in Images">
-            <template v-if="index==CurrentIndex">
-                <img style="width:100%;height:90px;border:1px solid" v-bind:src="'../'+item.url" />
-            </template>
-            <template v-if="index!=CurrentIndex">
-                <img style="width:100%;height:90px" v-bind:src="'../'+item.url" />
-            </template>
+        <div id="image_boxes">
+            <div v-for="(item,index) in Images">
+                <template v-if="index==CurrentIndex">
+                    <span v-text="item.id"></span>
+                    <p>
+                        <div>d</div>
+                        <!-- <img style="width:100%;height:90px;border:1px solid" v-bind:src="'../'+item.url" /> -->
+                </template>
+                <template v-if="index!=CurrentIndex">
+                    <span v-text="item.id"></span>
+                    <!-- <img style="width:100%;height:90px" v-bind:src="'../'+item.url" /> -->
+                </template>
+            </div>
         </div>
     </div>
     <div class="image_middle" v-on:click="setshowleft()">
@@ -64,7 +70,9 @@
     <div class="image_right">
         <div id="image_box" align="center" v-bind:style="rightcontentcss">
             <span v-bind:style="rightblackcss"></span>
-            <img style="vertical-align:middle" v-bind:style="rightimgcss" v-bind:src="'../'+CurrentImage.url" />
+            <span v-text="CurrentImage.id"></span>
+            <p>
+                <!-- <img style="vertical-align:middle" v-bind:style="rightimgcss" v-bind:src="'../'+CurrentImage.url" /> -->
         </div>
     </div>
 </div>
@@ -84,106 +92,107 @@
                 Section: 10,
                 IsEnd: false,
                 IsLoading: false,
-                Params: {
-                    params: {
-                        Tag: '',
-                        Score: 0,
-                        Sort: '',
-                    }
-                }
+                Params: { tag: '', score: 0, sort: '', }
             },
-        },
-        getters: {
-            // CurrentImage: state => {
-            //     if(CurrentIndex>-1)
-            //         return store.state.ImageData.Items[store.state.ImageData.CurrentIndex];
-            //     else
-            //         return null;
-            // },
         },
         mutations: {
-            indexstar(state) {
-                if(state.SelectData.Index<3-1)
-                    state.ImageData.CurrentIndex = state.SelectData.Index;
-                else
-                    state.ImageData.CurrentIndex = 3-1;
-            },
-            indexchange(state, isUp) {
-                if(isUp){
-                    if(state.ImageData.Items.length<state.ImageData.CurrentIndex+1)
-                            state.ImageData.CurrentIndex = state.ImageData.Items.length-1;
-                    else
-                        state.ImageData.CurrentIndex = state.ImageData.CurrentIndex-1;
+            indexchange(state, obj) {
+                isUp = obj.isup;
+                data = obj.data;                
+                state.SelectData.IsLoading = false;
+                if (data.total > 0) {
+                    if (isUp) {
+                        state.ImageData.Items.splice(0, 0, data.items[0])
+                        state.SelectData.StarIndex = state.SelectData.StarIndex - 1;
+                    }
+                    else {
+                        state.ImageData.Items.splice(0, 1);
+                        state.ImageData.Items.push(data.items[0]);
+                        state.SelectData.StarIndex = state.SelectData.StarIndex + 1;
+                    }
                 }
-                else{
-                    if(state.ImageData.CurrentIndex<3-1){
-                        if(state.ImageData.Items.length<state.ImageData.CurrentIndex+1)
-                            state.ImageData.CurrentIndex = state.ImageData.Items.length-1;
-                        else
-                            state.ImageData.CurrentIndex = state.ImageData.CurrentIndex+1;
+                else {
+                    if (!isUp) {
+                        state.ImageData.Items.splice(0, 1)
+                        state.SelectData.StarIndex = state.SelectData.StarIndex - 1;
+                        state.SelectData.IsEnd = true;
                     }
                 }
             },
             startdata(state, obj) {
                 state.SelectData.Index = obj.Index;
-                if (obj.Index - 3 > -1) {
-                    state.SelectData.StarIndex = obj.Index - 3;
-                    state.ImageData.CurrentIndex = 3 - 1;
-                } else {
-                    state.SelectData.StarIndex = obj.Index;
-                    state.ImageData.CurrentIndex = obj.Index;
-                }
-                state.SelectData.Params.params.Tag = obj.Tag;
-                state.SelectData.Params.params.Score = obj.Score;
-                state.SelectData.Params.params.Sort = obj.Sort;
+                state.SelectData.StarIndex = obj.Index;
+                state.SelectData.Params.tag = obj.Tag;
+                state.SelectData.Params.score = obj.Score;
+                state.SelectData.Params.sort = obj.Sort;
             }
         },
         actions: {
             start(context) {
                 API.image.getsbysection(
                     function (data) {
-                        if (data && data.length > 0) {
-                            data.forEach(element => {
+                        if (data.total > 0) {
+                            data.items.forEach(element => {
                                 context.state.ImageData.Items.push(element);
                             });
-                            context.commit("indexstar", false);
+                            context.state.ImageData.CurrentIndex = 0;
                         }
                     },
-                    context.state.SelectData.Index,
-                    context.state.SelectData.Index + context.state.SelectData.Section,
+                    context.state.SelectData.StarIndex,
+                    context.state.SelectData.StarIndex + context.state.SelectData.Section,
                     context.state.SelectData.Params)
             },
             change(context, isUp) {
-                index = context.state.SelectData.Index;
-                section = context.state.SelectData.Section;
-                if (isUp) {
-                    if (context.state.SelectData.Index <= 0)
-                        return;
-                    else {
-                        starIndex = context.state.SelectData.StarIndex - 1;
-                        endIndex = starIndex + 1;
-                    }
-                }
-                else {
-                    if (context.state.SelectData.IsEnd)
-                        return;
-                    else {
-                        starIndex = context.state.SelectData.StarIndex + context.state.SelectData.Section - 1;
-                        endIndex = starIndex + 1;
-                    }
-                }
                 if (!context.state.SelectData.IsLoading) {//未结束才进行尝试,且未正在读取数据 
-                    context.state.imagedata.isloading = true;
+                    context.state.SelectData.IsLoading = true;
+                    var starIndex, endIndex;
+                    if (isUp) {
+                        if (context.state.SelectData.StarIndex <= 0) {
+                            if (context.state.ImageData.CurrentIndex >= 1) {
+                                context.state.ImageData.CurrentIndex = context.state.ImageData.CurrentIndex - 1;
+                            }
+                            context.state.SelectData.IsLoading = false;
+                            return;
+                        }
+                        else {
+                            starIndex = context.state.SelectData.StarIndex + 1;
+                            endIndex = starIndex + 1;
+                        }
+                    }
+                    else {
+                        if (context.state.SelectData.IsEnd) {
+                            if (context.state.ImageData.CurrentIndex < 2) {
+                                if (context.state.ImageData.CurrentIndex + 1 <= context.state.ImageData.Items.length)
+                                    context.state.ImageData.CurrentIndex = context.state.ImageData.CurrentIndex + 1;
+                            }
+                            else {
+                                if (context.state.ImageData.Items.length >= 3) {
+                                    context.state.ImageData.Items.splice(0, 1);
+                                }
+                            }
+                            context.state.SelectData.IsLoading = false;
+                            return;
+                        }
+                        else {
+                            if (context.state.ImageData.CurrentIndex < 2) {
+                                if (context.state.ImageData.CurrentIndex + 1 <= context.state.ImageData.Items.length) {
+                                    context.state.ImageData.CurrentIndex = context.state.ImageData.CurrentIndex + 1;
+                                    context.state.SelectData.IsLoading = false;
+                                    return;
+                                }
+
+                            }
+                            starIndex = context.state.SelectData.StarIndex + context.state.ImageData.Items.length;
+                            endIndex = starIndex + 1;
+                        }
+                    }
                     API.image.getsbysection(
                         function (data) {
-                            if (data && data.length > 0) {
-                                context.state.ImageData.Items.push(data[0]);
-                            }                                
-                            context.commit("indexchange", isUp);
+                            context.commit("indexchange", { isup: isUp, data: data });
                         },
-                        context.state.SelectData.index,
-                        context.state.SelectData.index + 1,
-                        context.state.SelectData.Params)                    
+                        starIndex,
+                        endIndex,
+                        context.state.SelectData.Params)
                 }
             }
         }
@@ -215,7 +224,7 @@
                     return { url: '' };
             },
             rightmenucss: function () {
-                var obj = { overflow:'hidden','box-sizing': 'border-box', height: this.windowheight - 10 + 'px' };
+                var obj = { overflow: 'hidden', 'box-sizing': 'border-box', height: this.windowheight - 10 + 'px' };
                 return obj;
             },
             rightcontentcss: function () {
@@ -297,11 +306,19 @@
             $(window).resize(function () {
                 self.setheight();
             });
+            $('#image_boxes')
+                .mousewheel(function (event, delta) {
+                    var isup = delta > 0;
+                    console.log(isup);
+                    store.dispatch('change', isup)
+                })
             $('#image_box')
                 .mousewheel(function (event, delta) {
                     var isup = delta > 0;
+                    console.log(isup);
                     self.change(isup);
                 })
+
         },
     })
 </script> {% endblock %}
