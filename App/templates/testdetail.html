@@ -56,7 +56,7 @@
                     <!-- <span v-text="item.id"></span>
                     <p>
                         <div>d</div> -->
-                    <img style="width:100%;height:90px;border:1px solid" v-bind:src="'../'+item.url" />
+                    <img style="width:100%;height:90px;border:2px solid red" v-bind:src="'../'+item.url" />
                 </template>
                 <template v-if="index!=CurrentIndex">
                     <!-- <span v-text="item.id"></span> -->
@@ -69,8 +69,8 @@
     </div>
     <div class="image_right">
         <div id="image_box" align="center" v-bind:style="rightcontentcss">
-            <!-- <span v-bind:style="rightblackcss"></span>
-            <span v-text="CurrentImage.id"></span>
+            <span v-bind:style="rightblackcss"></span>
+            <!-- <span v-text="CurrentImage.id"></span>
             <p> -->
             <img style="vertical-align:middle" v-bind:style="rightimgcss" v-bind:src="'../'+CurrentImage.url" />
         </div>
