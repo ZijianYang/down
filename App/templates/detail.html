@@ -42,7 +42,7 @@
 
 <div id="image">
 
-    <div class="image_menu" v-if="isshowmenu" v-bind:style="rightmenucss">
+    <div class="image_menu" v-if="isshowmenu" v-bind:style="leftmenucss">
         <select v-model="imgtype">
             <option value="adaptw">适应宽</option>
             <option value="adapt">合适</option>
@@ -51,17 +51,9 @@
             <option value="adapth">适应高</option>
         </select>
         <div id="image_boxes">
-            <div v-for="(item,index) in Images">
-                <template v-if="index==CurrentIndex">
-                    <!-- <span v-text="item.id"></span>
-                    <p>
-                        <div>d</div> -->
-                    <img style="width:100%;border:2px solid red" v-bind:src="'../'+item.url" />
-                </template>
-                <template v-if="index!=CurrentIndex">
-                    <!-- <span v-text="item.id"></span> -->
-                    <img style="width:100%;" v-bind:src="'../'+item.url" />
-                </template>
+            <div v-for="(item,index) in Images" style="height:100px">
+                <img style="height:100%;" v-bind:style="GetLeftImgCss(index)" v-bind:src="'../'+item.url" v-on:click="SetCurrentIndex(index)" />
+
             </div>
         </div>
     </div>
@@ -125,6 +117,9 @@
                 state.SelectData.Params.tag = obj.Tag;
                 state.SelectData.Params.score = obj.Score;
                 state.SelectData.Params.sort = obj.Sort;
+            },
+            setindex(state,obj){
+                state.ImageData.CurrentIndex = obj;
             }
         },
         actions: {
@@ -214,7 +209,7 @@
                 else
                     return { url: '' };
             },
-            rightmenucss: function () {
+            leftmenucss: function () {
                 var obj = { overflow: 'hidden', 'box-sizing': 'border-box', height: this.windowheight - 10 + 'px' };
                 return obj;
             },
@@ -270,6 +265,17 @@
             },
         },
         methods: {
+            GetLeftImgCss(index) {
+                if (index == this.CurrentIndex) {
+                    var obj = { 'border': '2px solid red' };
+                    return obj;
+                } else {
+                    return {}
+                }
+            },
+            SetCurrentIndex(index){
+                store.commit("setindex",index);
+            },
             setshowleft() {
                 this.isshowmenu = !this.isshowmenu;
             },
