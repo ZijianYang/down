@@ -53,14 +53,14 @@
         <div id="image_boxes">
             <div v-for="(item,index) in Images">
                 <template v-if="index==CurrentIndex">
-                    <span v-text="item.id"></span>
+                    <!-- <span v-text="item.id"></span>
                     <p>
-                        <div>d</div>
-                        <!-- <img style="width:100%;height:90px;border:1px solid" v-bind:src="'../'+item.url" /> -->
+                        <div>d</div> -->
+                    <img style="width:100%;height:90px;border:1px solid" v-bind:src="'../'+item.url" />
                 </template>
                 <template v-if="index!=CurrentIndex">
-                    <span v-text="item.id"></span>
-                    <!-- <img style="width:100%;height:90px" v-bind:src="'../'+item.url" /> -->
+                    <!-- <span v-text="item.id"></span> -->
+                    <img style="width:100%;height:90px" v-bind:src="'../'+item.url" />
                 </template>
             </div>
         </div>
@@ -69,10 +69,10 @@
     </div>
     <div class="image_right">
         <div id="image_box" align="center" v-bind:style="rightcontentcss">
-            <span v-bind:style="rightblackcss"></span>
+            <!-- <span v-bind:style="rightblackcss"></span>
             <span v-text="CurrentImage.id"></span>
-            <p>
-                <!-- <img style="vertical-align:middle" v-bind:style="rightimgcss" v-bind:src="'../'+CurrentImage.url" /> -->
+            <p> -->
+            <img style="vertical-align:middle" v-bind:style="rightimgcss" v-bind:src="'../'+CurrentImage.url" />
         </div>
     </div>
 </div>
@@ -98,7 +98,7 @@
         mutations: {
             indexchange(state, obj) {
                 isUp = obj.isup;
-                data = obj.data;                
+                data = obj.data;
                 state.SelectData.IsLoading = false;
                 if (data.total > 0) {
                     if (isUp) {
@@ -160,18 +160,18 @@
                         }
                     }
                     else {
-                        if(context.state.SelectData.IsEnd&&context.state.ImageData.CurrentIndex == 2&&context.state.ImageData.Items.length > 3){                            
+                        if (context.state.SelectData.IsEnd && context.state.ImageData.CurrentIndex == 2 && context.state.ImageData.Items.length > 3) {
                             context.state.ImageData.Items.splice(0, 1);//结束情况移除数据但可能遇到isend的边界
                             context.state.SelectData.StarIndex = context.state.SelectData.StarIndex - 1;
                         }
-                        if(context.state.ImageData.CurrentIndex < 2&&context.state.ImageData.CurrentIndex + 1 <= context.state.ImageData.Items.length){
+                        if (context.state.ImageData.CurrentIndex < 2 && context.state.ImageData.CurrentIndex + 1 <= context.state.ImageData.Items.length) {
                             context.state.ImageData.CurrentIndex = context.state.ImageData.CurrentIndex + 1;
                         }
-                        if(context.state.SelectData.IsEnd){
-                            context.state.SelectData.IsLoading = false; 
+                        if (context.state.SelectData.IsEnd) {
+                            context.state.SelectData.IsLoading = false;
                             return;
                         }
-                        else {                            
+                        else {
                             starIndex = context.state.SelectData.StarIndex + context.state.ImageData.Items.length;
                             endIndex = starIndex + 1;
                         }
