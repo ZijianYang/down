@@ -115,7 +115,7 @@
                 if (list.length > 0) {
                     for (var i = 0; i < list.length; i++) {
                         list[i].title = "scroe:" + list[i].score + ";tags:" + list[i].tags;
-                        list[i].detailurl = config.urls.image+ "?index=" + (state.imagedata.currentindex+i) + "&score=" + data.score + "&tag=" + data.tag+ "&sort=" + data.sort ;
+                        list[i].detailurl = config.urls.image+ "?index=" + (state.imagedata.currentindex+i+1) + "&score=" + data.score + "&tag=" + data.tag+ "&sort=" + data.sort ;
                         state.imagedata.items.push(list[i]);
                     }                                        
                     state.imagedata.isloading=false;
