@@ -15,7 +15,7 @@
     .image_menu {
         order: 0;
         flex: none;
-        width: 200px;
+        width: 150px;
         height: auto;
     }
 
@@ -34,6 +34,7 @@
 
     .image_right>div {
         width: 100%;
+        margin: 0px -2px;
         overflow: auto;
     }
 </style>
@@ -41,7 +42,7 @@
 
 <div id="image">
 
-    <div class="image_menu" v-if="isshowmenu">
+    <div class="image_menu" v-if="isshowmenu" v-bind:style="rightmenucss">
         <select v-model="imgtype">
             <option value="adaptw">适应宽</option>
             <option value="adapt">合适</option>
@@ -49,14 +50,29 @@
             <option value="orign">原图</option>
             <option value="adapth">适应高</option>
         </select>
-        <div></div>
+        <div id="image_boxes">
+            <div v-for="(item,index) in Images">
+                <template v-if="index==CurrentIndex">
+                    <!-- <span v-text="item.id"></span>
+                    <p>
+                        <div>d</div> -->
+                    <img style="width:100%;border:2px solid red" v-bind:src="'../'+item.url" />
+                </template>
+                <template v-if="index!=CurrentIndex">
+                    <!-- <span v-text="item.id"></span> -->
+                    <img style="width:100%;" v-bind:src="'../'+item.url" />
+                </template>
+            </div>
+        </div>
     </div>
     <div class="image_middle" v-on:click="setshowleft()">
     </div>
     <div class="image_right">
         <div id="image_box" align="center" v-bind:style="rightcontentcss">
             <span v-bind:style="rightblackcss"></span>
-            <img style="vertical-align:middle" v-bind:style="rightimgcss" v-bind:src="currentimage.url" />
+            <!-- <span v-text="CurrentImage.id"></span>
+            <p> -->
+            <img style="vertical-align:middle" v-bind:style="rightimgcss" v-bind:src="'../'+CurrentImage.url" />
         </div>
     </div>
 </div>
@@ -64,20 +80,146 @@
 <script type="text/javascript" language="javascript" src="/App/static/jquery.mousewheel.js" charset="utf-8"></script>
 
 <script>
+    const store = new Vuex.Store({
+        state: {
+            ImageData: {
+                Items: [],
+                CurrentIndex: -1,
+            },
+            SelectData: {
+                Index: -1,
+                StarIndex: -1,
+                Section: 10,
+                IsEnd: false,
+                IsLoading: false,
+                Params: { tag: '', score: 0, sort: '', }
+            },
+        },
+        mutations: {
+            indexchange(state, obj) {
+                isUp = obj.isup;
+                data = obj.data;
+                state.SelectData.IsLoading = false;
+                if (data.total > 0) {
+                    if (isUp) {
+                        state.ImageData.Items.splice(0, 0, data.items[0])
+                        state.SelectData.StarIndex = state.SelectData.StarIndex - 1;
+                    }
+                    else {
+                        state.ImageData.Items.splice(0, 1);
+                        state.ImageData.Items.push(data.items[0]);
+                        state.SelectData.StarIndex = state.SelectData.StarIndex + 1;
+                    }
+                }
+                else {
+                    if (!isUp) {
+                        state.ImageData.Items.splice(0, 1)
+                        state.SelectData.StarIndex = state.SelectData.StarIndex - 1;
+                        state.SelectData.IsEnd = true;
+                    }
+                }
+            },
+            startdata(state, obj) {
+                state.SelectData.Index = obj.Index;
+                state.SelectData.StarIndex = obj.Index;
+                state.SelectData.Params.tag = obj.Tag;
+                state.SelectData.Params.score = obj.Score;
+                state.SelectData.Params.sort = obj.Sort;
+            }
+        },
+        actions: {
+            start(context) {
+                API.image.getsbysection(
+                    function (data) {
+                        if (data.total > 0) {
+                            data.items.forEach(element => {
+                                context.state.ImageData.Items.push(element);
+                            });
+                            context.state.ImageData.CurrentIndex = 0;
+                        }
+                    },
+                    context.state.SelectData.StarIndex,
+                    context.state.SelectData.StarIndex + context.state.SelectData.Section,
+                    context.state.SelectData.Params)
+            },
+            change(context, isUp) {
+                if (!context.state.SelectData.IsLoading) {//未结束才进行尝试,且未正在读取数据 
+                    context.state.SelectData.IsLoading = true;
+                    var starIndex, endIndex;
+                    if (isUp) {
+                        if (context.state.SelectData.StarIndex <= 0) {
+                            if (context.state.ImageData.CurrentIndex >= 1) {
+                                context.state.ImageData.CurrentIndex = context.state.ImageData.CurrentIndex - 1;
+                            }
+                            context.state.SelectData.IsLoading = false;
+                            return;
+                        }
+                        else {
+                            starIndex = context.state.SelectData.StarIndex - 1;
+                            endIndex = starIndex + 1;
+                        }
+                    }
+                    else {
+                        if (context.state.SelectData.IsEnd && context.state.ImageData.CurrentIndex == 2 && context.state.ImageData.Items.length > 3) {
+                            context.state.ImageData.Items.splice(0, 1);//结束情况移除数据但可能遇到isend的边界
+                            context.state.SelectData.StarIndex = context.state.SelectData.StarIndex - 1;
+                        }
+                        if (context.state.ImageData.CurrentIndex < 2 && context.state.ImageData.CurrentIndex + 1 <= context.state.ImageData.Items.length) {
+                            context.state.ImageData.CurrentIndex = context.state.ImageData.CurrentIndex + 1;
+                        }
+                        if (context.state.SelectData.IsEnd) {
+                            context.state.SelectData.IsLoading = false;
+                            return;
+                        }
+                        else {
+                            starIndex = context.state.SelectData.StarIndex + context.state.ImageData.Items.length;
+                            endIndex = starIndex + 1;
+                        }
+                    }
+
+                    API.image.getsbysection(
+                        function (data) {
+                            context.commit("indexchange", { isup: isUp, data: data });
+                        },
+                        starIndex,
+                        endIndex,
+                        context.state.SelectData.Params)
+                }
+            }
+        }
+    })
+
     var image = new Vue({
         el: '#image',
+        store,
         data: {
             items: [],
-            currentimage: '',
+            currentindex: 0,
             isshowmenu: true,
             imgtype: "adaptw",
             windowheight: 0,
-            imgheight:0,
-            imgwidth:0,
+            imgheight: 0,
+            imgwidth: 0,
         },
         computed: {
+            Images: function () {
+                return store.state.ImageData.Items;
+            },
+            CurrentIndex: function () {
+                return store.state.ImageData.CurrentIndex;
+            },
+            CurrentImage: function () {
+                if (this.Images.length > 0 && this.CurrentIndex > -1)
+                    return this.Images[this.CurrentIndex]
+                else
+                    return { url: '' };
+            },
+            rightmenucss: function () {
+                var obj = { overflow: 'hidden', 'box-sizing': 'border-box', height: this.windowheight - 10 + 'px' };
+                return obj;
+            },
             rightcontentcss: function () {
-                var obj = { 'box-sizing':'border-box', height: this.windowheight-10 + 'px' };
+                var obj = { 'box-sizing': 'border-box', height: this.windowheight - 10 + 'px' };
                 switch (this.imgtype) {
                     case "adaptw":
                         obj.overflow = "auto";
@@ -86,7 +228,7 @@
                 return obj;
             },
             rightblackcss: function () {
-                var obj = { 'line-height': this.windowheight-10 + 'px' };
+                var obj = { 'line-height': this.windowheight - 10 + 'px' };
                 return obj;
             },
             rightimgcss: function () {
@@ -96,17 +238,17 @@
                         obj = { width: "100%", height: "100%" };
                         break;
                     case "adaptw":
-                        obj = { width: "100%"};
+                        obj = { width: "100%" };
                         break;
                     case "adapth":
                         obj = { height: "100%" };
                         break;
                     case "adapt":
-                        var box=$("#image_box");
-                        if(this.imgwidth!=0&&this.imgheight/this.imgwidth>box.height()/box.width()){
+                        var box = $("#image_box");
+                        if (this.imgwidth != 0 && this.imgheight / this.imgwidth > box.height() / box.width()) {
                             obj = { height: "100%" };
-                        }else{
-                            obj = { width: "100%"};
+                        } else {
+                            obj = { width: "100%" };
                         }
                         break;
                     case "orign":
@@ -115,71 +257,59 @@
                 return obj;
             },
         },
+        watch: {
+            CurrentImage() {
+                self = this;
+                self.$nextTick(function () {
+                    var img = $("#image_box img")[0];
+                    if (img) {
+                        self.imgheight = img.naturalHeight;
+                        self.imgwidth = img.naturalWidth;
+                    }
+                });
+            },
+        },
         methods: {
             setshowleft() {
                 this.isshowmenu = !this.isshowmenu;
             },
             setheight() {
                 this.windowheight = $(window).height()
-            },   
-            get(funsuccess) {
-                self = this;
-                API.image.getsbysection(
-                    function (data) {
-                        if(data.total>0){
-                            self.currentimage = data.items[0];                    
-                            self.$nextTick(function(){
-                                var img=$("#image_box img")[0];
-                                if(img){
-                                    self.imgheight=img.naturalHeight;
-                                    self.imgwidth=img.naturalWidth;
-                                }
-                                if(funsuccess){
-                                    funsuccess();
-                                }
-                            })
-                        }
-                    },
-                    this.index,
-                    parseInt(this.index)+1,
-                    { tag: this.tag, score: this.score, sort:this.sort });
             },
-            getother(isup) {
+            change(isup) {
                 scrollheight = parseFloat($('#image_box').scrollTop());
-                // config.log(scrollheight);
-                // config.log($('#image_box').height());
-                // config.log($('#image_box img').height());
-                self=this;
                 if (isup && scrollheight < 3) {
-                    this.index = parseInt(this.index) - 1;
-                    if(this.index>-1)
-                        this.get();
+                    this.id = parseInt(this.id) - 1;
+                    store.dispatch('change', true)
                 }
                 else if (!isup && ($('#image_box').height() + scrollheight > $('#image_box img').height() - 3)) {
-                    this.get(function(){
-                        self.index = parseInt(self.index) + 1;
-                    });
+                    this.id = parseInt(this.id) + 1;
+                    store.dispatch('change', false)
                     $('#image_box').scrollTop(0);
                 }
             },
         },
         mounted: function () {
-            this.index = Vue.GetUrlParam("index");
-            this.tag = Vue.GetUrlParam("tag");
-            this.score = Vue.GetUrlParam("score");
-            this.sort = Vue.GetUrlParam("sort");
-            this.get();
+            store.commit("startdata", { Index: parseInt(Vue.GetUrlParam("index")), Tag: Vue.GetUrlParam("tag"), Score: Vue.GetUrlParam("score"), Sort: Vue.GetUrlParam("sort") })
+            store.dispatch('start')
             this.setheight();
             self = this;
             $(window).resize(function () {
                 self.setheight();
             });
+            $('#image_boxes')
+                .mousewheel(function (event, delta) {
+                    var isup = delta > 0;
+                    console.log(isup);
+                    store.dispatch('change', isup)
+                })
             $('#image_box')
                 .mousewheel(function (event, delta) {
                     var isup = delta > 0;
-                    config.log(delta);
-                    self.getother(isup);
+                    console.log(isup);
+                    self.change(isup);
                 })
+
         },
     })
 </script> {% endblock %}
