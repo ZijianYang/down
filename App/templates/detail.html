@@ -33,7 +33,6 @@
 
     .image_right>div {
         width: 100%;
-        margin: 0px;
         overflow: auto;
     }
 </style>
@@ -218,6 +217,9 @@
                 switch (this.imgtype) {
                     case "adaptw":
                         obj.overflow = "auto";
+                        break;
+                    case "adapt":
+                        obj.overflow = "hidden";
                         break;
                 };
                 return obj;
