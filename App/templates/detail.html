@@ -23,7 +23,6 @@
         width: 5px;
         height: auto;
         background-color: black;
-        order: 1;
         flex: none;
     }
 
@@ -34,7 +33,7 @@
 
     .image_right>div {
         width: 100%;
-        margin: 0px -2px;
+        margin: 0px;
         overflow: auto;
     }
 </style>
@@ -193,6 +192,7 @@
             isshowmenu: true,
             imgtype: "adaptw",
             windowheight: 0,
+            contenthw:1,
             imgheight: 0,
             imgwidth: 0,
         },
@@ -210,11 +210,11 @@
                     return { url: '' };
             },
             leftmenucss: function () {
-                var obj = { overflow: 'hidden', 'box-sizing': 'border-box', height: this.windowheight - 10 + 'px' };
+                var obj = { overflow: 'hidden', 'box-sizing': 'border-box', height: this.windowheight + 'px' };
                 return obj;
             },
             rightcontentcss: function () {
-                var obj = { 'box-sizing': 'border-box', height: this.windowheight - 10 + 'px' };
+                var obj = { 'box-sizing': 'border-box', height: this.windowheight + 'px' };
                 switch (this.imgtype) {
                     case "adaptw":
                         obj.overflow = "auto";
@@ -223,7 +223,7 @@
                 return obj;
             },
             rightblackcss: function () {
-                var obj = { 'line-height': this.windowheight - 10 + 'px' };
+                var obj = { 'line-height': this.windowheight + 'px' };
                 return obj;
             },
             rightimgcss: function () {
@@ -239,8 +239,7 @@
                         obj = { height: "100%" };
                         break;
                     case "adapt":
-                        var box = $("#image_box");
-                        if (this.imgwidth != 0 && this.imgheight / this.imgwidth > box.height() / box.width()) {
+                        if (this.imgwidth != 0 && this.imgheight / this.imgwidth > this.contenthw) {
                             obj = { height: "100%" };
                         } else {
                             obj = { width: "100%" };
@@ -280,7 +279,8 @@
                 this.isshowmenu = !this.isshowmenu;
             },
             setheight() {
-                this.windowheight = $(window).height()
+                this.windowheight = $(window).height();
+                this.contenthw = this.windowheight/($(window).width()-155);
             },
             change(isup) {
                 scrollheight = parseFloat($('#image_box').scrollTop());
