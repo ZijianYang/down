@@ -49,7 +49,7 @@
             <option value="adapth">适应高</option>
         </select>
         <div id="image_boxes">
-            <div v-for="(item,index) in Images" style="height:100px">
+            <div v-for="(item,index) in Images" align="center"  style="height:100px">
                 <img style="height:100%;" v-bind:style="GetLeftImgCss(index)" v-bind:src="'../'+item.url" v-on:click="SetCurrentIndex(index)" />
 
             </div>
