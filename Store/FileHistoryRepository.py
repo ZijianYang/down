@@ -69,6 +69,8 @@ class FileHistoryRepository(RepositoryBase):
                 entities = entities.filter(FileHistory.remark2.like('%'+item+'%'))
         if sort == "score":
             entities = entities.order_by(FileHistory.remark1.desc())
+        elif sort == "noramldesc":
+            entities = entities.order_by(FileHistory.adddate.desc())
         star = pageindex * pagesize
         end = (pageindex + 1) * pagesize
         total = entities.count()
@@ -100,6 +102,8 @@ class FileHistoryRepository(RepositoryBase):
                 entities = entities.filter(FileHistory.remark2.like('%'+item+'%'))
         if sort == "score":
             entities = entities.order_by(FileHistory.remark1.desc())
+        elif sort == "noramldesc":
+            entities = entities.order_by(FileHistory.adddate.desc())
         items = entities[star:end]
         total = len(items)
         return {"total": total, "list": items}
