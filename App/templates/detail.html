@@ -290,7 +290,7 @@
                     this.id = parseInt(this.id) - 1;
                     store.dispatch('change', true)
                 }
-                else if (!isup && ($('#image_box').height() + scrollheight > $('#image_box img').height() - 3)) {
+                else if (!isup && ($('#image_box').height() + scrollheight > $('#image_box img').height() - 5)) {
                     this.id = parseInt(this.id) + 1;
                     store.dispatch('change', false)
                     $('#image_box').scrollTop(0);
