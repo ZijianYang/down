@@ -81,10 +81,10 @@ def main(argv):
                     configs = Core.ConfigBusiness.configsfrompaths(configpaths)
                     for item in configs:
                         #Core.ProcessBusiness.clearnew(item.key)
-                        Core.ProcessBusiness.newpardon(item.key, 1)
+                        Core.ProcessBusiness.newpardon(item.key, 3)
                 else:
                     #Core.ProcessBusiness.clearnew(content)
-                    Core.ProcessBusiness.newpardon(content, 1)
+                    Core.ProcessBusiness.newpardon(content,3)
             sys.exit(0)
         elif opt in ('--history', ):
             if arg == "detail":
