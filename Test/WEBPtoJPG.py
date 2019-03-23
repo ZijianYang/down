@@ -43,8 +43,13 @@ def ToJpg(path):
             image_format = 'JPEG' 
 # ToJpg("008.jpg")
 # AllToJpg(os.path.join(sys.path[0],"SouMiao"))
+
+AllToNewTotal(os.path.join(sys.path[0],"SouMiao\\1427"),"Total")
+
+
+
+
 # path=os.path.join(sys.path[0],"008.jpg") 
 # print(os.path.split(os.path.split(path)[0])[1])      
 # print(os.path.split(path)[1])
 # print(os.path.splitext(os.path.split(path)[1])[1])
-AllToNewTotal(os.path.join(sys.path[0],"SouMiao\\1427"),"Total")
