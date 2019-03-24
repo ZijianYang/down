@@ -53,12 +53,19 @@ class DownHandle(object):
             wordsDir=os.path.join(self.rootPath, self.comicid,words["wordsNo"])
             wordUrl=self.rootUrl+words["wordsUrl"]
             print(words["wordsNo"]+"话(共"+str(words["pageCount"])+"页)地址:"+wordUrl+";")
-            # wordsHtml=self.Downfile(self.rootUrl+words["wordsUrl"],wordsDir,"Index.html",True) #下载每话页面
-            # self.PageHtml(wordUrl,words["pageCount"],wordsDir)  #模拟浏览器获取路径
-            self.DownByRecord(wordsDir,"Record.txt")
+            self.Downfile(self.rootUrl+words["wordsUrl"],wordsDir,"Index.html",True) #下载每话页面,创建文件夹
+            self.PageHtml(wordUrl,words["pageCount"],wordsDir)  #模拟浏览器获取路径
+            # self.DownByRecord(wordsDir,"Record.txt")
     
     def PageHtml(self,wordsUrl,count,wordsDir):
-        self.driver.get(wordsUrl + "/")
+        Flag=True
+        while Flag:
+            try:
+                self.driver.get(wordsUrl + "/")
+                Flag=False
+            except:
+                time.sleep(1)
+                print("打开页面超时")  
         imgXPath='//*[@id="slideshow"]/span/a/img'
         nextXPath='//*[@id="nav"]/div/a[2]'
         urlList=[]
@@ -75,7 +82,8 @@ class DownHandle(object):
             urlList.append(imgUrl)
             # self.Downfile(imgUrl,wordsDir,imgUrl[-7:],True)
             count=count-1   
-        self.WriteRecord(urlList,os.path.join(wordsDir,"Record.txt"))
+        # self.WriteRecord(urlList,os.path.join(wordsDir,"Record.txt"))
+        self.DownByUrlList(urlList,wordsDir)
 
     def Downfile(self,url,dir,name="",isSave=False):
         """下载文件"""
@@ -104,12 +112,15 @@ class DownHandle(object):
         with open(path, "a") as filestream:
             filestream.writelines(list)
     # 从保存文件中下载图片
-    def DownByRecord(self,dir,name):
-        recordPath=os.path.join(dir,name)
+    def DownByRecord(self,recorddir,name):
+        recordPath=os.path.join(recorddir,name)
         with open(recordPath, "r") as filestream:
             record=filestream.read()
         records=record.split("\n")
         records=[item for item in records if item!=""] 
+        self.DownByUrlList(records,recorddir)
+    # 根据列表下载文件
+    def DownByUrlList(self,records,dir):
         for recordUrl in records:
             # print(recordUrl[-7:])
             # print(recordUrl)            
@@ -125,23 +136,18 @@ class DownHandle(object):
                         Flag=False
                     except:
                         time.sleep(1)
-                        print("读取超时")
-                
+                        print("读取超时")                
                 with open(imgPath, 'wb') as filestream:
                     filestream.write(data)
-
-    # def ConvetJpg(self,dir,name):
-    #     recordPath=os.path.join(dir,name)
-    #     with open(recordPath, "r") as filestream:
-    #         record=filestream.read()
-    #     records=record.split("\n")
-    #     records=[item for item in records if item!=""] 
-    #     for recordUrl in records:           
-    #         imgPath=os.path.join(dir,recordUrl[-7:])
-    #         if os.path.exists(imgPath):
-                
-    #             with open(imgPath, 'wb') as filestream:
-    #                 filestream.write(data)
+                self.ToJpg(imgPath)
+    # 变换格式#
+    def ToJpg(self,path):
+        if os.path.exists(path):
+            image = Image.open(path)
+            image_format = image.format
+            if image_format == 'WEBP':
+                image.save(path, 'JPEG')
+                image_format = 'JPEG' 
 
     # 获取页面元素，防止一次没获取到,没加载完等
     def getEement(self,xPath): 
