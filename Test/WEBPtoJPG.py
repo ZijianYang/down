@@ -44,7 +44,7 @@ def ToJpg(path):
 # ToJpg("008.jpg")
 # AllToJpg(os.path.join(sys.path[0],"SouMiao"))
 
-AllToNewTotal(os.path.join(sys.path[0],"SouMiao\\1427"),"Total")
+AllToNewTotal(os.path.join(sys.path[0],"SouMiao\\5681"),"Total")
 
 
 
